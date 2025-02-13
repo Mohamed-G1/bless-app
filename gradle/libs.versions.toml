@@ -1,5 +1,5 @@
 [versions]
-agp = "8.5.1"
+agp = "8.5.2"
 kotlin = "1.9.0"
 coreKtx = "1.15.0"
 junit = "4.13.2"
@@ -13,7 +13,18 @@ squareup_retrofit = "2.9.0"
 squareup_logger = "5.0.0-alpha.3"
 
 koin = "3.4.0"
-
+serialization = "1.6.3"
+androidx_navigation = "2.8.0-beta06"
+credentials = "1.5.0-beta01"
+facebookLogin = "latest.release"
+firebase_bom = "33.1.2"
+google-firebase-crashlytics-plugin = "3.0.2"
+lifecycleProcess = "2.8.6"
+mapsCompose = "6.1.0"
+playServicesAuth = "21.2.0"
+googleid = "1.1.1"
+androidx_datastore = "1.1.1"
+coil = "2.4.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -42,7 +53,32 @@ koin_core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 koin_android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin_compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin" }
 
+#Navigation
+androidx_navigation = { module = "androidx.navigation:navigation-compose", version.ref = "androidx_navigation" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization"}
+
+
+facebook-login = { module = "com.facebook.android:facebook-login", version.ref = "facebookLogin" }
+
+firebase_bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase_bom" }
+firebase-messaging-ktx = { group = "com.google.firebase", name = "firebase-messaging" }
+firebase-auth = { module = "com.google.firebase:firebase-auth" }
+
+maps-compose = { module = "com.google.maps.android:maps-compose", version.ref = "mapsCompose" }
+androidx-credentials-play-services-auth = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "credentials" }
+androidx-credentials = { module = "androidx.credentials:credentials", version.ref = "credentials" }
+googleid = { group = "com.google.android.libraries.identity.googleid", name = "googleid", version.ref = "googleid" }
+
+
+androidx_datastore = { module = "androidx.datastore:datastore-preferences", version.ref = "androidx_datastore" }
+
+coil = { module = "io.coil-kt:coil", version.ref = "coil" }
+coil_gif = { module = "io.coil-kt:coil-gif", version.ref = "coil" }
+coil_compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
+
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 

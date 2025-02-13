@@ -1,16 +1,17 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
-    namespace = "com.exmple.mybaseproject"
-    compileSdk = 34
+    namespace = "com.siad.stayksa"
+    compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.exmple.mybaseproject"
+        applicationId = "com.siad.stayksa"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -18,14 +19,35 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        resourceConfigurations += mutableSetOf("en", "ar")
+
     }
 
+    buildFeatures.buildConfig = true
+
     buildTypes {
+        debug {
+            buildConfigField("String", "BASE_URL", "\"https://staging.stayksa.com/api/\"")
+            buildConfigField(
+                "String",
+                "CLIENT_ID",
+                "\"235851507231-9paiu2lqebsuh2a4ureo1imv4gle50dp.apps.googleusercontent.com\""
+            )
+
+        }
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
+            )
+            buildConfigField("String", "BASE_URL", "\"https://staging.stayksa.com/api/\"")
+            buildConfigField(
+                "String",
+                "CLIENT_ID",
+                "\"235851507231-9paiu2lqebsuh2a4ureo1imv4gle50dp.apps.googleusercontent.com\""
             )
         }
     }
@@ -47,6 +69,8 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
+
 }
 
 dependencies {
@@ -76,4 +100,34 @@ dependencies {
     implementation(libs.koin.core)
     implementation(libs.koin.android)
     implementation(libs.koin.compose)
+
+    //Navigation
+    implementation(libs.androidx.navigation)
+    implementation(libs.kotlinx.serialization.json)
+
+    //Facebook
+    implementation(libs.facebook.login)
+
+    //Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.messaging.ktx)
+    implementation(libs.firebase.auth)
+
+    //Maps
+    implementation(libs.maps.compose)
+
+
+    //Credential Manager
+    implementation (libs.androidx.credentials)
+    implementation(libs.googleid)
+    implementation( libs.androidx.credentials.play.services.auth)
+
+    //DataStore
+    implementation(libs.androidx.datastore)
+
+    //Coil
+    implementation(libs.coil)
+    implementation(libs.coil.gif)
+    implementation(libs.coil.compose)
+
 }

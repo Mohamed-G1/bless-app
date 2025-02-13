@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="facebook_app_id" translatable="false">426336879725992</string>
+    <string name="fb_login_protocol_scheme" translatable="false">fb426336879725992</string>
+    <string name="facebook_client_token" translatable="false">e242ae98510485bc5119b17a17ed4272</string>
+    <string name="web_client_id" translatable="false">235851507231-k3eao0bdsqhk1c6ohamlst6m5vrhofg2.apps.googleusercontent.com</string>
+
+    <string name="api_key" translatable="false">AIzaSyDKpcEtv3Clyk5R_jQr0RgjmDJBTvkBNXg</string>
+
+</resources>
