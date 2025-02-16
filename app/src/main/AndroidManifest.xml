@@ -4,9 +4,16 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
+
+
 
     <application
-        android:name="com.siad.stayksa.base.StayKsaApp"
+        android:name="com.nat.couriersapp.base.CouriersApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -17,7 +24,7 @@
         android:theme="@style/Theme.StayKsa"
         tools:targetApi="31">
         <activity
-            android:name="com.siad.stayksa.MainActivity"
+            android:name="com.nat.couriersapp.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.StayKsa">
             <intent-filter>

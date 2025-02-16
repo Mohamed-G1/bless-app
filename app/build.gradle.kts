@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.siad.stayksa"
+    namespace = "com.nat.couriersapp"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.siad.stayksa"
+        applicationId = "com.nat.couriersapp"
         minSdk = 24
         targetSdk = 35
         versionCode = 1
@@ -20,20 +20,19 @@ android {
             useSupportLibrary = true
         }
 
-        resourceConfigurations += mutableSetOf("en", "ar")
-
     }
 
     buildFeatures.buildConfig = true
 
     buildTypes {
         debug {
-            buildConfigField("String", "BASE_URL", "\"https://staging.stayksa.com/api/\"")
-            buildConfigField(
-                "String",
-                "CLIENT_ID",
-                "\"235851507231-9paiu2lqebsuh2a4ureo1imv4gle50dp.apps.googleusercontent.com\""
-            )
+            isMinifyEnabled = false
+            buildConfigField("String", "BASE_URL", "\"http://mecsmobileapi.natlab.net/\"")
+//            buildConfigField(
+//                "String",
+//                "CLIENT_ID",
+//                "\"235851507231-9paiu2lqebsuh2a4ureo1imv4gle50dp.apps.googleusercontent.com\""
+//            )
 
         }
         release {
@@ -43,12 +42,12 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            buildConfigField("String", "BASE_URL", "\"https://staging.stayksa.com/api/\"")
-            buildConfigField(
-                "String",
-                "CLIENT_ID",
-                "\"235851507231-9paiu2lqebsuh2a4ureo1imv4gle50dp.apps.googleusercontent.com\""
-            )
+            buildConfigField("String", "BASE_URL", "\"http://mecsmobileapi.natlab.net/\"")
+//            buildConfigField(
+//                "String",
+//                "CLIENT_ID",
+//                "\"235851507231-9paiu2lqebsuh2a4ureo1imv4gle50dp.apps.googleusercontent.com\""
+//            )
         }
     }
     compileOptions {
