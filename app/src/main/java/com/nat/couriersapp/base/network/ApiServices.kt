@@ -1,9 +1,14 @@
 package com.nat.couriersapp.base.network
 
-interface ApiServices {
+import com.nat.couriersapp.screens.login.domain.models.LoginRequest
+import com.nat.couriersapp.screens.login.domain.models.UserResponse
+import retrofit2.Response
+import retrofit2.http.Body
+import retrofit2.http.POST
 
-//    @GET("customers/board_screens")
-//    suspend fun getOnBoardingData(
-//        @Query("lang") language: String
-//    ): BaseResponse<List<OnBoardingResponse>>
+interface ApiServices {
+    @POST("api/Account/login")
+    suspend fun userLogin(
+        @Body loginRequest: LoginRequest
+    ): Response<UserResponse>
 }

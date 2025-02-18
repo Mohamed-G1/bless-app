@@ -15,7 +15,7 @@ sealed class Destinations {
     data object Splash : Destinations()
 
     @Serializable
-    data object SignIn : Destinations()
+    data object Login : Destinations()
 
 
     @Serializable

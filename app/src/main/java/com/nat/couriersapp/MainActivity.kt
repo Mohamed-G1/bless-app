@@ -1,6 +1,7 @@
 package com.nat.couriersapp
 
 import android.os.Bundle
+import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -18,6 +19,8 @@ import com.nat.couriersapp.ui.theme.CouriersAppTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // disable LTR because the app is only supports arabic language
+        window.decorView.layoutDirection = View.LAYOUT_DIRECTION_RTL
         enableEdgeToEdge()
         setContent {
             CouriersAppTheme {

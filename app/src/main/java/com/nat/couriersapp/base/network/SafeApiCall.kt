@@ -7,7 +7,7 @@ import retrofit2.Response
 import java.io.IOException
 import java.util.concurrent.TimeoutException
 
-private suspend fun <T> safeApiCall(apiCall: suspend () -> Response<T>): Resource<T> {
+suspend fun <T> safeApiCall(apiCall: suspend () -> Response<T>): Resource<T> {
     return try {
         val response = apiCall.invoke()
         when {
