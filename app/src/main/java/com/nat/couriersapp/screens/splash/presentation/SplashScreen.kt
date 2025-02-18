@@ -36,6 +36,7 @@ import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.nat.couriersapp.R
+import com.nat.couriersapp.base.locationChecker.LocationPermissionsChecker
 import com.nat.couriersapp.base.permissions.LocationPermissionTextProvider
 import com.nat.couriersapp.base.permissions.PermissionDialog
 import com.nat.couriersapp.base.permissions.PermissionViewModel
@@ -67,16 +68,11 @@ fun SplashScreen(
         }
     )
 
-    // Check if the location permission is already granted
-    val locationPermissionGranted = ContextCompat.checkSelfPermission(
-        activity,
-        android.Manifest.permission.ACCESS_FINE_LOCATION
-    ) == PackageManager.PERMISSION_GRANTED
-    if (locationPermissionGranted) {
+    val isLocationGranted = LocationPermissionsChecker.isLocationPermissionGranted(activity)
+    if (isLocationGranted) {
         if (state.shouldNavigate) {
             LaunchedEffect(Unit) {
                 navigateToNext?.invoke()
-                Toast.makeText(activity, "Done", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -84,6 +80,7 @@ fun SplashScreen(
     LaunchedEffect(Unit) {
         multiplePermissionResultLauncher.launch(permissionsToRequest)
     }
+
     dialogQueue
         .reversed()
         .forEach { permission ->

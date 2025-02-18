@@ -31,7 +31,7 @@ class SplashViewModel(
                     // if the user is already logged in
                     _state.update { it.copy(destination = Destinations.Home) }
                 } else {
-                    _state.update { it.copy(destination = Destinations.SignIn) }
+                    _state.update { it.copy(destination = Destinations.Login) }
                 }
                 delay(2000)
                 _state.update { it.copy(shouldNavigate = true) }

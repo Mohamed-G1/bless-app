@@ -1,7 +1,9 @@
 package com.nat.couriersapp.base
 
 import android.app.Application
+import com.nat.couriersapp.base.domain.di.getUserModule
 import com.nat.couriersapp.base.network.di.networkModule
+import com.nat.couriersapp.screens.login.di.userModule
 import com.nat.couriersapp.screens.splash.di.splashModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
@@ -16,6 +18,8 @@ class CouriersApp : Application() {
             modules(
                 networkModule,
                 splashModule,
+                userModule,
+                getUserModule
             )
         }
     }

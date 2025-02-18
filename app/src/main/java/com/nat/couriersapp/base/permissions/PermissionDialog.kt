@@ -77,9 +77,9 @@ fun PermissionDialog(
                     HorizontalDivider()
                     Text(
                         text = if (isPermanentlyDeclined) {
-                            "منح الإذن"
+                            "Enable Location."
                         } else {
-                            "نعم"
+                            "yes"
                         },
                         textAlign = TextAlign.Center,
                         style = CompactTypography.titleMedium.copy(fontWeight = FontWeight.Bold),
@@ -118,10 +118,9 @@ class CameraPermissionTextProvider : PermissionTextProvider {
 class LocationPermissionTextProvider : PermissionTextProvider {
     override fun getDescription(isPermanentlyDeclined: Boolean): String {
         return if (isPermanentlyDeclined) {
-            "يبدو أنك رفضت إذن تحديد الموقع بشكل دائم. " +
-                    "لتتمكن من استخدام التطبيق يمكنك الانتقال إلى الاعدادات لمنحه"
+            "Location access is required to use the app."
         } else {
-            "يحتاج هذا التطبيق إلى الوصول إلى موقعك حتى تتمكن من استخدام التطبيق"
+            "Location access is required to use the app."
         }
     }
 }
@@ -129,10 +128,9 @@ class LocationPermissionTextProvider : PermissionTextProvider {
 class NotificationsPermissionTextProvider : PermissionTextProvider {
     override fun getDescription(isPermanentlyDeclined: Boolean): String {
         return if (isPermanentlyDeclined) {
-            "يبدو أنك رفضت إذن الإشعارات بشكل دائم. " +
-                    "يمكنك الانتقال إلى إعدادات التطبيق لمنحه"
+            "Notifications help you stay updated on shipments."
         } else {
-            "يحتاج هذا التطبيق إلى الوصول إلى أذونات الإشعارات حتى يتم تسليم الإشعارات إليك"
+            "Notifications help you stay updated on shipments."
         }
     }
 }

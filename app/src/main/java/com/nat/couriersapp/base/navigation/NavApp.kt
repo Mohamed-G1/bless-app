@@ -1,5 +1,7 @@
 package com.nat.couriersapp.base.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -18,6 +20,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.nat.couriersapp.screens.login.presentation.LoginScreen
+import com.nat.couriersapp.screens.login.presentation.LoginViewModel
 import com.nat.couriersapp.screens.splash.presentation.SplashScreen
 import com.nat.couriersapp.screens.splash.presentation.SplashViewModel
 import org.koin.androidx.compose.koinViewModel
@@ -25,6 +29,7 @@ import org.koin.androidx.compose.koinViewModel
 /**
  * This file handle the app navigations
  * */
+@RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @Composable
 fun NavApp(){
     val navController = rememberNavController()
@@ -65,6 +70,15 @@ fun NavApp(){
                 )
             }
 
+            composable<Destinations.Login> {
+                val viewModel : LoginViewModel = koinViewModel()
+                val state by viewModel.state.collectAsStateWithLifecycle()
+                LoginScreen(
+                    state = state,
+                    events = viewModel::onEvent
+                )
+            }
+
             composable<Destinations.Home> {
 
             }
@@ -76,9 +90,9 @@ fun NavApp(){
 /** These functions to navigate to the destination screen and remove the previous screen from the back-stack
  * */
 
-private fun goToSignInFromSplashScreen(navController: NavController) {
+private fun goToLoginFromSplashScreen(navController: NavController) {
     navController.navigate(
-        Destinations.SignIn
+        Destinations.Login
     ) {
         popUpTo(Destinations.Splash) {
             inclusive = true
@@ -100,9 +114,9 @@ private fun goToHomeScreen(navController: NavController) {
  * */
 fun goToNextAfterSplash(navController: NavHostController, destination: Destinations) {
     when (destination) {
-        Destinations.SignIn -> goToSignInFromSplashScreen(navController)
+        Destinations.Login -> goToLoginFromSplashScreen(navController)
         Destinations.Home -> goToHomeScreen(navController)
-        else -> goToSignInFromSplashScreen(navController)
+        else -> goToLoginFromSplashScreen(navController)
     }
 }
 
