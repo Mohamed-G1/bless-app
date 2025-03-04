@@ -16,6 +16,7 @@ const val TOKEN = "token"
 const val REFRESH_TOKEN = "refreshToken"
 const val IS_ACTIVE_USER = "isActiveUser"
 const val USER_NAME = "userName"
+const val USER_ID = "userID"
 const val USER_EMAIL = "userEMAIL"
 const val USER_PHONE= "userPHONE"
 const val USER_LANGUAGE = "userLanguage"
@@ -31,6 +32,8 @@ const val FREE_CANCEL = "free_cancel"
 const val BENEFITS = "benefits"
 const val FACILITIES = "facilities "
 const val HOUSE_RULES = "house_rules"
+const val SORT_TYPE = "sort_type"
+const val FILTER_TYPE = "filter_type"
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = USER_SETTINGS)
 
@@ -41,6 +44,9 @@ object PreferencesKeys {
     val refreshToken = stringPreferencesKey(name = REFRESH_TOKEN)
 //    val isActiveUser = booleanPreferencesKey(name = IS_ACTIVE_USER)
     val userName = stringPreferencesKey(name = USER_NAME)
+    val sortType = stringPreferencesKey(name = SORT_TYPE)
+    val filterType = stringPreferencesKey(name = FILTER_TYPE)
+    val userId = intPreferencesKey(name = USER_ID)
     val userEmail = stringPreferencesKey(name = USER_EMAIL)
     val userPhone = stringPreferencesKey(name = USER_PHONE)
     val userLanguage = stringPreferencesKey(name = USER_LANGUAGE)

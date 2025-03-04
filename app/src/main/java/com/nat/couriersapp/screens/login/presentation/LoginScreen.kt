@@ -1,5 +1,6 @@
 package com.nat.couriersapp.screens.login.presentation
 
+import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -13,27 +14,28 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
-import com.nat.couriersapp.R
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.nat.couriersapp.R
 import com.nat.couriersapp.base.ui.appButton.AppButton
 import com.nat.couriersapp.base.ui.appLoading.FullLoading
 import com.nat.couriersapp.base.ui.textField.AppTextField
@@ -54,21 +56,6 @@ fun LoginScreen(
         painterResource(id = R.drawable.animate_2),
         painterResource(id = R.drawable.animate_3)
     )
-    // Current image index
-    var currentImageIndex by remember { mutableStateOf(0) }
-
-    // Launch the infinite loop with a delay of 1 second for each image
-    LaunchedEffect(Unit) {
-        while (true) {
-            delay(500)
-            currentImageIndex = (currentImageIndex + 1) % images.size
-        }
-    }
-    // Animate alpha for smooth transition between images
-    val alpha by animateFloatAsState(
-        targetValue = 1f,
-        animationSpec = tween(durationMillis = 500), label = ""
-    )
 
     Column(
         modifier = Modifier
@@ -87,7 +74,7 @@ fun LoginScreen(
                 .size(100.dp)
         )
 
-        Spacer(Modifier.height(60.dp))
+        Spacer(Modifier.height(24.dp))
 
         Text(
             text = stringResource(R.string.wellcom),
@@ -99,7 +86,7 @@ fun LoginScreen(
         Spacer(Modifier.height(12.dp))
         PasswordTextField(state, events)
 
-        Spacer(Modifier.height(64.dp))
+        Spacer(Modifier.height(48.dp))
 
 
         AppButton(
@@ -111,20 +98,15 @@ fun LoginScreen(
 
         Spacer(Modifier.height(64.dp))
 
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            // Display the image with the animated alpha value
-            Image(
-                painter = images[currentImageIndex],
-                contentDescription = null,
-                modifier = Modifier
-                    .alpha(alpha)
-                    .fillMaxWidth()
-                ,
-                contentScale = ContentScale.Crop
-            )
+        AnimatedImage(images = images)
+
+    }
+
+
+    if (state.navigateToHome) {
+        LaunchedEffect(Unit) {
+            navigateToHome?.invoke()
+            events?.invoke(LoginEvents.NavigationComplete)
         }
     }
 
@@ -135,6 +117,44 @@ fun LoginScreen(
         FullLoading()
     }
 
+}
+
+@Composable
+fun AnimatedImage(images: List<Painter>) {
+    // Current image index
+    var currentImageIndex by remember { mutableIntStateOf(0) }
+
+    // Launch the infinite loop with a delay of 1 second for each image
+    LaunchedEffect(Unit) {
+        while (true) {
+            delay(500)
+            currentImageIndex = (currentImageIndex + 1) % images.size
+        }
+    }
+    // Animate alpha for smooth transition between images
+    val alpha by animateFloatAsState(
+        targetValue = 1f,
+        animationSpec = tween(
+            durationMillis = 300,
+            delayMillis = 50,
+            easing = LinearOutSlowInEasing
+        ),
+        label = "",
+    )
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        // Display the image with the animated alpha value
+        Image(
+            painter = images[currentImageIndex],
+            contentDescription = null,
+            modifier = Modifier
+                .alpha(alpha)
+                .fillMaxWidth(),
+            contentScale = ContentScale.Crop
+        )
+    }
 }
 
 

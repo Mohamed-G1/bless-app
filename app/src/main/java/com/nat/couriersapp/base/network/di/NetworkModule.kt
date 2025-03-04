@@ -4,7 +4,12 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import com.nat.couriersapp.BuildConfig
+import com.nat.couriersapp.base.dataStore.PreferencesKeys
+import com.nat.couriersapp.base.dataStore.dataStore
 import com.nat.couriersapp.base.network.ApiServices
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -17,10 +22,13 @@ import java.io.IOException
 import java.util.concurrent.TimeUnit
 
 val networkModule = module {
+
     single<Interceptor>(named("AuthInterceptor")) {
         Interceptor { chain ->
+            val token = getToken(get())
+
             val request = chain.request().newBuilder()
-                .addHeader("Authorization", "BarerToken")
+                .addHeader("Authorization", "Bearer $token")
                 .addHeader("Accept", "application/json")
                 .build()
             chain.proceed(request)
@@ -46,9 +54,9 @@ val networkModule = module {
                 level = HttpLoggingInterceptor.Level.BODY
             })
             .retryOnConnectionFailure(true) // Automatically retry when network failure
-            .connectTimeout(60, TimeUnit.SECONDS)
-            .readTimeout(60, TimeUnit.SECONDS)
-            .writeTimeout(60, TimeUnit.SECONDS)
+            .connectTimeout(120, TimeUnit.SECONDS)
+            .readTimeout(120, TimeUnit.SECONDS)
+            .writeTimeout(120, TimeUnit.SECONDS)
             .build()
 
     }
@@ -83,3 +91,13 @@ fun isNetworkAvailable(context: Context): Boolean {
 }
 
 class NoConnectionException(error: String) : IOException(error)
+
+private fun getToken(context: Context): String {
+    var token: String
+    runBlocking {
+        token = context.dataStore.data.map { preferences ->
+            preferences[PreferencesKeys.token] ?: ""
+        }.first()
+    }
+    return token
+}

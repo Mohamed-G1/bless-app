@@ -15,6 +15,7 @@ class LoginManagerImpl(
             settings[PreferencesKeys.isLoggedIn] = true
             settings[PreferencesKeys.token] = response.obj?.token ?: ""
             settings[PreferencesKeys.userName] = response.obj?.userName ?: ""
+            settings[PreferencesKeys.userId] = response.obj?.userId ?: 0
         }
     }
 
@@ -24,6 +25,8 @@ class LoginManagerImpl(
             settings[PreferencesKeys.isLoggedIn] = false
             settings[PreferencesKeys.token] = ""
             settings[PreferencesKeys.userName] = ""
+            settings[PreferencesKeys.userId] = 0
+
         }
     }
 

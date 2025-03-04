@@ -3,6 +3,7 @@ package com.nat.couriersapp.base.navigation
 import android.annotation.SuppressLint
 import androidx.annotation.DrawableRes
 import com.nat.couriersapp.R
+import com.nat.couriersapp.screens.home.domain.models.HomeModel
 import kotlinx.serialization.Serializable
 
 /**
@@ -17,17 +18,22 @@ sealed class Destinations {
     @Serializable
     data object Login : Destinations()
 
-
     @Serializable
     data object Home : Destinations()
+
     @Serializable
     data object Scan : Destinations()
+
     @Serializable
     data object Controller : Destinations()
+
     @Serializable
     data object More : Destinations()
+
     @Serializable
-    data object ShipmentDetails : Destinations()
+    data class CourierDetails(
+        val homeModel: HomeModel
+    ) : Destinations()
 
 }
 

@@ -1,5 +1,6 @@
 package com.nat.couriersapp.base.ui.appButton
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -23,6 +24,7 @@ fun AppButton(
     text: String = "Courier",
     buttonColor: Color = MediumBlue,
     textColor: Color = Color.White,
+    boarderColor: Color = MediumBlue,
     textSize: TextUnit = 18.sp,
     onClick: (() -> Unit)? = null
 ) {
@@ -31,6 +33,7 @@ fun AppButton(
         modifier = modifier.fillMaxWidth(),
         color = buttonColor,
         shape = RoundedCornerShape(12.dp),
+        border = BorderStroke(1.dp, boarderColor)
     ) {
         Text(
             text = text,

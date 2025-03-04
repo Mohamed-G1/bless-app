@@ -4,8 +4,7 @@ import com.nat.couriersapp.base.navigation.Destinations
 
 
 data class SplashState(
-    val destination: Destinations,
-    val shouldNavigate: Boolean
+    val destination: Destinations = Destinations.Login,
+    val shouldNavigate: Boolean = false,
 )
 
-fun splashDefaultState() = SplashState(Destinations.Home, false)

@@ -9,11 +9,20 @@ import androidx.core.content.ContextCompat
 object LocationPermissionsChecker {
     // Checks if the location permission is granted
     fun isLocationPermissionGranted(context: Context): Boolean {
-        return ContextCompat.checkSelfPermission(
+        val fineLocationPermission = ContextCompat.checkSelfPermission(
             context,
             android.Manifest.permission.ACCESS_FINE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED
+        )
+
+        val coarseLocationPermission = ContextCompat.checkSelfPermission(
+            context,
+            android.Manifest.permission.ACCESS_COARSE_LOCATION
+        )
+
+        return fineLocationPermission == PackageManager.PERMISSION_GRANTED || coarseLocationPermission == PackageManager.PERMISSION_GRANTED
     }
+
+}
 
     // Request location permission if not granted
     fun requestLocationPermission(activity: Activity, requestCode: Int) {
@@ -23,4 +32,6 @@ object LocationPermissionsChecker {
             requestCode
         )
     }
-}
+
+
+

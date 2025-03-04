@@ -16,5 +16,12 @@
     <string name="enter_your_username">إكتب الإسم</string>
     <string name="wellcom">أهلاًِ بيك ! من فضلك سجل الدخول</string>
     <string name="login">تسجيل</string>
+    <string name="deliver_to">شحنة إلي</string>
+    <string name="delive_date">تاريخ التسليم</string>
+    <string name="delive_time">موعد التسليم</string>
+    <string name="delive_mony">مبلغ التحصيل</string>
+    <string name="egp">جنيه مصري</string>
+    <string name="client_name">إسم العميل</string>
+    <string name="enter_client_name">ادخل اسم العميل</string>
 
 </resources>

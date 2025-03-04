@@ -129,4 +129,7 @@ dependencies {
     implementation(libs.coil.gif)
     implementation(libs.coil.compose)
 
+    //Location
+    implementation(libs.play.services.location)
+
 }

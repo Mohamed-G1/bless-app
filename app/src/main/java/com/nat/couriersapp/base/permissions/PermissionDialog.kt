@@ -56,7 +56,7 @@ fun PermissionDialog(
                 Text(
                     text = "مطلوب الإذن",
                     style = CompactTypography.headlineMedium.copy(fontWeight = FontWeight.Bold),
-                    textAlign = TextAlign.End,
+                    textAlign = TextAlign.Start,
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(Modifier.height(16.dp))
@@ -77,7 +77,7 @@ fun PermissionDialog(
                     HorizontalDivider()
                     Text(
                         text = if (isPermanentlyDeclined) {
-                            "Enable Location."
+                            "Enable Location"
                         } else {
                             "yes"
                         },
@@ -100,6 +100,73 @@ fun PermissionDialog(
     }
 }
 
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun LocationPermissionDialog(
+    onDismiss: () -> Unit,
+) {
+
+    BasicAlertDialog(
+        onDismissRequest = onDismiss,
+        modifier = Modifier,
+        properties = DialogProperties()
+
+    ) {
+        Card(
+            modifier = Modifier
+                .wrapContentSize(),
+            colors = CardDefaults.cardColors(containerColor = Color.White)
+
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "Attention",
+                    style = CompactTypography.headlineMedium.copy(fontWeight = FontWeight.Bold),
+                    textAlign = TextAlign.End,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(Modifier.height(16.dp))
+                Text(
+                    text = "Location tracking is required for the app to function properly",
+                    style = CompactTypography.titleMedium.copy(lineHeight = 22.sp),
+                    textAlign = TextAlign.End,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(Modifier.height(16.dp))
+
+                Column(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    HorizontalDivider()
+                    Text(
+                        text = "Ok",
+                        textAlign = TextAlign.Center,
+                        style = CompactTypography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                onDismiss()
+                            }
+                            .padding(16.dp)
+                    )
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
 interface PermissionTextProvider {
     fun getDescription(isPermanentlyDeclined: Boolean): String
 }
@@ -118,9 +185,9 @@ class CameraPermissionTextProvider : PermissionTextProvider {
 class LocationPermissionTextProvider : PermissionTextProvider {
     override fun getDescription(isPermanentlyDeclined: Boolean): String {
         return if (isPermanentlyDeclined) {
-            "Location access is required to use the app."
+            "Location access is required to use the app"
         } else {
-            "Location access is required to use the app."
+            "Location access is required to use the app"
         }
     }
 }

@@ -4,88 +4,155 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nat.couriersapp.R
+import com.nat.couriersapp.base.BaseViewModel
 import com.nat.couriersapp.base.network.Resource
+import com.nat.couriersapp.base.network.executeSuspend
+import com.nat.couriersapp.screens.home.presentation.HomeEvents
 import com.nat.couriersapp.screens.login.domain.models.LoginRequest
 import com.nat.couriersapp.screens.login.domain.usecases.LoginUseCase
 import com.nat.couriersapp.screens.login.domain.usecases.SaveUserUseCase
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class LoginViewModel(
     private val useCase: LoginUseCase,
     private val saveUserUseCase: SaveUserUseCase
-) : ViewModel() {
+) : BaseViewModel() {
 
     private val _state = MutableStateFlow(LoginState())
     val state = _state.asStateFlow()
 
-    fun onEvent(events: LoginEvents) {
-        when (events) {
-            is LoginEvents.UserNameChanged -> {
-                _state.update { it.copy(userName = events.userName) }
-            }
+    private val _intentChannel = Channel<LoginEvents>(Channel.UNLIMITED)
 
-            is LoginEvents.PasswordChanged -> {
-                _state.update { it.copy(password = events.password) }
-            }
+    init {
+        processEvents()
+    }
 
-            is LoginEvents.SubmitUser -> {
-                if (isValidData(
-                        userName = state.value.userName.orEmpty(),
-                        password = state.value.password.orEmpty()
-                    )
-                ) {
-                    _state.update { it.copy(errorMessage = "", isLoading = true) }
-                    viewModelScope.launch {
-                        useCase(
-                            request = LoginRequest(
-                                UserName = state.value.userName.orEmpty(),
-                                Password = state.value.password.orEmpty()
+    fun sendEvent(intent: LoginEvents) {
+        viewModelScope.launch {
+            _intentChannel.send(intent)
+        }
+    }
+
+    private fun processEvents() {
+        viewModelScope.launch {
+            _intentChannel.consumeAsFlow().collect { event ->
+                when (event) {
+                    is LoginEvents.UserNameChanged -> {
+                        _state.update { it.copy(userName = event.userName) }
+                    }
+
+                    is LoginEvents.PasswordChanged -> {
+                        _state.update { it.copy(password = event.password) }
+                    }
+
+                    is LoginEvents.SubmitUser -> {
+                        if (isValidData(
+                                userName = state.value.userName.orEmpty(),
+                                password = state.value.password.orEmpty()
                             )
-                        ).also { data ->
-                            when (data) {
-                                is Resource.Loading -> {
-                                    _state.update { it.copy(isLoading = data.status) }
-                                }
-
-                                is Resource.Success -> {
+                        ) {
+                            _state.update { it.copy(errorMessage = "", isLoading = true) }
+                            executeSuspend(
+                                block = {
+                                    useCase(
+                                        request = LoginRequest(
+                                            UserName = state.value.userName.orEmpty(),
+                                            Password = state.value.password.orEmpty()
+                                        )
+                                    )
+                                },
+                                onSuccess = { data ->
                                     // this line because the api is returned success in the user is exist or not exist
                                     val errorMessage =
-                                        if (data.data.message.equals("Login Successful")
+                                        if (data?.message.equals("Login Successful")
                                                 .not()
-                                        ) data.data.message else null
+                                        ) data?.message else null
                                     _state.update {
                                         it.copy(
                                             isLoading = false,
-                                            errorMessage = errorMessage
+                                            errorMessage = errorMessage,
+                                            navigateToHome = data?.status ?: false
+
                                         )
                                     }
+                                    if (data?.obj != null)
+                                        viewModelScope.launch {
+                                            saveUserUseCase(response = data)
+                                        }
 
-                                    if (data.data.obj != null)
-                                        saveUserUseCase(response = data.data)
-                                }
-
-                                is Resource.Error -> {
+                                },
+                                onFailure = { message ->
                                     _state.update {
                                         it.copy(
                                             isLoading = false,
-                                            errorMessage = data.message
+                                            errorMessage = message
                                         )
                                     }
                                 }
+                            )
 
-                                else -> {
-                                    _state.update { it.copy(isLoading = false) }
-                                }
-                            }
+
+//                    viewModelScope.launch {
+//                        useCase(
+//                            request = LoginRequest(
+//                                UserName = state.value.userName.orEmpty(),
+//                                Password = state.value.password.orEmpty()
+//                            )
+//                        ).also { data ->
+//                            when (data) {
+//                                is Resource.Loading -> {
+//                                    _state.update { it.copy(isLoading = data.status) }
+//                                }
+//
+//                                is Resource.Success -> {
+//                                    // this line because the api is returned success in the user is exist or not exist
+//                                    val errorMessage =
+//                                        if (data.data.message.equals("Login Successful")
+//                                                .not()
+//                                        ) data.data.message else null
+//                                    _state.update {
+//                                        it.copy(
+//                                            isLoading = false,
+//                                            errorMessage = errorMessage
+//                                        )
+//                                    }
+//
+//                                    if (data.data.obj != null)
+//                                        saveUserUseCase(response = data.data)
+//                                }
+//
+//                                is Resource.Error -> {
+//                                    _state.update {
+//                                        it.copy(
+//                                            isLoading = false,
+//                                            errorMessage = data.message
+//                                        )
+//                                    }
+//                                }
+//
+//                                else -> {
+//                                    _state.update { it.copy(isLoading = false) }
+//                                }
+//                            }
+//                        }
+//                    }
                         }
+                    }
+
+                    is LoginEvents.NavigationComplete -> {
+                        _state.update { it.copy(navigateToHome = false) }
                     }
                 }
             }
         }
     }
+
 
     private fun isValidData(userName: String, password: String): Boolean {
         return when {
