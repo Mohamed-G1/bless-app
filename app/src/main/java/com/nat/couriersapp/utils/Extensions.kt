@@ -6,11 +6,15 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Paint
 import android.os.Build
 import android.util.LayoutDirection
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.asAndroidPath
 import androidx.core.text.layoutDirection
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavHostController
@@ -18,12 +22,52 @@ import com.nat.couriersapp.R
 import retrofit2.HttpException
 import java.net.HttpURLConnection
 import java.text.SimpleDateFormat
+import java.time.LocalDate
 import java.util.Base64
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 import java.util.concurrent.TimeUnit
+import kotlin.math.roundToInt
 
+fun createSignatureBitmap(
+    path: Path,
+    width: Float,
+    height: Int,
+): Bitmap {
+    val bitmap = Bitmap.createBitmap(
+        width.roundToInt(),
+        height,
+        Bitmap.Config.ARGB_8888
+    )
+
+    // Create a Canvas to draw on the Bitmap
+    val canvas = android.graphics.Canvas(bitmap)
+    canvas.drawColor(android.graphics.Color.WHITE)
+
+    // Set up paint for the drawing
+    val paint = Paint().apply {
+        color = android.graphics.Color.BLACK
+        style = Paint.Style.STROKE
+        strokeCap = Paint.Cap.ROUND
+        strokeJoin = Paint.Join.ROUND
+    }
+
+    // Draw the signature path onto the Android Canvas
+    canvas.drawPath(path.asAndroidPath(), paint)
+
+    return bitmap
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+fun getCurrentDate(): String {
+    val currentDate = LocalDate.now() // Get current date
+    return currentDate.toString() // Returns date in YYYY-MM-DD format
+}
+
+fun createDefaultBitmap(): Bitmap {
+    return Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888) // Default blank bitmap
+}
 
 // Extension function to convert String date to "X years ago" format
 fun String.toTimeAgo(dateFormat: String = "dd-MM-yyyy HH:mm"): String {

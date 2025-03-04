@@ -15,12 +15,27 @@ suspend fun <T> safeApiCall(apiCall: suspend () -> Response<T>): Resource<T> {
                 response.body()?.let { Resource.Success(it) }
                     ?: Resource.Error("HTTP 200: Empty response body")
             }
+
             else -> {
-                Resource.Error("HTTP Error: ${response.code()}")
+                val errorMessage = getErrorMessageForHttpCode(response.code(), response.message())
+                Resource.Error(errorMessage)
             }
         }
     } catch (exception: Throwable) {
         handleApiError(exception)
+    }
+}
+
+// Centralized error message handler for HTTP error codes
+fun getErrorMessageForHttpCode(statusCode: Int, message: String): String {
+    return when (statusCode) {
+        400 -> "Bad Request"
+        401 -> "Unauthorized. Please sign out and re-sign in"
+        403 -> "Forbidden. Access is denied"
+        404 -> "Resource not found"
+        500 -> "Internal Server Error. Please try again later"
+        503 -> "Service Unavailable. Please try again later"
+        else -> "Unexpected HTTP Error: $message"
     }
 }
 
@@ -32,7 +47,7 @@ fun <T> handleApiError(exception: Throwable): Resource<T> {
             val statusCode = exception.code()
             when (statusCode) {
                 400 -> "Bad Request"
-                401 -> "Unauthorized. Please check your credentials"
+                401 -> "Unauthorized. Please sign out and re-sign in"
                 403 -> "Forbidden. Access is denied"
                 404 -> "Resource not found"
                 500 -> "Internal Server Error. Please try again later"

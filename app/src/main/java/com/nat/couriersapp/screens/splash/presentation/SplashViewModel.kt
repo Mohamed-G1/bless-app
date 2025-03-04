@@ -17,11 +17,23 @@ import kotlinx.coroutines.launch
 class SplashViewModel(
     private val splashUseCases: SplashUseCases
 ) : ViewModel() {
-    private val _state = MutableStateFlow(splashDefaultState())
+    private val _state = MutableStateFlow(SplashState())
     val state = _state.asStateFlow()
 
     init {
         determineNavigation()
+    }
+
+    fun onEvent(event: SplashEvent) {
+        when (event) {
+            is SplashEvent.Navigate -> {
+                determineNavigation()
+            }
+
+            is SplashEvent.IsLocationGranted  -> {
+                onLocationPermissionGranted()
+            }
+        }
     }
 
     private fun determineNavigation() {
@@ -37,5 +49,10 @@ class SplashViewModel(
                 _state.update { it.copy(shouldNavigate = true) }
             }.collect()
         }
+    }
+
+    private fun onLocationPermissionGranted() {
+        // Update the state to trigger navigation
+        _state.update { it.copy(shouldNavigate = true) }
     }
 }

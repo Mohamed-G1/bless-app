@@ -8,6 +8,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -33,13 +34,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.nat.couriersapp.ui.theme.CompactTypography
+import com.nat.couriersapp.ui.theme.WhiteGray
 
 @SuppressLint("ResourceType")
 @Composable
@@ -96,7 +100,10 @@ fun AppBottomNavigation(navController: NavController) {
                     animationSpec = tween(durationMillis = 500)
                 )
     ) {
-        NavigationBar(containerColor = MaterialTheme.colorScheme.background) {
+        NavigationBar(
+            containerColor = Color.White,
+            modifier = Modifier.border(width = 1.dp, color = WhiteGray)
+        ) {
             bottomScreens.forEachIndexed { index, screen ->
                 //To compare with the bottomBar route
                 val isSelected by remember(currentRoute) {
@@ -117,33 +124,38 @@ fun AppBottomNavigation(navController: NavController) {
                         }
                     },
                     colors = NavigationBarItemDefaults.colors(
-                        indicatorColor = MaterialTheme.colorScheme.background,
+                        indicatorColor = Color.Transparent,
+                        selectedIconColor = MaterialTheme.colorScheme.primary,
+                        unselectedIconColor = Color.Unspecified,
+                        selectedTextColor = MaterialTheme.colorScheme.primary,
+                        unselectedTextColor = Color.Unspecified
 
-                        ),
+                    ),
                     icon = {
                         val color =
-                            if (isSelected) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.primary
+                            if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary
 
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Icon(
                                 painter = painterResource(id = screen.icon),
                                 contentDescription = null,
                                 modifier = Modifier.size(20.dp),
-                                tint = color
-                            )
+
+                                )
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
                                 text = stringResource(id = screen.name),
                                 style = CompactTypography.labelMedium.copy(
-                                    color = color,
-                                    fontSize = 9.sp
+
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold
                                 )
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             if (isSelected) {
                                 Spacer(
                                     modifier = Modifier
-                                        .size(8.dp)
+                                        .size(4.dp)
                                         .clip(CircleShape)
                                         .background(MaterialTheme.colorScheme.secondary)
                                 )

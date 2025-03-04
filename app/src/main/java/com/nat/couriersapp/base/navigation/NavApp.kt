@@ -20,18 +20,29 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
+import com.nat.couriersapp.screens.controller.ControllerScreen
+import com.nat.couriersapp.screens.courierDetails.presentation.CourierDetailsScreen
+import com.nat.couriersapp.screens.courierDetails.presentation.CourierDetailsViewModel
+import com.nat.couriersapp.screens.home.domain.models.HomeModel
+import com.nat.couriersapp.screens.home.presentation.HomeScreen
+import com.nat.couriersapp.screens.home.presentation.HomeViewModel
 import com.nat.couriersapp.screens.login.presentation.LoginScreen
 import com.nat.couriersapp.screens.login.presentation.LoginViewModel
+import com.nat.couriersapp.screens.more.MoreScreen
+import com.nat.couriersapp.screens.scan.ScanScreen
 import com.nat.couriersapp.screens.splash.presentation.SplashScreen
 import com.nat.couriersapp.screens.splash.presentation.SplashViewModel
+import com.nat.couriersapp.utils.canNavigate
 import org.koin.androidx.compose.koinViewModel
+import kotlin.reflect.typeOf
 
 /**
  * This file handle the app navigations
  * */
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @Composable
-fun NavApp(){
+fun NavApp() {
     val navController = rememberNavController()
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -64,6 +75,7 @@ fun NavApp(){
                 val state by viewModel.state.collectAsStateWithLifecycle()
                 SplashScreen(
                     state = state,
+                    event = viewModel::onEvent,
                     navigateToNext = {
                         goToNextAfterSplash(navController, state.destination)
                     }
@@ -71,16 +83,61 @@ fun NavApp(){
             }
 
             composable<Destinations.Login> {
-                val viewModel : LoginViewModel = koinViewModel()
+                val viewModel: LoginViewModel = koinViewModel()
                 val state by viewModel.state.collectAsStateWithLifecycle()
                 LoginScreen(
                     state = state,
-                    events = viewModel::onEvent
+                    events = viewModel::sendEvent,
+                    navigateToHome = {
+                        goToHomeScreenFromLogin(navController)
+                    }
                 )
             }
 
             composable<Destinations.Home> {
+                val viewModel: HomeViewModel = koinViewModel()
+                val state by viewModel.state.collectAsStateWithLifecycle()
+                HomeScreen(
+                    state = state,
+                    events = viewModel::sendEvent,
+                    onClick = { model ->
+                        if (navController.canNavigate)
+                            navController.navigate(Destinations.CourierDetails(model))
+                    }
+                )
+            }
 
+            composable<Destinations.CourierDetails>(
+                typeMap = mapOf(
+                    typeOf<HomeModel>() to CustomNavType.HomeModel
+                )
+            ) {
+                val args = it.toRoute<Destinations.CourierDetails>()
+                val viewModel: CourierDetailsViewModel = koinViewModel()
+                val state by viewModel.state.collectAsStateWithLifecycle()
+                CourierDetailsScreen(
+                    state = state,
+                    events = viewModel::sendEvent,
+                    courierModel = args.homeModel,
+                    onBackClicked = {
+                        if (navController.canNavigate)
+                            navController.navigateUp()
+                    }
+                )
+
+
+            }
+
+            composable<Destinations.Scan> {
+                ScanScreen()
+            }
+
+            composable<Destinations.Controller> {
+                ControllerScreen()
+            }
+
+            composable<Destinations.More> {
+                MoreScreen()
             }
         }
 
@@ -105,6 +162,16 @@ private fun goToHomeScreen(navController: NavController) {
         Destinations.Home
     ) {
         popUpTo(Destinations.Splash) {
+            inclusive = true
+        }
+    }
+}
+
+private fun goToHomeScreenFromLogin(navController: NavController) {
+    navController.navigate(
+        Destinations.Home
+    ) {
+        popUpTo(Destinations.Login) {
             inclusive = true
         }
     }
