@@ -14,7 +14,6 @@ import androidx.compose.ui.unit.sp
 import com.nat.couriersapp.ui.theme.CompactTypography
 import com.nat.couriersapp.ui.theme.LightGray
 import com.nat.couriersapp.ui.theme.MediumBlue
-import com.nat.couriersapp.ui.theme.MediumGray
 
 @Composable
 fun SearchTapItem(

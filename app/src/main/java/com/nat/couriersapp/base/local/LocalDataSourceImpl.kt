@@ -43,7 +43,7 @@ class LocalDataSourceImpl(
 
     override suspend fun readFilterValue(): Flow<String> {
         return context.dataStore.data.map { preferences ->
-            preferences[PreferencesKeys.filterType] ?: "Gamal"
+            preferences[PreferencesKeys.filterType] ?: ""
         }
     }
 }

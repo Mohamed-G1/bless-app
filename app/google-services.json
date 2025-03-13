@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "62445704657",
+    "project_id": "courier-app-460aa",
+    "storage_bucket": "courier-app-460aa.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:62445704657:android:560614e21aba7c4cb03cf0",
+        "android_client_info": {
+          "package_name": "com.nat.couriersapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAgT7PMzUAQ2ygL8O59oAdpkunHrLtLEac"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

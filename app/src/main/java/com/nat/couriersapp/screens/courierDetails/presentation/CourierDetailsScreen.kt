@@ -1,9 +1,12 @@
 package com.nat.couriersapp.screens.courierDetails.presentation
 
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -50,6 +53,8 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
+import com.journeyapps.barcodescanner.ScanContract
 import com.nat.couriersapp.R
 import com.nat.couriersapp.base.locationChecker.LocationHandler
 import com.nat.couriersapp.base.ui.appButton.AppButton
@@ -59,6 +64,7 @@ import com.nat.couriersapp.screens.courierDetails.presentation.compoenets.Delive
 import com.nat.couriersapp.screens.courierDetails.presentation.compoenets.NotDeliveredBottomSheet
 import com.nat.couriersapp.screens.courierDetails.presentation.compoenets.RefusalReasonsBottomSheet
 import com.nat.couriersapp.screens.home.domain.models.HomeModel
+import com.nat.couriersapp.screens.qrCode.QrCodeScreen
 import com.nat.couriersapp.ui.theme.CompactTypography
 import com.nat.couriersapp.ui.theme.DeliverGreen
 import com.nat.couriersapp.ui.theme.NotDeliverRed
@@ -74,7 +80,36 @@ fun CourierDetailsScreen(
     courierModel: HomeModel? = null,
     onBackClicked: (() -> Unit)? = null
 ) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
 
+
+    val scanLauncher = rememberLauncherForActivityResult(
+        contract = ScanContract(),
+        onResult = { result ->
+            Log.d("BarcodeTest", "Scanned: ${result.contents}")
+        }
+    )
+
+
+    var hasCamPermission by remember {
+        mutableStateOf(
+            ContextCompat.checkSelfPermission(
+                context,
+                android.Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_GRANTED
+        )
+    }
+
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { granted ->
+            hasCamPermission = granted
+        }
+    )
+    LaunchedEffect(key1 = true) {
+        launcher.launch(android.Manifest.permission.CAMERA)
+    }
     var showDeliveredBottomSheet by remember { mutableStateOf(false) }
     var showNotDeliveredBottomSheet by remember { mutableStateOf(false) }
     var showRefusalReasonsBottomSheet by remember { mutableStateOf(false) }
@@ -82,8 +117,10 @@ fun CourierDetailsScreen(
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
-    val context = LocalContext.current
-    val scope = rememberCoroutineScope()
+
+
+    var showCodeScannerScreen by remember { mutableStateOf(false) }
+
 
     LaunchedEffect(Unit) {
         events?.invoke(CourierDetailsEvents.HomeModelChanged(courierModel))
@@ -141,14 +178,14 @@ fun CourierDetailsScreen(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Column(
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier.weight(1.2f)
                         ) {
                             Text(
                                 "شحنة إلي",
                                 style = CompactTypography.labelMedium.copy(
                                     fontSize = 12.sp,
                                     color = Color.Gray
-                                )
+                                ),
                             )
                             Spacer(Modifier.height(4.dp))
                             Text(
@@ -283,7 +320,29 @@ fun CourierDetailsScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    IconButton(onClick = {}) {
+                    IconButton(onClick = {
+                        scope.launch {
+                            val location = LocationHandler.getCurrentLocation(context)
+                            if (location != null && LocationHandler.isLocationServiceEnabled(context)) {
+                                events?.invoke(
+                                    CourierDetailsEvents.LocationChanged(
+                                        lat = location.latitude.toString(),
+                                        lng = location.longitude.toString()
+                                    )
+                                )
+                                showCodeScannerScreen = true
+
+                            } else {
+                                Toast.makeText(
+                                    context,
+                                    "You need to enable location",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
+
+
+                    }) {
                         Image(
                             painter = painterResource(R.drawable.ic_bar_code),
                             contentDescription = null
@@ -342,7 +401,7 @@ fun CourierDetailsScreen(
                 ) {
                     IconButton(onClick = {
                         val uri =
-                            Uri.parse("geo:0,0?q=${courierModel?.consigneeDestinationAddress}")
+                            Uri.parse("geo:0,0?q=${courierModel?.shipperOriginAddress}")
                         val intent = Intent(Intent.ACTION_VIEW, uri)
                         intent.setPackage("com.google.android.apps.maps") // Explicitly use Google Maps app
                         context.startActivity(intent)
@@ -465,8 +524,14 @@ fun CourierDetailsScreen(
                 }, sheetState = sheetState, containerColor = White
             ) {
                 DeliveredBottomSheet(
-                    state = state,
-                    events = events,
+                    value = state.clientName,
+                    clientName = { name ->
+                        events?.invoke(CourierDetailsEvents.ClientNameChanged(name))
+                    },
+                    clientSignature = { signature ->
+                        events?.invoke(CourierDetailsEvents.ClientSignatureChanged(signature))
+
+                    },
                     onDismiss = {
                         scope.launch {
                             val location = LocationHandler.getCurrentLocation(context)
@@ -478,7 +543,7 @@ fun CourierDetailsScreen(
                                     )
                                 )
 
-                                events?.invoke(CourierDetailsEvents.TriggerUserSignatureApi)
+                                events?.invoke(CourierDetailsEvents.TriggerDeliveredApi)
 
                                 showDeliveredBottomSheet = false
 
@@ -582,6 +647,8 @@ fun CourierDetailsScreen(
         }
 
 
+
+
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
@@ -603,7 +670,25 @@ fun CourierDetailsScreen(
                     boarderColor = DeliverGreen,
                     modifier = Modifier.weight(.5f),
                     onClick = {
-                        showDeliveredBottomSheet = true
+                        scope.launch {
+                            val location = LocationHandler.getCurrentLocation(context)
+                            if (location != null && LocationHandler.isLocationServiceEnabled(context)) {
+                                events?.invoke(
+                                    CourierDetailsEvents.LocationChanged(
+                                        lat = location.latitude.toString(),
+                                        lng = location.longitude.toString()
+                                    )
+                                )
+                                showDeliveredBottomSheet = true
+
+                            } else {
+                                Toast.makeText(
+                                    context,
+                                    "You need to enable location",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
                     }
                 )
 
@@ -615,8 +700,28 @@ fun CourierDetailsScreen(
                     boarderColor = NotDeliverRed,
                     modifier = Modifier.weight(.5f),
                     onClick = {
-                        showNotDeliveredBottomSheet = true
-                        events?.invoke(CourierDetailsEvents.NotDeliveredStatus)
+                        scope.launch {
+                            val location = LocationHandler.getCurrentLocation(context)
+                            if (location != null && LocationHandler.isLocationServiceEnabled(context)) {
+                                events?.invoke(
+                                    CourierDetailsEvents.LocationChanged(
+                                        lat = location.latitude.toString(),
+                                        lng = location.longitude.toString()
+                                    )
+                                )
+                                showNotDeliveredBottomSheet = true
+                                events?.invoke(CourierDetailsEvents.NotDeliveredStatus)
+
+                            } else {
+                                Toast.makeText(
+                                    context,
+                                    "You need to enable location",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
+
+
                     }
                 )
             }
@@ -628,7 +733,14 @@ fun CourierDetailsScreen(
         if (state.errorMessage.isNotEmpty()) {
             ShowToast(state.errorMessage)
         }
+    }
 
+
+    if (showCodeScannerScreen) {
+        QrCodeScreen { value ->
+            events?.invoke(CourierDetailsEvents.BarCodeScannerValue(value.toLong()))
+            showCodeScannerScreen = false
+        }
     }
 }
 

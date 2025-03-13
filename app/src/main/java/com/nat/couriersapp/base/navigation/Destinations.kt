@@ -31,6 +31,9 @@ sealed class Destinations {
     data object More : Destinations()
 
     @Serializable
+    data object Notification : Destinations()
+
+    @Serializable
     data class CourierDetails(
         val homeModel: HomeModel
     ) : Destinations()

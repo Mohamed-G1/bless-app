@@ -3,9 +3,14 @@ package com.nat.couriersapp.screens.courierDetails.domain.repository
 import android.graphics.Bitmap
 import com.nat.couriersapp.base.network.Resource
 import com.nat.couriersapp.screens.courierDetails.domain.models.CourierBody
+import com.nat.couriersapp.screens.courierDetails.domain.models.DeliveredRequest
+import com.nat.couriersapp.screens.courierDetails.domain.models.DeliveredResponse
 import com.nat.couriersapp.screens.courierDetails.domain.models.RefusalReasonsResponse
 import com.nat.couriersapp.screens.courierDetails.domain.models.StatusNotDeliveredResponse
 import kotlinx.coroutines.flow.Flow
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import java.io.File
 
 interface CourierDetailsRepository {
 
@@ -22,13 +27,11 @@ interface CourierDetailsRepository {
         Latitude: String,
         Longitude: String,
         courierBody: List<CourierBody>
-    ): Resource<Any>
+    ): Resource<DeliveredResponse>
 
-    suspend fun sendUserSignature(
-        file: Bitmap,
-        waybill: Int,
-        receiverName: String,
-    ): Resource<Any>
+    suspend fun deliveredCourier(
+        deliveredRequest : DeliveredRequest
+    ): Resource<DeliveredResponse>
 
     suspend fun getNotDeliveredStatus(
         isActive: Boolean

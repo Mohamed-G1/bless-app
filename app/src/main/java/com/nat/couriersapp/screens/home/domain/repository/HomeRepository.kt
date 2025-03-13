@@ -10,7 +10,8 @@ interface HomeRepository {
         date: String,
         type: String,
         clientId: String,
-        keyword: String
+        keyword: String,
+        filterQuery: String
     ): Flow<Resource<HomeResponse>>
 
     suspend fun sendLocation(

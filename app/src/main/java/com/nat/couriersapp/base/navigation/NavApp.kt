@@ -1,6 +1,7 @@
 package com.nat.couriersapp.base.navigation
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -30,6 +31,8 @@ import com.nat.couriersapp.screens.home.presentation.HomeViewModel
 import com.nat.couriersapp.screens.login.presentation.LoginScreen
 import com.nat.couriersapp.screens.login.presentation.LoginViewModel
 import com.nat.couriersapp.screens.more.MoreScreen
+import com.nat.couriersapp.screens.notifications.NotificationScreen
+import com.nat.couriersapp.screens.qrCode.QrCodeScreen
 import com.nat.couriersapp.screens.scan.ScanScreen
 import com.nat.couriersapp.screens.splash.presentation.SplashScreen
 import com.nat.couriersapp.screens.splash.presentation.SplashViewModel
@@ -103,6 +106,10 @@ fun NavApp() {
                     onClick = { model ->
                         if (navController.canNavigate)
                             navController.navigate(Destinations.CourierDetails(model))
+                    },
+                    navigateToNotification = {
+                        if (navController.canNavigate)
+                            navController.navigate(Destinations.Notification)
                     }
                 )
             }
@@ -126,6 +133,15 @@ fun NavApp() {
                 )
 
 
+            }
+
+            composable<Destinations.Notification> {
+                NotificationScreen(
+                    onBackClicked = {
+                        if (navController.canNavigate)
+                            navController.navigateUp()
+                    }
+                )
             }
 
             composable<Destinations.Scan> {

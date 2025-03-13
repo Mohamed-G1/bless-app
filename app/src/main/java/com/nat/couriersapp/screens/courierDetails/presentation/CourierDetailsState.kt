@@ -1,6 +1,5 @@
 package com.nat.couriersapp.screens.courierDetails.presentation
 
-import android.graphics.Bitmap
 import androidx.annotation.StringRes
 import com.nat.couriersapp.R
 import com.nat.couriersapp.screens.courierDetails.domain.models.RefusalReasonsModel
@@ -18,9 +17,10 @@ data class CourierDetailsState(
     val statusId: Int = 0,
     val refusalId: Int = 0,
     val clientName: String = "",
+    val waybillSerial: Long = 0,
     val isValidClientName: Boolean = true,
     val homeModel: HomeModel? = null,
-    val bitmap: Bitmap? = null,
+    val image: String = "",
     val lat: String = "",
     val lng: String = "",
     @StringRes val clientNameValidationMessage: Int = R.string.enter_client_name

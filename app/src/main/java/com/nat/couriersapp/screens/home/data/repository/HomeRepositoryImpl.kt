@@ -18,7 +18,8 @@ class HomeRepositoryImpl(
         date: String,
         type: String,
         clientId: String,
-        keyword: String
+        keyword: String,
+        filterQuery: String
     ): Flow<Resource<HomeResponse>> = flow {
         emit(Resource.Loading)
         val result = safeApiCall {
@@ -27,7 +28,8 @@ class HomeRepositoryImpl(
                 date = date,
                 type = type,
                 clientId = clientId,
-                keyword = keyword
+                keyword = keyword,
+                filterQuery = filterQuery
             )
         }
         emit(result)
