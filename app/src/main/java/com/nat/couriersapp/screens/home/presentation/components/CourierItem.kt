@@ -158,8 +158,8 @@ fun CourierItem(
 @Composable
 fun DeliveryStatus(status: String) {
     val color = when (status) {
-        "deliver" -> DeliverGreen
-        "not deliver" -> NotDeliverRed
+        "Delivered" -> DeliverGreen
+        "Not Delivered" -> NotDeliverRed
         else -> Gray
     }
     Card(
@@ -187,14 +187,14 @@ fun DeliveryStatus(status: String) {
 @Composable
 fun DeliveryStatusBar(status: String) {
     val color = when (status) {
-        "deliver" -> DeliverGreen
-        "not deliver" -> NotDeliverRed
+        "Delivered" -> DeliverGreen
+        "Not Delivered" -> NotDeliverRed
         else -> Gray
     }
 
     val icon = when (status) {
-        "deliver" -> painterResource(R.drawable.ic_check_circle)
-        "not deliver" -> painterResource(R.drawable.ic_cancel)
+        "Delivered" -> painterResource(R.drawable.ic_check_circle)
+        "Not Delivered" -> painterResource(R.drawable.ic_cancel)
         else -> painterResource(R.drawable.ic_filled_circle)
     }
 
@@ -203,7 +203,7 @@ fun DeliveryStatusBar(status: String) {
             .fillMaxWidth()
             .padding(horizontal = 18.dp), contentAlignment = Alignment.Center
     ) {
-        HorizontalDivider(thickness = 2.dp, color = color.copy(alpha = .2f))
+        HorizontalDivider(thickness = 2.dp, color = color.copy(alpha = .2f), modifier = Modifier.padding(horizontal = 8.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -224,7 +224,7 @@ fun DeliveryStatusBar(status: String) {
             Icon(
                 painter = icon,
                 contentDescription = null,
-                tint = color
+                tint = color,
             )
         }
     }

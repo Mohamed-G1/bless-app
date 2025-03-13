@@ -19,16 +19,33 @@ import androidx.core.text.layoutDirection
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavHostController
 import com.nat.couriersapp.R
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.HttpException
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
 import java.net.HttpURLConnection
 import java.text.SimpleDateFormat
 import java.time.LocalDate
-import java.util.Base64
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
+import android.util.Base64
+import okhttp3.RequestBody.Companion.asRequestBody
+import java.io.ByteArrayOutputStream
+
+
+fun createFilePart(filePath: String, paramName: String): MultipartBody.Part {
+    val file = File(filePath)
+    val requestFile =
+        file.asRequestBody("application/pdf".toMediaTypeOrNull()) // Change MIME type if needed
+    return MultipartBody.Part.createFormData(paramName, file.name, requestFile)
+}
 
 fun createSignatureBitmap(
     path: Path,
@@ -68,6 +85,24 @@ fun getCurrentDate(): String {
 fun createDefaultBitmap(): Bitmap {
     return Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888) // Default blank bitmap
 }
+
+fun prepareImageFile(imageFile: File): MultipartBody.Part {
+    // Create RequestBody from the file
+    val requestFile = RequestBody.create("image/jpeg".toMediaTypeOrNull(), imageFile)
+
+    // Create MultipartBody.Part using the file
+    return MultipartBody.Part.createFormData("image", imageFile.name, requestFile)
+}
+
+
+fun bitmapToBase64(bitmap: Bitmap): String {
+    val outputStream = ByteArrayOutputStream()
+    bitmap.compress(Bitmap.CompressFormat.JPEG, 80, outputStream) // Compress to JPEG (80% quality)
+    val byteArray = outputStream.toByteArray()
+
+    return Base64.encodeToString(byteArray, Base64.DEFAULT) // Convert to Base64 String
+}
+
 
 // Extension function to convert String date to "X years ago" format
 fun String.toTimeAgo(dateFormat: String = "dd-MM-yyyy HH:mm"): String {
@@ -111,7 +146,8 @@ fun String?.formatDateMonthsNameAndDays(): String? {
     if (this.isNullOrEmpty()) return null
 
     val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
-    val outputFormat = SimpleDateFormat("MMM d", Locale.ENGLISH) // Desired output format (e.g., "Sep 4")
+    val outputFormat =
+        SimpleDateFormat("MMM d", Locale.ENGLISH) // Desired output format (e.g., "Sep 4")
 
     return try {
         val date = inputFormat.parse(this) // Parse the string to Date
@@ -125,7 +161,8 @@ fun String?.formatDateMonthsNameAndDays(): String? {
 fun String.convertDateStringToMillis(): Long? {
     return try {
         val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        formatter.timeZone = TimeZone.getTimeZone("UTC") // Set this according to your timezone needs
+        formatter.timeZone =
+            TimeZone.getTimeZone("UTC") // Set this according to your timezone needs
         val date = formatter.parse(this)
         date?.time // returns the time in milliseconds
     } catch (e: Exception) {
@@ -175,7 +212,10 @@ val NavHostController.canNavigate: Boolean
 // Mirror the icon based on RTL
 @Stable
 fun Modifier.mirror(): Modifier {
-    return if (Locale.getDefault().layoutDirection == LayoutDirection.LTR) this.scale(scaleX = 1f, scaleY = -1f)
+    return if (Locale.getDefault().layoutDirection == LayoutDirection.LTR) this.scale(
+        scaleX = 1f,
+        scaleY = -1f
+    )
     else this
 }
 
@@ -191,15 +231,15 @@ fun String.cleanBase64(): String {
     return this.split("data:image/png;base64,")[1]
 }
 
-fun String.fromBase64ToBitmap(): Bitmap {
-    val cleanedBase64String = this.cleanBase64()
-    val decodedString: ByteArray = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        // Use the java.util.Base64 for API 26 and above
-        Base64.getDecoder().decode(cleanedBase64String)
-    } else {
-        // Use android.util.Base64 for older versions
-        android.util.Base64.decode(cleanedBase64String, android.util.Base64.DEFAULT)
-    }
-    // Decode the byte array to a bitmap
-    return BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
-}
+//fun String.fromBase64ToBitmap(): Bitmap {
+//    val cleanedBase64String = this.cleanBase64()
+//    val decodedString: ByteArray = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//        // Use the java.util.Base64 for API 26 and above
+//        Base64.getDecoder().decode(cleanedBase64String)
+//    } else {
+//        // Use android.util.Base64 for older versions
+//        android.util.Base64.decode(cleanedBase64String, android.util.Base64.DEFAULT)
+//    }
+//    // Decode the byte array to a bitmap
+//    return BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
+//}

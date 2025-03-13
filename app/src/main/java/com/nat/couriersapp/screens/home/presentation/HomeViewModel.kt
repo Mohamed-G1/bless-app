@@ -1,6 +1,8 @@
 package com.nat.couriersapp.screens.home.presentation
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.viewModelScope
 import com.nat.couriersapp.base.BaseViewModel
 import com.nat.couriersapp.base.domain.userManager.GetUserDataManager
@@ -9,6 +11,7 @@ import com.nat.couriersapp.screens.home.domain.models.SortOptions
 import com.nat.couriersapp.screens.home.domain.models.HomeModel
 import com.nat.couriersapp.screens.home.domain.usecases.GetCouriersUseCase
 import com.nat.couriersapp.screens.home.domain.usecases.SendLocationUseCase
+import com.nat.couriersapp.utils.getCurrentDate
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,6 +20,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+@RequiresApi(Build.VERSION_CODES.O)
 class HomeViewModel(
     private val useCase: GetCouriersUseCase,
     private val getUserDataManager: GetUserDataManager,
@@ -41,21 +45,24 @@ class HomeViewModel(
             _state.update {
                 it.copy(
                     userName = getUserDataManager.readName().first(),
-                    sortType = localDataSource.readSortValue().first()
+                    sortType = localDataSource.readSortValue().first(),
+                    filterType = localDataSource.readFilterValue().first()
                 )
             }
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun callGetCouriersApi() {
         executeFlow(
             block = {
                 useCase(
                     userId = getUserDataManager.readUserId().first(),
-                    date = "",
+                    date = getCurrentDate(),
                     type = _state.value.courierType.orEmpty(),
-                    clientId = "",
-                    keyword = ""
+                    clientId = "undefiend",
+                    keyword = "",
+                    filterQuery = localDataSource.readFilterValue().first()
                 )
             },
             onLoading = { value ->
@@ -118,6 +125,7 @@ class HomeViewModel(
         )
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun processEvents() {
         viewModelScope.launch {
             _intentChannel.consumeAsFlow().collect { event ->
@@ -150,6 +158,8 @@ class HomeViewModel(
                     is HomeEvents.FilterTypeClicked -> {
                         _state.update { it.copy(filterType = event.filter) }
                         localDataSource.saveFilterValue(event.filter)
+
+                        callGetCouriersApi()
                     }
 
                     is HomeEvents.SendFrequentlyLocation -> {

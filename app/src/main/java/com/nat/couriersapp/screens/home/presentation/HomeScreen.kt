@@ -3,6 +3,7 @@ package com.nat.couriersapp.screens.home.presentation
 import android.content.IntentFilter
 import android.location.LocationManager
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -63,7 +64,8 @@ import kotlinx.coroutines.delay
 fun HomeScreen(
     state: HomeState,
     events: ((HomeEvents) -> Unit)? = null,
-    onClick: ((HomeModel) -> Unit)? = null
+    onClick: ((HomeModel) -> Unit)? = null,
+    navigateToNotification: (() -> Unit)? = null
 ) {
     val context = LocalContext.current
 
@@ -198,7 +200,9 @@ fun HomeScreen(
                     .fillMaxWidth(.7f)
             )
 
-            IconButton(onClick = {}) {
+            IconButton(onClick = {
+                Toast.makeText(context, "This feature will be available soon", Toast.LENGTH_SHORT).show()
+            }) {
                 Icon(
                     painter = painterResource(R.drawable.ic_message),
                     contentDescription = null,
@@ -206,7 +210,9 @@ fun HomeScreen(
                 )
             }
 
-            IconButton(onClick = {}) {
+            IconButton(onClick = {
+                navigateToNotification?.invoke()
+            }) {
                 Icon(
                     painter = painterResource(R.drawable.ic_notification),
                     contentDescription = null,
@@ -253,7 +259,7 @@ fun HomeScreen(
             Spacer(Modifier.width(8.dp))
 
             IconButton(onClick = {
-                showFilterBottomSheet = true
+                showSortBottomSheet = true
             }) {
                 Image(
                     painter = painterResource(R.drawable.ic_sort), contentDescription = null
@@ -261,7 +267,7 @@ fun HomeScreen(
             }
 
             IconButton(onClick = {
-                showSortBottomSheet = true
+                showFilterBottomSheet = true
             }) {
                 Image(
                     painter = painterResource(R.drawable.ic_filter), contentDescription = null
@@ -347,6 +353,7 @@ fun HomeScreen(
 
 
             }, onResetClick = {
+                events?.invoke(HomeEvents.ResetFilterClicked)
                 showFilterBottomSheet = false
             }, alreadySelectedFilter = state.filterType.orEmpty()
             )

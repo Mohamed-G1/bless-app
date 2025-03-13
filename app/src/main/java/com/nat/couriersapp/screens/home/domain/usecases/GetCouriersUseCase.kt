@@ -13,14 +13,16 @@ class GetCouriersUseCase(
         date: String,
         type: String,
         clientId: String,
-        keyword: String
+        keyword: String,
+        filterQuery: String
     ): Flow<Resource<HomeResponse>> {
         return repository.getCouriers(
             userId = userId,
             date = date,
             type = type,
             clientId = clientId,
-            keyword = keyword
+            keyword = keyword,
+            filterQuery = filterQuery
         )
     }
 

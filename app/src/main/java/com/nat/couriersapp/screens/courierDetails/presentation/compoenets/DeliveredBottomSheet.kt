@@ -30,6 +30,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -39,20 +40,22 @@ import androidx.compose.ui.unit.dp
 import com.nat.couriersapp.R
 import com.nat.couriersapp.base.ui.appButton.AppButton
 import com.nat.couriersapp.base.ui.textField.AppTextField
-import com.nat.couriersapp.screens.courierDetails.presentation.CourierDetailsEvents
-import com.nat.couriersapp.screens.courierDetails.presentation.CourierDetailsState
 import com.nat.couriersapp.ui.theme.CompactTypography
 import com.nat.couriersapp.ui.theme.LightGray
 import com.nat.couriersapp.ui.theme.MediumBlue
 import com.nat.couriersapp.ui.theme.WhiteGray
+import com.nat.couriersapp.utils.bitmapToBase64
 import com.nat.couriersapp.utils.createSignatureBitmap
+import java.io.File
 
 @Composable
 fun DeliveredBottomSheet(
-    state: CourierDetailsState,
-    events: ((CourierDetailsEvents) -> Unit)? = null,
+    value: String,
+    clientName: ((String) -> Unit)? = null,
+    clientSignature: ((String) -> Unit)? = null,
     onDismiss: (() -> Unit)? = null
 ) {
+
 
     var showSignature by remember {
         mutableStateOf(false)
@@ -69,7 +72,7 @@ fun DeliveredBottomSheet(
 
             Spacer(Modifier.height(24.dp))
 
-            ClientNameTextField(state, events)
+            ClientNameTextField(value =value ,clientName = clientName)
 
             Spacer(Modifier.height(24.dp))
 
@@ -84,24 +87,23 @@ fun DeliveredBottomSheet(
 
 
     } else {
-        ClientSignatureArea(events = events, onDismiss = onDismiss)
+        ClientSignatureArea(clientSignature = clientSignature, onDismiss = onDismiss)
     }
 }
 
 @Composable
 private fun ClientNameTextField(
-    state: CourierDetailsState,
-    event: ((CourierDetailsEvents) -> Unit)?,
+    value: String,
+    clientName: ((String) -> Unit)? = null
 ) {
     AppTextField(
         modifier = Modifier.fillMaxWidth(),
         placeholder = stringResource(R.string.client_name),
         label = stringResource(R.string.client_name),
-        isError = !state.isValidClientName,
-        errorMessage = if (state.isValidClientName) null else stringResource(id = state.clientNameValidationMessage),
-        value = state.clientName,
+        isError = false,
+        value = value,
         onValueChange = {
-            event?.invoke(CourierDetailsEvents.ClientNameChanged(it))
+            clientName?.invoke(it)
         },
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Text,
@@ -112,9 +114,11 @@ private fun ClientNameTextField(
 
 @Composable
 fun ClientSignatureArea(
-    events: ((CourierDetailsEvents) -> Unit)? = null,
+    clientSignature: ((String) -> Unit)? = null,
     onDismiss: (() -> Unit)? = null
 ) {
+
+    val context = LocalContext.current
     // State to hold the drawing path
     val path by remember { mutableStateOf(Path()) }
     var currentpath by remember { mutableStateOf(path) }
@@ -178,16 +182,33 @@ fun ClientSignatureArea(
 
                 if (saveBitmap) {
                     // create and save bitmap in remeber variable
-                    events?.invoke(
-                        CourierDetailsEvents.ClientSignatureChanged(
+                    val file = File(
+                        context.cacheDir,
+                        "image.jpg"
+                    ) // Save file in app's cache directory (you can choose other directories)
 
-                            bimap = createSignatureBitmap(
+
+                    clientSignature?.invoke(
+                        bitmapToBase64(
+                            createSignatureBitmap(
                                 path,
                                 size.width,
                                 with(density) { canvasHeight.toPx() }.toInt()
                             )
                         )
                     )
+//                    events?.invoke(
+//                        CourierDetailsEvents.ClientSignatureChanged(
+//                            image = bitmapToFile(
+//                                createSignatureBitmap(
+//                                    path,
+//                                    size.width,
+//                                    with(density) { canvasHeight.toPx() }.toInt()
+//                                ), file
+//                            )!!
+//                        )
+//                    )
+
                     saveBitmap = false
                 }
             }
@@ -202,10 +223,11 @@ fun ClientSignatureArea(
                 buttonColor = MediumBlue,
                 modifier = Modifier.weight(.8f),
                 onClick = {
-                    if (isSigned){
+                    if (isSigned) {
                         saveBitmap = true
                     }
                     onDismiss?.invoke()
+
                 })
 
             Spacer(modifier = Modifier.width(12.dp))
@@ -233,7 +255,7 @@ fun ClientSignatureArea(
 @Preview
 @Composable
 private fun DeliverdBottomSheetPreview() {
-    DeliveredBottomSheet(CourierDetailsState())
+    DeliveredBottomSheet("")
 }
 
 @Preview

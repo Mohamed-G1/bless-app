@@ -5,11 +5,10 @@ import com.nat.couriersapp.screens.courierDetails.domain.models.CourierBody
 import com.nat.couriersapp.screens.courierDetails.domain.models.DeliveredResponse
 import com.nat.couriersapp.screens.courierDetails.domain.repository.CourierDetailsRepository
 
-class NotDeliveredCourierUseCase (
+class DeliveredBarCodeCourierUseCase (
     private val repository: CourierDetailsRepository
 ) {
     suspend operator fun invoke(
-        LastStatusId: Int,
         Comment: String,
         LastRefusalReasonId: Int,
         ActionDate: String,
@@ -21,9 +20,9 @@ class NotDeliveredCourierUseCase (
         Latitude: String,
         Longitude: String,
         courierBody: List<CourierBody>
-    ) : Resource<DeliveredResponse> {
+    ) : Resource<DeliveredResponse>{
         return repository.updateCourierStatus(
-            LastStatusId = LastStatusId,
+            LastStatusId = 6,
             Comment = Comment,
             LastRefusalReasonId = LastRefusalReasonId,
             ActionDate = ActionDate,

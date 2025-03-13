@@ -22,10 +22,11 @@ data class Obj(
     val total: Int?
 )
 
+
 @Serializable
 data class HomeModel(
     @SerializedName("ActualWeight")
-    val actualWeight: Int?,
+    val actualWeight: Double?,
     @SerializedName("CollectCharges")
     val collectCharges: Double?,
     @SerializedName("CollectedBy")
@@ -79,7 +80,7 @@ data class HomeModel(
     @SerializedName("IsDeposit")
     val isDeposit: Boolean?,
     @SerializedName("IsRecievedByCourier")
-    val isRecievedByCourier: Boolean?,
+    val isRecievedByCourier: String?,
     @SerializedName("LastStatusActionDate")
     val lastStatusActionDate: String?,
     @SerializedName("LastStatusComment")
@@ -123,7 +124,7 @@ data class HomeModel(
     @SerializedName("TransitTime")
     val transitTime: String?,
     @SerializedName("WaybillCODValue")
-    val waybillCODValue: Int?,
+    val waybillCODValue: Double?,
     @SerializedName("WaybillComment")
     val waybillComment: String?,
     @SerializedName("WaybillCondition")
@@ -137,5 +138,5 @@ data class HomeModel(
     @SerializedName("WaybillSerial")
     val waybillSerial: Long?,
     @SerializedName("Weight")
-    val weight: Int?
+    val weight: Double?
 )
