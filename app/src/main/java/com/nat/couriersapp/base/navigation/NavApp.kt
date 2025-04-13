@@ -110,6 +110,10 @@ fun NavApp() {
                     navigateToNotification = {
                         if (navController.canNavigate)
                             navController.navigate(Destinations.Notification)
+                    },
+                    signOut = {
+                        if (navController.canNavigate)
+                            signOutFromHome(navController)
                     }
                 )
             }
@@ -193,6 +197,15 @@ private fun goToHomeScreenFromLogin(navController: NavController) {
     }
 }
 
+private fun signOutFromHome(navController: NavController) {
+    navController.navigate(
+        Destinations.Login
+    ) {
+        popUpTo(Destinations.Home) {
+            inclusive = true
+        }
+    }
+}
 /** This function handle the destination from the splash screen to the appropriate screen
  * */
 fun goToNextAfterSplash(navController: NavHostController, destination: Destinations) {

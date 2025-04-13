@@ -1,6 +1,5 @@
 package com.nat.couriersapp.base.network
 
-import android.graphics.Bitmap
 import com.nat.couriersapp.screens.courierDetails.domain.models.CourierBody
 import com.nat.couriersapp.screens.courierDetails.domain.models.DeliveredRequest
 import com.nat.couriersapp.screens.courierDetails.domain.models.DeliveredResponse
@@ -9,17 +8,12 @@ import com.nat.couriersapp.screens.courierDetails.domain.models.StatusNotDeliver
 import com.nat.couriersapp.screens.home.domain.models.HomeResponse
 import com.nat.couriersapp.screens.login.domain.models.LoginRequest
 import com.nat.couriersapp.screens.login.domain.models.UserResponse
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
-import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.PUT
-import retrofit2.http.Part
 import retrofit2.http.Query
-import java.io.File
 
 interface ApiServices {
     @POST("api/Account/login")
@@ -45,12 +39,12 @@ interface ApiServices {
     ): Response<Any>
 
     @POST("api/Waybill/AddPodMobile")
-    suspend fun deliveredCourier(
+    suspend fun deliveredCourierWithPOD(
         @Body deliveredRequest : DeliveredRequest
     ): Response<DeliveredResponse>
 
     @PUT("api/WaybillOperation/UpdateMultipleWaybillMobile")
-    suspend fun updateCourierStatus(
+    suspend fun updateWaybillCourierStatus(
         @Query("LastStatusId") LastStatusId: Int,
         @Query("Comment") Comment: String,
         @Query("LastRefusalReasonId") LastRefusalReasonId: Int,
@@ -60,6 +54,21 @@ interface ApiServices {
         @Query("RoleId") RoleId: String,
         @Query("HubName") HubName: String,
         @Query("ZoneHubId") ZoneHubId: Int,
+        @Query("Latitude") Latitude: String,
+        @Query("Longitude") Longitude: String,
+        @Body courierBody: List<CourierBody>,
+    ): Response<DeliveredResponse>
+
+    @PUT("api/Pickup/UpdateMultiplePickupMobile")
+    suspend fun updatePickupCourierStatus(
+        @Query("LastStatusId") LastStatusId: Int,
+        @Query("Comment") Comment: String,
+        @Query("LastRefusalReasonId") LastRefusalReasonId: Int,
+        @Query("ActionDate") ActionDate: String,
+        @Query("UserId") UserId: Int,
+        @Query("UserName") UserName: String,
+        @Query("RoleId") RoleId: String,
+        @Query("HubName") HubName: String,
         @Query("Latitude") Latitude: String,
         @Query("Longitude") Longitude: String,
         @Body courierBody: List<CourierBody>,

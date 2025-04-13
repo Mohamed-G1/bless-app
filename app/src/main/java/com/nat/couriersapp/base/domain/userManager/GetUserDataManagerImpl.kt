@@ -30,6 +30,12 @@ class GetUserDataManagerImpl(
         }
     }
 
+    override fun readRoleId(): Flow<Int> {
+        return context.dataStore.data.map { preferences ->
+            preferences[PreferencesKeys.roleId] ?: 0
+        }
+    }
+
     override fun isUserLoggedIn(): Flow<Boolean> {
         return context.dataStore.data.map { preferences ->
             preferences[PreferencesKeys.isLoggedIn] ?: false

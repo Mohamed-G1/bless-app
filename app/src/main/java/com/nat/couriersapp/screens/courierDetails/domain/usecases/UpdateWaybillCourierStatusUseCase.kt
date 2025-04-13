@@ -5,7 +5,7 @@ import com.nat.couriersapp.screens.courierDetails.domain.models.CourierBody
 import com.nat.couriersapp.screens.courierDetails.domain.models.DeliveredResponse
 import com.nat.couriersapp.screens.courierDetails.domain.repository.CourierDetailsRepository
 
-class NotDeliveredCourierUseCase (
+class UpdateWaybillCourierStatusUseCase (
     private val repository: CourierDetailsRepository
 ) {
     suspend operator fun invoke(
@@ -22,7 +22,7 @@ class NotDeliveredCourierUseCase (
         Longitude: String,
         courierBody: List<CourierBody>
     ) : Resource<DeliveredResponse> {
-        return repository.updateCourierStatus(
+        return repository.updateWaybillCourierStatus(
             LastStatusId = LastStatusId,
             Comment = Comment,
             LastRefusalReasonId = LastRefusalReasonId,

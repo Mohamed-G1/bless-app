@@ -138,5 +138,7 @@ data class HomeModel(
     @SerializedName("WaybillSerial")
     val waybillSerial: Long?,
     @SerializedName("Weight")
-    val weight: Double?
+    val weight: Double?,
+
+    val courierType : String
 )

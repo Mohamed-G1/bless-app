@@ -9,6 +9,8 @@ import com.nat.couriersapp.screens.home.domain.models.HomeModel
 data class CourierDetailsState(
     val isLoading: Boolean = false,
     val errorMessage: String = "",
+    val navigateBack: Boolean = false,
+    val errorCode: Int? = null,
     val statusNotDelivered: List<StatusNotDeliveredModel> = listOf(),
     val refusalStatusNotDelivered: List<RefusalReasonsModel> = listOf(),
     val refusalName: String = "",

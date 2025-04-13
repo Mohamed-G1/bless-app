@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.nat.couriersapp.base.BaseViewModel
 import com.nat.couriersapp.base.domain.userManager.GetUserDataManager
 import com.nat.couriersapp.base.local.LocalDataSource
+import com.nat.couriersapp.screens.home.domain.models.CourierSheetTypes
 import com.nat.couriersapp.screens.home.domain.models.SortOptions
 import com.nat.couriersapp.screens.home.domain.models.HomeModel
 import com.nat.couriersapp.screens.home.domain.usecases.GetCouriersUseCase
@@ -45,15 +46,17 @@ class HomeViewModel(
             _state.update {
                 it.copy(
                     userName = getUserDataManager.readName().first(),
-                    sortType = localDataSource.readSortValue().first(),
-                    filterType = localDataSource.readFilterValue().first()
+                    courierType = localDataSource.readSelectedCourierType().first(),
+                    waybillSortType = localDataSource.readWaybillSortValue().first(),
+                    waybillFilterType = localDataSource.readWaybillFilterValue().first(),
+                    pickupFilterType = localDataSource.readPickupFilterValue().first(),
                 )
             }
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun callGetCouriersApi() {
+    private fun callGetWaybillCouriersApi() {
         executeFlow(
             block = {
                 useCase(
@@ -62,7 +65,7 @@ class HomeViewModel(
                     type = _state.value.courierType.orEmpty(),
                     clientId = "undefiend",
                     keyword = "",
-                    filterQuery = localDataSource.readFilterValue().first()
+                    filterQuery = localDataSource.readWaybillFilterValue().first()
                 )
             },
             onLoading = { value ->
@@ -71,12 +74,12 @@ class HomeViewModel(
             onSuccess = { result ->
                 // sort the lst automatically in case there is a filter value is stored
                 viewModelScope.launch {
-                    if (localDataSource.readSortValue().first().isNotEmpty()) {
+                    if (localDataSource.readWaybillSortValue().first().isNotEmpty()) {
                         _state.update { currentState ->
                             val filteredItems =
                                 sortItems(
                                     result?.obj?.data.orEmpty(),
-                                    localDataSource.readSortValue().first()
+                                    localDataSource.readWaybillSortValue().first()
                                 )
                             currentState.copy(
                                 model = result,
@@ -96,8 +99,60 @@ class HomeViewModel(
 
 
             },
-            onFailure = { error ->
-                _state.update { it.copy(errorMessage = error) }
+            onFailure = { error, code ->
+                _state.update { it.copy(errorMessage = error, errorCode = code) }
+
+            }
+        )
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun callGetPickupsCouriersApi() {
+        executeFlow(
+            block = {
+                useCase(
+                    filterQuery = localDataSource.readPickupFilterValue().first(),
+                    userId = getUserDataManager.readUserId().first(),
+                    date = getCurrentDate(),
+                    type = _state.value.courierType.orEmpty(),
+                    clientId = "undefiend",
+                    keyword = ""
+
+                )
+            },
+            onLoading = { value ->
+                _state.update { it.copy(isLoading = value) }
+            },
+            onSuccess = { result ->
+                // sort the lst automatically in case there is a filter value is stored
+                viewModelScope.launch {
+                    if (localDataSource.readWaybillSortValue().first().isNotEmpty()) {
+                        _state.update { currentState ->
+                            val filteredItems =
+                                sortItems(
+                                    result?.obj?.data.orEmpty(),
+                                    localDataSource.readWaybillSortValue().first()
+                                )
+                            currentState.copy(
+                                model = result,
+                                homeList = filteredItems
+                            )
+                        }
+                        // if no sort stored return the original list
+                    } else {
+                        _state.update {
+                            it.copy(
+                                model = result,
+                                homeList = result?.obj?.data.orEmpty()
+                            )
+                        }
+                    }
+                }
+
+
+            },
+            onFailure = { error, code ->
+                _state.update { it.copy(errorMessage = error, errorCode = code) }
 
             }
         )
@@ -130,36 +185,82 @@ class HomeViewModel(
         viewModelScope.launch {
             _intentChannel.consumeAsFlow().collect { event ->
                 when (event) {
-                    is HomeEvents.CallAllCouriers -> {
-                        _state.update { it.copy(courierType = event.query, errorMessage = "") }
-                        callGetCouriersApi()
+                    is HomeEvents.RefreshCouriers -> {
+                        if (_state.value.courierType == CourierSheetTypes.waybill.name){
+                            callGetWaybillCouriersApi()
+                        } else {
+                            callGetPickupsCouriersApi()
+                        }
                     }
 
-                    is HomeEvents.SortTypeClicked -> {
+                    is HomeEvents.CallWaybillCouriers -> {
+                        localDataSource.saveSelectedCourierType(event.query)
+                        _state.update { it.copy(courierType = event.query, errorMessage = "") }
+                        callGetWaybillCouriersApi()
+
+                    }
+
+                    is HomeEvents.CallPickupCouriers -> {
+                        localDataSource.saveSelectedCourierType(event.query)
+                        _state.update { it.copy(courierType = event.query, errorMessage = "") }
+                        callGetPickupsCouriersApi()
+
+                    }
+                    is HomeEvents.CallAllCouriers -> {
+                        localDataSource.saveSelectedCourierType(event.query)
+                        _state.update { it.copy(courierType = "null", errorMessage = "") }
+                        callGetWaybillCouriersApi()
+
+                    }
+
+                    is HomeEvents.WaybillSortTypeClicked -> {
                         Log.d("filterValue", event.sort)
-                        _state.update { it.copy(sortType = event.sort) }
+                        _state.update { it.copy(waybillSortType = event.sort) }
 
                         val filteredItems = sortItems(_state.value.homeList, event.sort)
                         _state.update { currentState ->
                             currentState.copy(
-                                sortType = event.sort,
+                                waybillSortType = event.sort,
                                 homeList = filteredItems
                             )
                         }
-                        localDataSource.saveSortValue(event.sort)
+                        localDataSource.saveWaybillSortValue(event.sort)
                     }
 
-                    is HomeEvents.ResetSortClicked -> {
-                        _state.update { it.copy(sortType = "") }
-                        localDataSource.clearSortValue()
-                        callGetCouriersApi()
+                    is HomeEvents.PickupSortTypeClicked -> {
+                        _state.update { it.copy(pickupSortType = event.sort) }
+                        val filteredItems = sortItems(_state.value.homeList, event.sort)
+                        _state.update { currentState ->
+                            currentState.copy(
+                                pickupSortType = event.sort,
+                                homeList = filteredItems
+                            )
+                        }
+
+                        localDataSource.savePickupSortValue(event.sort)
+
+
                     }
 
-                    is HomeEvents.FilterTypeClicked -> {
-                        _state.update { it.copy(filterType = event.filter) }
-                        localDataSource.saveFilterValue(event.filter)
+                    is HomeEvents.ResetWaybillSortClicked -> {
+                        _state.update { it.copy(waybillSortType = "") }
+                        localDataSource.clearWaybillSortValue()
 
-                        callGetCouriersApi()
+                        callGetWaybillCouriersApi()
+                    }
+
+                    is HomeEvents.ResetPickupSortClicked -> {
+                        _state.update { it.copy(pickupSortType = "") }
+                        localDataSource.clearPickupSortValue()
+
+                        callGetPickupsCouriersApi()
+                    }
+
+                    is HomeEvents.WaybillFilterTypeClicked -> {
+                        _state.update { it.copy(waybillFilterType = event.filter) }
+                        localDataSource.saveWaybillFilterValue(event.filter)
+
+                        callGetWaybillCouriersApi()
                     }
 
                     is HomeEvents.SendFrequentlyLocation -> {
@@ -169,17 +270,30 @@ class HomeViewModel(
                         )
                     }
 
-                    is HomeEvents.ResetFilterClicked -> {
-                        _state.update { it.copy(filterType = "") }
-                        localDataSource.clearFilterValue()
+                    is HomeEvents.WaybillResetFilterClicked -> {
+                        _state.update { it.copy(waybillFilterType = "") }
+                        localDataSource.clearWaybillFilterValue()
 
-                        callGetCouriersApi()
+                        callGetWaybillCouriersApi()
+                    }
+
+                    is HomeEvents.PickupFilterTypeClicked -> {
+                        _state.update { it.copy(pickupFilterType = event.filter) }
+                        localDataSource.savePickupFilterValue(event.filter)
+
+                        callGetPickupsCouriersApi()
+                    }
+
+                    HomeEvents.PickupResetFilterClicked -> {
+                        _state.update { it.copy(pickupFilterType = "") }
+                        localDataSource.clearPickupFilterValue()
+
+                        callGetPickupsCouriersApi()
                     }
                 }
             }
         }
     }
-
 
 
     // sort logic
