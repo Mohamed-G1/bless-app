@@ -28,7 +28,7 @@ abstract class BaseViewModel : ViewModel() {
         block: suspend () -> Flow<Resource<T>>,
         onLoading: (Boolean) -> Unit,
         onSuccess: (T?) -> Unit,
-        onFailure: (String) -> Unit,
+        onFailure: (String, Int) -> Unit,
     ) {
         viewModelScope.launch {
             block().collect { result ->
@@ -43,7 +43,7 @@ abstract class BaseViewModel : ViewModel() {
                     }
 
                     is Resource.Error -> {
-                        onFailure(result.message)
+                        onFailure(result.message, result.code ?: 200)
                         onLoading(false)
                     }
                 }

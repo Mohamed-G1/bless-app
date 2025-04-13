@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nat.couriersapp.R
 import com.nat.couriersapp.base.ui.shimmer.shimmerLoading
+import com.nat.couriersapp.screens.home.domain.models.CourierSheetTypes
 import com.nat.couriersapp.screens.home.domain.models.HomeModel
 import com.nat.couriersapp.ui.theme.CompactTypography
 import com.nat.couriersapp.ui.theme.DeliverGreen
@@ -37,6 +38,7 @@ import com.nat.couriersapp.ui.theme.WhiteGray
 
 @Composable
 fun CourierItem(
+    courierType : String,
     item: HomeModel? = null,
     modifier: Modifier = Modifier,
     onClick: ((HomeModel) -> Unit)? = null
@@ -73,13 +75,17 @@ fun CourierItem(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
 
+                    val text =
+                        if (courierType == CourierSheetTypes.waybill.name) "شحنة إلي" else "طلبية من"
                     Text(
-                        stringResource(R.string.deliver_to),
+                        text,
                         style = CompactTypography.labelMedium.copy(color = Gray, fontSize = 12.sp)
                     )
 
+                    val name =
+                        if (courierType == CourierSheetTypes.waybill.name) item?.consigneeName.orEmpty() else item?.shipperName.orEmpty()
                     Text(
-                        text = item?.shipperContactName.orEmpty(),
+                        text = name,
                         style = CompactTypography.headlineLarge.copy(fontSize = 12.sp)
                     )
                 }
@@ -159,6 +165,7 @@ fun CourierItem(
 fun DeliveryStatus(status: String) {
     val color = when (status) {
         "Delivered" -> DeliverGreen
+        "Courier Picked up" -> DeliverGreen
         "Not Delivered" -> NotDeliverRed
         else -> Gray
     }
@@ -188,12 +195,14 @@ fun DeliveryStatus(status: String) {
 fun DeliveryStatusBar(status: String) {
     val color = when (status) {
         "Delivered" -> DeliverGreen
+        "Courier Picked up" -> DeliverGreen
         "Not Delivered" -> NotDeliverRed
         else -> Gray
     }
 
     val icon = when (status) {
         "Delivered" -> painterResource(R.drawable.ic_check_circle)
+        "Courier Picked up" -> painterResource(R.drawable.ic_check_circle)
         "Not Delivered" -> painterResource(R.drawable.ic_cancel)
         else -> painterResource(R.drawable.ic_filled_circle)
     }
@@ -234,7 +243,7 @@ fun DeliveryStatusBar(status: String) {
 @Preview(locale = "ar")
 @Composable
 private fun CourierItemPreview() {
-    CourierItem()
+    CourierItem(CourierSheetTypes.pickup.name)
 }
 
 @Preview(locale = "ar")

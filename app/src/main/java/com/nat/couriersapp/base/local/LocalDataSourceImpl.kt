@@ -11,39 +11,87 @@ class LocalDataSourceImpl(
     private val context: Context
 
 ) : LocalDataSource {
-    override suspend fun saveSortValue(filter: String) {
+    override suspend fun saveWaybillSortValue(filter: String) {
         context.dataStore.edit { settings ->
-            settings[PreferencesKeys.sortType] = filter
+            settings[PreferencesKeys.waybillSortType] = filter
         }
     }
 
-    override suspend fun clearSortValue() {
+    override suspend fun savePickupSortValue(filter: String) {
         context.dataStore.edit { settings ->
-            settings[PreferencesKeys.sortType] = ""
+            settings[PreferencesKeys.pickupSortType] = filter
         }
     }
 
-    override suspend fun readSortValue(): Flow<String> {
+    override suspend fun saveSelectedCourierType(courier: String) {
+        context.dataStore.edit { settings ->
+            settings[PreferencesKeys.courierType] = courier
+        }
+    }
+
+    override suspend fun clearWaybillSortValue() {
+        context.dataStore.edit { settings ->
+            settings[PreferencesKeys.waybillSortType] = ""
+        }
+    }
+
+    override suspend fun clearPickupSortValue() {
+        context.dataStore.edit { settings ->
+            settings[PreferencesKeys.pickupSortType] = ""
+        }
+    }
+
+    override suspend fun readWaybillSortValue(): Flow<String> {
         return context.dataStore.data.map { preferences ->
-            preferences[PreferencesKeys.sortType] ?: "Gamal"
+            preferences[PreferencesKeys.waybillSortType] ?: "Gamal"
         }
     }
 
-    override suspend fun saveFilterValue(filter: String) {
-        context.dataStore.edit { settings ->
-            settings[PreferencesKeys.filterType] = filter
-        }
-    }
-
-    override suspend fun clearFilterValue() {
-        context.dataStore.edit { settings ->
-            settings[PreferencesKeys.filterType] = ""
-        }
-    }
-
-    override suspend fun readFilterValue(): Flow<String> {
+    override suspend fun readPickupSortValue(): Flow<String> {
         return context.dataStore.data.map { preferences ->
-            preferences[PreferencesKeys.filterType] ?: ""
+            preferences[PreferencesKeys.pickupSortType] ?: "Gamal"
+        }
+    }
+
+    override suspend fun readSelectedCourierType(): Flow<String> {
+        return context.dataStore.data.map { preferences ->
+            preferences[PreferencesKeys.courierType] ?: "Gamal"
+        }
+    }
+
+    override suspend fun saveWaybillFilterValue(filter: String) {
+        context.dataStore.edit { settings ->
+            settings[PreferencesKeys.waybillFilterType] = filter
+        }
+    }
+
+    override suspend fun clearWaybillFilterValue() {
+        context.dataStore.edit { settings ->
+            settings[PreferencesKeys.waybillFilterType] = ""
+        }
+    }
+
+    override suspend fun savePickupFilterValue(filter: String) {
+        context.dataStore.edit { settings ->
+            settings[PreferencesKeys.pickupFilterType] = filter
+        }
+    }
+
+    override suspend fun clearPickupFilterValue() {
+        context.dataStore.edit { settings ->
+            settings[PreferencesKeys.pickupFilterType] = ""
+        }
+    }
+
+    override suspend fun readWaybillFilterValue(): Flow<String> {
+        return context.dataStore.data.map { preferences ->
+            preferences[PreferencesKeys.waybillFilterType] ?: ""
+        }
+    }
+
+    override suspend fun readPickupFilterValue(): Flow<String> {
+        return context.dataStore.data.map { preferences ->
+            preferences[PreferencesKeys.pickupFilterType] ?: ""
         }
     }
 }

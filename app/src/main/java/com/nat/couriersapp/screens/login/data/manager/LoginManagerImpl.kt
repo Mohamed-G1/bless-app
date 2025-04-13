@@ -16,6 +16,7 @@ class LoginManagerImpl(
             settings[PreferencesKeys.token] = response.obj?.token ?: ""
             settings[PreferencesKeys.userName] = response.obj?.userName ?: ""
             settings[PreferencesKeys.userId] = response.obj?.userId ?: 0
+            settings[PreferencesKeys.roleId] = response.obj?.roleId ?: 0
         }
     }
 
@@ -26,6 +27,12 @@ class LoginManagerImpl(
             settings[PreferencesKeys.token] = ""
             settings[PreferencesKeys.userName] = ""
             settings[PreferencesKeys.userId] = 0
+            settings[PreferencesKeys.roleId] = 0
+            settings[PreferencesKeys.courierType] = ""
+            settings[PreferencesKeys.pickupFilterType] = ""
+            settings[PreferencesKeys.waybillFilterType] = ""
+            settings[PreferencesKeys.waybillSortType] = ""
+            settings[PreferencesKeys.waybillSortType] = ""
 
         }
     }

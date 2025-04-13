@@ -18,7 +18,7 @@ suspend fun <T> safeApiCall(apiCall: suspend () -> Response<T>): Resource<T> {
 
             else -> {
                 val errorMessage = getErrorMessageForHttpCode(response.code(), response.message())
-                Resource.Error(errorMessage)
+                Resource.Error(message = errorMessage , code = response.code())
             }
         }
     } catch (exception: Throwable) {

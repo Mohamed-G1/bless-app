@@ -42,17 +42,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nat.couriersapp.R
-import com.nat.couriersapp.base.broadCasstReciver.LocationReceiver
 import com.nat.couriersapp.base.locationChecker.LocationHandler
 import com.nat.couriersapp.base.locationChecker.LocationServiceReceiver
 import com.nat.couriersapp.base.permissions.LocationPermissionDialog
 import com.nat.couriersapp.base.ui.appLoading.FullLoading
-import com.nat.couriersapp.base.ui.shimmer.shimmerLoading
 import com.nat.couriersapp.base.ui.toast.ShowToast
 import com.nat.couriersapp.screens.home.domain.models.CourierSheetTypes
 import com.nat.couriersapp.screens.home.domain.models.HomeModel
 import com.nat.couriersapp.screens.home.presentation.components.CourierItem
-import com.nat.couriersapp.screens.home.presentation.components.FilterBottomSheetLayout
+import com.nat.couriersapp.screens.home.presentation.components.PickupFilterBottomSheetLayout
+import com.nat.couriersapp.screens.home.presentation.components.WaybillFilterBottomSheetLayout
 import com.nat.couriersapp.screens.home.presentation.components.SortBottomSheetLayout
 import com.nat.couriersapp.screens.home.presentation.components.SearchTapItem
 import com.nat.couriersapp.ui.theme.CompactTypography
@@ -65,21 +64,28 @@ fun HomeScreen(
     state: HomeState,
     events: ((HomeEvents) -> Unit)? = null,
     onClick: ((HomeModel) -> Unit)? = null,
-    navigateToNotification: (() -> Unit)? = null
+    navigateToNotification: (() -> Unit)? = null,
+    signOut: (() -> Unit)? = null
 ) {
     val context = LocalContext.current
 
     var selectedTap by remember {
         mutableStateOf(CourierSheetTypes.All.name)
     }
-    var showSortBottomSheet by remember { mutableStateOf(false) }
+    var showWaybillSortBottomSheet by remember { mutableStateOf(false) }
+    var showPickupSortBottomSheet by remember { mutableStateOf(false) }
+
     var isLocationEnabled by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
 
-    var showFilterBottomSheet by remember { mutableStateOf(false) }
+    var showWaybillFilterBottomSheet by remember { mutableStateOf(false) }
+    var showPickupFilterBottomSheet by remember { mutableStateOf(false) }
     val locationError by remember { mutableStateOf("") }
+
+    var courierType by remember { mutableStateOf(state.courierType ?: CourierSheetTypes.All.name) }
+
     var shouldShowDialog by remember { mutableStateOf(false) }
 
     val locationServiceReceiver = rememberUpdatedState(LocationServiceReceiver(
@@ -145,7 +151,7 @@ fun HomeScreen(
 
 
     LaunchedEffect(Unit) {
-        events?.invoke(HomeEvents.CallAllCouriers(CourierSheetTypes.waybill.name))
+        events?.invoke(HomeEvents.RefreshCouriers)
     }
 
     // Register the LocationReceiver using DisposableEffect (Lifecycle-aware)
@@ -201,7 +207,8 @@ fun HomeScreen(
             )
 
             IconButton(onClick = {
-                Toast.makeText(context, "This feature will be available soon", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "This feature will be available soon", Toast.LENGTH_SHORT)
+                    .show()
             }) {
                 Icon(
                     painter = painterResource(R.drawable.ic_message),
@@ -233,33 +240,40 @@ fun HomeScreen(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             SearchTapItem(query = "الكل",
-                isSelected = selectedTap == CourierSheetTypes.All.name,
+                isSelected = courierType == CourierSheetTypes.All.name,
                 onClick = {
-                    selectedTap = CourierSheetTypes.All.name
-                    events?.invoke(HomeEvents.CallAllCouriers(CourierSheetTypes.waybill.name))
+                    courierType = CourierSheetTypes.All.name
+//                    selectedTap = CourierSheetTypes.All.name
+                    events?.invoke(HomeEvents.CallAllCouriers(CourierSheetTypes.All.name))
                 })
 
             Spacer(Modifier.width(8.dp))
 
-            SearchTapItem(query = "توصيل طلبية",
-                isSelected = selectedTap == CourierSheetTypes.waybill.name,
+            SearchTapItem(query = "توصيل شحنة",
+                isSelected = courierType == CourierSheetTypes.waybill.name,
                 onClick = {
-                    selectedTap = CourierSheetTypes.waybill.name
-                    events?.invoke(HomeEvents.CallAllCouriers(CourierSheetTypes.waybill.name))
+                    courierType = CourierSheetTypes.waybill.name
+//                    selectedTap = CourierSheetTypes.waybill.name
+                    events?.invoke(HomeEvents.CallWaybillCouriers(CourierSheetTypes.waybill.name))
                 })
             Spacer(Modifier.width(8.dp))
 
-            SearchTapItem(query = "إستلام طلبية",
-                isSelected = selectedTap == CourierSheetTypes.pickup.name,
+            SearchTapItem(query = "طلبية من",
+                isSelected = courierType == CourierSheetTypes.pickup.name,
                 onClick = {
-                    selectedTap = CourierSheetTypes.pickup.name
-                    events?.invoke(HomeEvents.CallAllCouriers(CourierSheetTypes.pickup.name))
+                    courierType = CourierSheetTypes.pickup.name
+//                    selectedTap = CourierSheetTypes.pickup.name
+                    events?.invoke(HomeEvents.CallPickupCouriers(CourierSheetTypes.pickup.name))
 
                 })
             Spacer(Modifier.width(8.dp))
 
             IconButton(onClick = {
-                showSortBottomSheet = true
+                if (courierType == CourierSheetTypes.waybill.name) {
+                    showWaybillSortBottomSheet = true
+                } else {
+                    showPickupSortBottomSheet = true
+                }
             }) {
                 Image(
                     painter = painterResource(R.drawable.ic_sort), contentDescription = null
@@ -267,7 +281,11 @@ fun HomeScreen(
             }
 
             IconButton(onClick = {
-                showFilterBottomSheet = true
+                if (courierType == CourierSheetTypes.waybill.name) {
+                    showWaybillFilterBottomSheet = true
+                } else {
+                    showPickupFilterBottomSheet = true
+                }
             }) {
                 Image(
                     painter = painterResource(R.drawable.ic_filter), contentDescription = null
@@ -281,13 +299,17 @@ fun HomeScreen(
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
+            val text = if (state.model?.obj?.data?.firstOrNull()?.lastStatusName == CourierSheetTypes.waybill.name) "قائمة الشحنات" else "قائمة الطلبيات"
+
             Text(
-                text = "قائمة الطرود", style = CompactTypography.labelMedium.copy(fontSize = 18.sp),
+                text = text, style = CompactTypography.labelMedium.copy(fontSize = 18.sp),
             )
             Spacer(Modifier.width(8.dp))
 
+            val countText = if (state.model?.obj?.data?.firstOrNull()?.lastStatusName == CourierSheetTypes.waybill.name) "شحنة" else "طلبية"
+
             val count =
-                StringBuilder().append("( ").append(state.model?.obj?.total ?: 0).append(" شحنة")
+                StringBuilder().append("( ").append(state.model?.obj?.total ?: 0).append(" ").append(countText)
                     .append(" )").toString()
 
             Text(
@@ -305,60 +327,111 @@ fun HomeScreen(
             items(items = state.homeList) { item ->
                 CourierItem(
                     item = item,
+                    courierType = courierType,
                     onClick = { model ->
-                        onClick?.invoke(model)
+                        onClick?.invoke(model.copy(courierType = courierType))
                     }
                 )
             }
         }
     }
 
-    if (showSortBottomSheet) {
+    if (showWaybillSortBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = {
-                showSortBottomSheet = false
+                showWaybillSortBottomSheet = false
             }, sheetState = sheetState, containerColor = White
         ) {
             SortBottomSheetLayout(onClick = { sort ->
-                if (sort.equals(state.sortType)) {
-                    showSortBottomSheet = false
+                if (sort.equals(state.waybillSortType)) {
+                    showWaybillSortBottomSheet = false
                 } else {
-                    events?.invoke(HomeEvents.SortTypeClicked(sort))
-                    showSortBottomSheet = false
+                    events?.invoke(HomeEvents.WaybillSortTypeClicked(sort))
+                    showWaybillSortBottomSheet = false
                 }
 
 
             }, onResetClick = {
-                events?.invoke(HomeEvents.ResetSortClicked)
-                showSortBottomSheet = false
-            }, alreadySelectedSort = state.sortType.orEmpty()
+                events?.invoke(HomeEvents.ResetWaybillSortClicked)
+                showWaybillSortBottomSheet = false
+            }, alreadySelectedSort = state.waybillSortType.orEmpty()
             )
         }
 
     }
 
-    if (showFilterBottomSheet) {
+    if (showPickupSortBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = {
-                showFilterBottomSheet = false
+                showPickupSortBottomSheet = false
             }, sheetState = sheetState, containerColor = White
         ) {
-            FilterBottomSheetLayout(onClick = { filter ->
-                if (filter.equals(state.filterType)) {
-                    showFilterBottomSheet = false
+            SortBottomSheetLayout(onClick = { sort ->
+                if (sort.equals(state.pickupSortType)) {
+                    showPickupSortBottomSheet = false
                 } else {
-                    events?.invoke(HomeEvents.FilterTypeClicked(filter))
-                    showFilterBottomSheet = false
+                    events?.invoke(HomeEvents.PickupSortTypeClicked(sort))
+                    showPickupSortBottomSheet = false
                 }
 
 
             }, onResetClick = {
-                events?.invoke(HomeEvents.ResetFilterClicked)
-                showFilterBottomSheet = false
-            }, alreadySelectedFilter = state.filterType.orEmpty()
+                events?.invoke(HomeEvents.ResetPickupSortClicked)
+                showPickupSortBottomSheet = false
+            }, alreadySelectedSort = state.pickupSortType.orEmpty()
             )
         }
     }
+
+    if (showWaybillFilterBottomSheet) {
+        ModalBottomSheet(
+            onDismissRequest = {
+                showWaybillFilterBottomSheet = false
+            }, sheetState = sheetState, containerColor = White
+        ) {
+            WaybillFilterBottomSheetLayout(
+                onClick = { filter ->
+                    if (filter.equals(state.waybillFilterType)) {
+                        showWaybillFilterBottomSheet = false
+                    } else {
+                        events?.invoke(HomeEvents.WaybillFilterTypeClicked(filter))
+                        showWaybillFilterBottomSheet = false
+                    }
+
+
+                }, onResetClick = {
+                    events?.invoke(HomeEvents.WaybillResetFilterClicked)
+                    showWaybillFilterBottomSheet = false
+                }, alreadySelectedFilter = state.waybillFilterType.orEmpty()
+            )
+        }
+
+    }
+
+    if (showPickupFilterBottomSheet) {
+        ModalBottomSheet(
+            onDismissRequest = {
+                showPickupFilterBottomSheet = false
+            }, sheetState = sheetState, containerColor = White
+        ) {
+            PickupFilterBottomSheetLayout(
+                onClick = { filter ->
+                    if (filter.equals(state.pickupFilterType)) {
+                        showPickupFilterBottomSheet = false
+                    } else {
+                        events?.invoke(HomeEvents.PickupFilterTypeClicked(filter))
+                        showPickupFilterBottomSheet = false
+                    }
+
+
+                }, onResetClick = {
+                    events?.invoke(HomeEvents.PickupResetFilterClicked)
+                    showPickupFilterBottomSheet = false
+                }, alreadySelectedFilter = state.pickupFilterType.orEmpty()
+            )
+        }
+    }
+
 
     if (state.isLoading) {
         FullLoading()
@@ -367,6 +440,11 @@ fun HomeScreen(
         ShowToast(state.errorMessage)
     } else if (locationError.isNotEmpty()) {
         ShowToast(locationError)
+    }
+
+    // if the user is unauthorized, sign out
+    if (state.errorCode == 401) {
+        signOut?.invoke()
     }
 }
 

@@ -12,14 +12,11 @@ import com.nat.couriersapp.screens.courierDetails.domain.repository.CourierDetai
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
-import java.io.File
 
 class CourierDetailsRepositoryImpl(
     private val apiServices: ApiServices
 ) : CourierDetailsRepository {
-    override suspend fun updateCourierStatus(
+    override suspend fun updateWaybillCourierStatus(
         LastStatusId: Int,
         Comment: String,
         LastRefusalReasonId: Int,
@@ -34,7 +31,7 @@ class CourierDetailsRepositoryImpl(
         courierBody: List<CourierBody>
     ): Resource<DeliveredResponse> {
         return safeApiCall {
-            apiServices.updateCourierStatus(
+            apiServices.updateWaybillCourierStatus(
                 LastStatusId = LastStatusId,
                 Comment = Comment,
                 LastRefusalReasonId = LastRefusalReasonId,
@@ -51,11 +48,41 @@ class CourierDetailsRepositoryImpl(
         }
     }
 
-    override suspend fun deliveredCourier(
-        deliveredRequest : DeliveredRequest
+    override suspend fun updatePickupCourierStatus(
+        LastStatusId: Int,
+        Comment: String,
+        LastRefusalReasonId: Int,
+        ActionDate: String,
+        UserId: Int,
+        UserName: String,
+        RoleId: String,
+        HubName: String,
+        Latitude: String,
+        Longitude: String,
+        courierBody: List<CourierBody>
     ): Resource<DeliveredResponse> {
         return safeApiCall {
-            apiServices.deliveredCourier(
+            apiServices.updatePickupCourierStatus(
+                LastStatusId = LastStatusId,
+                Comment = Comment,
+                LastRefusalReasonId = LastRefusalReasonId,
+                ActionDate = ActionDate,
+                UserId = UserId,
+                UserName = UserName,
+                RoleId = RoleId,
+                HubName = HubName,
+                Latitude = Latitude,
+                Longitude = Longitude,
+                courierBody = courierBody
+            )
+        }
+    }
+
+    override suspend fun deliveredCourierWithPOD(
+        deliveredRequest: DeliveredRequest
+    ): Resource<DeliveredResponse> {
+        return safeApiCall {
+            apiServices.deliveredCourierWithPOD(
                 deliveredRequest = deliveredRequest
             )
         }

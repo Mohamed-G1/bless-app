@@ -3,26 +3,26 @@ package com.nat.couriersapp.screens.courierDetails.di
 import com.nat.couriersapp.screens.courierDetails.data.repository.CourierDetailsRepositoryImpl
 import com.nat.couriersapp.screens.courierDetails.domain.repository.CourierDetailsRepository
 import com.nat.couriersapp.screens.courierDetails.presentation.CourierDetailsViewModel
-import com.nat.couriersapp.screens.courierDetails.domain.usecases.DeliveredBarCodeCourierUseCase
-import com.nat.couriersapp.screens.courierDetails.domain.usecases.DeliveredCourierUseCase
+import com.nat.couriersapp.screens.courierDetails.domain.usecases.DeliveredCourierWithPODUseCase
 import com.nat.couriersapp.screens.courierDetails.domain.usecases.GetRefusalReasonsUseCase
-import com.nat.couriersapp.screens.courierDetails.domain.usecases.NotDeliveredCourierUseCase
+import com.nat.couriersapp.screens.courierDetails.domain.usecases.UpdateWaybillCourierStatusUseCase
 import com.nat.couriersapp.screens.courierDetails.domain.usecases.SendSignatureUseCase
 import com.nat.couriersapp.screens.courierDetails.domain.usecases.StatusNotDeliveredUseCase
+import com.nat.couriersapp.screens.courierDetails.domain.usecases.UpdatePickupCourierStatusUseCase
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val courierDetailsModule = module {
-    single { DeliveredBarCodeCourierUseCase(get()) }
-    single { NotDeliveredCourierUseCase(get()) }
+    single { UpdatePickupCourierStatusUseCase(get()) }
+    single { UpdateWaybillCourierStatusUseCase(get()) }
     single { SendSignatureUseCase(get()) }
     single { StatusNotDeliveredUseCase(get()) }
     single { GetRefusalReasonsUseCase(get()) }
-    single { DeliveredCourierUseCase(get()) }
+    single { DeliveredCourierWithPODUseCase(get()) }
     single<CourierDetailsRepository> {
         CourierDetailsRepositoryImpl(get())
     }
     viewModel {
-        CourierDetailsViewModel(get(), get(), get(), get(), get(), get(), get())
+        CourierDetailsViewModel(get(), get(), get(), get(), get(), get())
     }
 }

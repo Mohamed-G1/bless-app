@@ -24,19 +24,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.nat.couriersapp.base.ui.appButton.AppButton
-import com.nat.couriersapp.screens.home.domain.models.FilterOptions
+import com.nat.couriersapp.screens.home.domain.models.CourierSheetTypes
+import com.nat.couriersapp.screens.home.domain.models.PickupFilterOptions
+import com.nat.couriersapp.screens.home.domain.models.WaybillFilterOptions
 import com.nat.couriersapp.ui.theme.CompactTypography
 import com.nat.couriersapp.ui.theme.MediumBlue
 import com.nat.couriersapp.ui.theme.WhiteGray
 
 @Composable
-fun FilterBottomSheetLayout(
+fun PickupFilterBottomSheetLayout(
     onClick: (String) -> Unit,
     onResetClick: () -> Unit,
     alreadySelectedFilter: String
 ) {
 
-    val filtersList = FilterOptions.entries
+    val pickupFiltersList = PickupFilterOptions.entries
 
     var selectedFilter by remember {
         mutableStateOf(alreadySelectedFilter)
@@ -47,11 +49,12 @@ fun FilterBottomSheetLayout(
             .wrapContentSize()
             .padding(16.dp)
     ) {
-        filtersList.forEach { filter ->
-            FilterItem(
+
+        pickupFiltersList.forEach { filter ->
+            PickupFilterItem(
                 filter = filter,
                 onClick = {
-                    selectedFilter = filter.name
+                    selectedFilter = filter.value
                 },
                 alreadySelectedFilter = selectedFilter
             )
@@ -93,8 +96,8 @@ fun FilterBottomSheetLayout(
 
 
 @Composable
-fun FilterItem(
-    filter: FilterOptions,
+fun PickupFilterItem(
+    filter: PickupFilterOptions,
     onClick: (String) -> Unit,
     alreadySelectedFilter: String
 
@@ -111,7 +114,7 @@ fun FilterItem(
             )
 
             RadioButton(
-                selected = alreadySelectedFilter == filter.name,
+                selected = alreadySelectedFilter == filter.value,
                 onClick = {
                     onClick.invoke(filter.value)
                 },
@@ -130,6 +133,6 @@ fun FilterItem(
 
 @Preview
 @Composable
-private fun FilterBottomSheetLayoutReeview() {
+private fun FilterBottomSheetLayoutReview() {
 
 }

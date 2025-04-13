@@ -63,6 +63,7 @@ import com.nat.couriersapp.base.ui.toast.ShowToast
 import com.nat.couriersapp.screens.courierDetails.presentation.compoenets.DeliveredBottomSheet
 import com.nat.couriersapp.screens.courierDetails.presentation.compoenets.NotDeliveredBottomSheet
 import com.nat.couriersapp.screens.courierDetails.presentation.compoenets.RefusalReasonsBottomSheet
+import com.nat.couriersapp.screens.home.domain.models.CourierSheetTypes
 import com.nat.couriersapp.screens.home.domain.models.HomeModel
 import com.nat.couriersapp.screens.qrCode.QrCodeScreen
 import com.nat.couriersapp.ui.theme.CompactTypography
@@ -180,16 +181,21 @@ fun CourierDetailsScreen(
                         Column(
                             modifier = Modifier.weight(1.2f)
                         ) {
+                            val text =
+                                if (state.homeModel?.courierType == CourierSheetTypes.waybill.name) "شحنة إلي" else "طلبية من"
                             Text(
-                                "شحنة إلي",
+                                text,
                                 style = CompactTypography.labelMedium.copy(
                                     fontSize = 12.sp,
                                     color = Color.Gray
                                 ),
                             )
                             Spacer(Modifier.height(4.dp))
+                            val name =
+                                if (state.homeModel?.courierType == CourierSheetTypes.waybill.name) courierModel?.consigneeName.orEmpty() else courierModel?.shipperName.orEmpty()
+
                             Text(
-                                courierModel?.consigneeName.orEmpty(),
+                                name,
                                 style = CompactTypography.labelMedium.copy(
                                     fontSize = 13.sp,
                                     fontWeight = FontWeight.Bold
@@ -227,8 +233,10 @@ fun CourierDetailsScreen(
                                 )
                             )
                             Spacer(Modifier.height(8.dp))
+                            val text =
+                                if (state.homeModel?.courierType == CourierSheetTypes.waybill.name) courierModel?.consigneePhone.orEmpty() else courierModel?.shipperPhone.orEmpty()
                             Text(
-                                courierModel?.consigneePhone.orEmpty(),
+                                text,
                                 style = CompactTypography.labelMedium.copy(
                                     fontSize = 13.sp,
                                     fontWeight = FontWeight.Bold,
@@ -266,8 +274,11 @@ fun CourierDetailsScreen(
 
                     Spacer(Modifier.height(4.dp))
 
+                    val text =
+                        if (state.homeModel?.courierType == CourierSheetTypes.waybill.name) courierModel?.consigneeDestinationAddress.orEmpty() else courierModel?.shipperOriginAddress.orEmpty()
+
                     Text(
-                        courierModel?.shipperOriginAddress.orEmpty(),
+                        text,
                         style = CompactTypography.labelMedium.copy(
                             fontSize = 13.sp,
                             fontWeight = FontWeight.Bold
@@ -298,7 +309,7 @@ fun CourierDetailsScreen(
                         .padding(16.dp)
                 ) {
                     Text(
-                        courierModel?.lastStatusComment.orEmpty(),
+                        courierModel?.waybillComment.orEmpty(),
                         style = CompactTypography.labelMedium.copy(
                             fontSize = 12.sp,
                             color = Color.Gray
@@ -321,24 +332,55 @@ fun CourierDetailsScreen(
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     IconButton(onClick = {
-                        scope.launch {
-                            val location = LocationHandler.getCurrentLocation(context)
-                            if (location != null && LocationHandler.isLocationServiceEnabled(context)) {
-                                events?.invoke(
-                                    CourierDetailsEvents.LocationChanged(
-                                        lat = location.latitude.toString(),
-                                        lng = location.longitude.toString()
+                        if (state.homeModel?.courierType == CourierSheetTypes.waybill.name) {
+                            // waybill
+                            scope.launch {
+                                val location = LocationHandler.getCurrentLocation(context)
+                                if (location != null && LocationHandler.isLocationServiceEnabled(context)) {
+                                    events?.invoke(
+                                        CourierDetailsEvents.LocationChanged(
+                                            lat = location.latitude.toString(),
+                                            lng = location.longitude.toString()
+                                        )
                                     )
-                                )
-                                showCodeScannerScreen = true
+                                    showCodeScannerScreen = true
 
-                            } else {
-                                Toast.makeText(
-                                    context,
-                                    "You need to enable location",
-                                    Toast.LENGTH_SHORT
-                                ).show()
+                                } else {
+                                    Toast.makeText(
+                                        context,
+                                        "You need to enable location",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
                             }
+                        }
+
+                        else {
+                            scope.launch {
+                                val location = LocationHandler.getCurrentLocation(context)
+                                if (location != null && LocationHandler.isLocationServiceEnabled(
+                                        context
+                                    )
+                                ) {
+                                    events?.invoke(
+                                        CourierDetailsEvents.LocationChanged(
+                                            lat = location.latitude.toString(),
+                                            lng = location.longitude.toString()
+                                        )
+                                    )
+
+                                    events?.invoke(CourierDetailsEvents.TriggerPickupDeliveredApi)
+
+
+                                } else {
+                                    Toast.makeText(
+                                        context,
+                                        "You need to enable location",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            }
+
                         }
 
 
@@ -400,8 +442,11 @@ fun CourierDetailsScreen(
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     IconButton(onClick = {
+                        val address =
+                            if (state.homeModel?.courierType == CourierSheetTypes.waybill.name) courierModel?.consigneeDestinationAddress else courierModel?.shipperOriginAddress
+
                         val uri =
-                            Uri.parse("geo:0,0?q=${courierModel?.shipperOriginAddress}")
+                            Uri.parse("geo:0,0?q=${address}")
                         val intent = Intent(Intent.ACTION_VIEW, uri)
                         intent.setPackage("com.google.android.apps.maps") // Explicitly use Google Maps app
                         context.startActivity(intent)
@@ -440,8 +485,10 @@ fun CourierDetailsScreen(
                             .padding(16.dp)
                             .padding(vertical = 12.dp)
                     ) {
+                        val text =
+                            if (state.homeModel?.courierType == CourierSheetTypes.waybill.name) "رقم الشحنة" else " رقم الطلبية"
                         Text(
-                            "رقم الشحنة",
+                            text,
                             style = CompactTypography.labelMedium.copy(
                                 fontSize = 12.sp,
                                 color = Color.Gray
@@ -450,7 +497,7 @@ fun CourierDetailsScreen(
 
                         Spacer(Modifier.height(4.dp))
                         Text(
-                            courierModel?.waybillId.toString().orEmpty(),
+                            courierModel?.waybillSerial.toString().orEmpty(),
                             style = CompactTypography.labelMedium.copy(
                                 fontSize = 13.sp,
                                 fontWeight = FontWeight.Bold
@@ -543,7 +590,7 @@ fun CourierDetailsScreen(
                                     )
                                 )
 
-                                events?.invoke(CourierDetailsEvents.TriggerDeliveredApi)
+                                events?.invoke(CourierDetailsEvents.TriggerWaybillDeliveredApi)
 
                                 showDeliveredBottomSheet = false
 
@@ -611,28 +658,60 @@ fun CourierDetailsScreen(
                                 Toast.LENGTH_SHORT
                             ).show()
                         } else {
-                            scope.launch {
-                                val location = LocationHandler.getCurrentLocation(context)
-                                if (location != null && LocationHandler.isLocationServiceEnabled(
-                                        context
-                                    )
-                                ) {
-                                    events?.invoke(
-                                        CourierDetailsEvents.RefusalReasonsChanged(
-                                            name = refusalName,
-                                            id = refusalId,
-                                            comments = comment,
-                                            lat = location.latitude.toString(),
-                                            lng = location.longitude.toString()
+
+                            if (state.homeModel?.courierType == CourierSheetTypes.waybill.name) {
+                                scope.launch {
+                                    val location = LocationHandler.getCurrentLocation(context)
+                                    if (location != null && LocationHandler.isLocationServiceEnabled(
+                                            context
                                         )
-                                    )
-                                    showRefusalReasonsBottomSheet = false
-                                } else {
-                                    Toast.makeText(
-                                        context,
-                                        "You need to enable location",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
+                                    ) {
+                                        events?.invoke(
+                                            CourierDetailsEvents.RefusalWaybillReasonsChanged(
+                                                name = refusalName,
+                                                id = refusalId,
+                                                comments = comment,
+                                                lat = location.latitude.toString(),
+                                                lng = location.longitude.toString()
+                                            )
+                                        )
+                                        showRefusalReasonsBottomSheet = false
+                                    } else {
+                                        Toast.makeText(
+                                            context,
+                                            "You need to enable location",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                }
+
+
+                            } else {
+                                scope.launch {
+                                    val location = LocationHandler.getCurrentLocation(context)
+                                    if (location != null && LocationHandler.isLocationServiceEnabled(
+                                            context
+                                        )
+                                    ) {
+                                        events?.invoke(
+                                            CourierDetailsEvents.RefusalPickupReasonsChanged(
+                                                name = refusalName,
+                                                id = refusalId,
+                                                comments = comment,
+                                                lat = location.latitude.toString(),
+                                                lng = location.longitude.toString()
+                                            )
+                                        )
+                                        showRefusalReasonsBottomSheet = false
+
+                                        showRefusalReasonsBottomSheet = false
+                                    } else {
+                                        Toast.makeText(
+                                            context,
+                                            "You need to enable location",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
                                 }
                             }
 
@@ -648,6 +727,7 @@ fun CourierDetailsScreen(
 
 
 
+        if (state.homeModel?.lastStatusName != "Delivered" && state.homeModel?.lastStatusName != "Courier Picked up") {
 
         Surface(
             modifier = Modifier
@@ -655,75 +735,110 @@ fun CourierDetailsScreen(
                 .align(Alignment.BottomCenter),
             color = White
         ) {
+                // status buttons
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
+                    AppButton(
+                        text = "تم التسليم",
+                        buttonColor = DeliverGreen,
+                        boarderColor = DeliverGreen,
+                        modifier = Modifier.weight(.5f),
+                        onClick = {
+                            if (state.homeModel?.courierType == CourierSheetTypes.waybill.name) {
+                                scope.launch {
+                                    val location = LocationHandler.getCurrentLocation(context)
+                                    if (location != null && LocationHandler.isLocationServiceEnabled(
+                                            context
+                                        )
+                                    ) {
+                                        events?.invoke(
+                                            CourierDetailsEvents.LocationChanged(
+                                                lat = location.latitude.toString(),
+                                                lng = location.longitude.toString()
+                                            )
+                                        )
+                                        showDeliveredBottomSheet = true
 
-                AppButton(
-                    text = "تم التسليم",
-                    buttonColor = DeliverGreen,
-                    boarderColor = DeliverGreen,
-                    modifier = Modifier.weight(.5f),
-                    onClick = {
-                        scope.launch {
-                            val location = LocationHandler.getCurrentLocation(context)
-                            if (location != null && LocationHandler.isLocationServiceEnabled(context)) {
-                                events?.invoke(
-                                    CourierDetailsEvents.LocationChanged(
-                                        lat = location.latitude.toString(),
-                                        lng = location.longitude.toString()
-                                    )
-                                )
-                                showDeliveredBottomSheet = true
-
+                                    } else {
+                                        Toast.makeText(
+                                            context,
+                                            "You need to enable location",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                }
                             } else {
-                                Toast.makeText(
-                                    context,
-                                    "You need to enable location",
-                                    Toast.LENGTH_SHORT
-                                ).show()
+
+                                scope.launch {
+                                    val location = LocationHandler.getCurrentLocation(context)
+                                    if (location != null && LocationHandler.isLocationServiceEnabled(
+                                            context
+                                        )
+                                    ) {
+                                        events?.invoke(
+                                            CourierDetailsEvents.LocationChanged(
+                                                lat = location.latitude.toString(),
+                                                lng = location.longitude.toString()
+                                            )
+                                        )
+
+                                        events?.invoke(CourierDetailsEvents.TriggerPickupDeliveredApi)
+
+
+                                    } else {
+                                        Toast.makeText(
+                                            context,
+                                            "You need to enable location",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                }
+
                             }
                         }
-                    }
-                )
+                    )
 
-                Spacer(modifier = Modifier.width(12.dp))
+                    Spacer(modifier = Modifier.width(12.dp))
 
-                AppButton(
-                    text = "إلغاء التسليم",
-                    buttonColor = NotDeliverRed,
-                    boarderColor = NotDeliverRed,
-                    modifier = Modifier.weight(.5f),
-                    onClick = {
-                        scope.launch {
-                            val location = LocationHandler.getCurrentLocation(context)
-                            if (location != null && LocationHandler.isLocationServiceEnabled(context)) {
-                                events?.invoke(
-                                    CourierDetailsEvents.LocationChanged(
-                                        lat = location.latitude.toString(),
-                                        lng = location.longitude.toString()
+                    AppButton(
+                        text = "إلغاء التسليم",
+                        buttonColor = NotDeliverRed,
+                        boarderColor = NotDeliverRed,
+                        modifier = Modifier.weight(.5f),
+                        onClick = {
+                            scope.launch {
+                                val location = LocationHandler.getCurrentLocation(context)
+                                if (location != null && LocationHandler.isLocationServiceEnabled(
+                                        context
                                     )
-                                )
-                                showNotDeliveredBottomSheet = true
-                                events?.invoke(CourierDetailsEvents.NotDeliveredStatus)
+                                ) {
+                                    events?.invoke(
+                                        CourierDetailsEvents.LocationChanged(
+                                            lat = location.latitude.toString(),
+                                            lng = location.longitude.toString()
+                                        )
+                                    )
+                                    showNotDeliveredBottomSheet = true
+                                    events?.invoke(CourierDetailsEvents.NotDeliveredStatus)
 
-                            } else {
-                                Toast.makeText(
-                                    context,
-                                    "You need to enable location",
-                                    Toast.LENGTH_SHORT
-                                ).show()
+                                } else {
+                                    Toast.makeText(
+                                        context,
+                                        "You need to enable location",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
                             }
+
                         }
-
-
-                    }
-                )
+                    )
+                }
             }
         }
 
@@ -732,6 +847,10 @@ fun CourierDetailsScreen(
         }
         if (state.errorMessage.isNotEmpty()) {
             ShowToast(state.errorMessage)
+        }
+
+        if (state.navigateBack) {
+            onBackClicked?.invoke()
         }
     }
 
