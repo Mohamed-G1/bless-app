@@ -140,5 +140,5 @@ data class HomeModel(
     @SerializedName("Weight")
     val weight: Double?,
 
-    val courierType : String
+    val courierType: String
 )

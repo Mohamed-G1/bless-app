@@ -76,7 +76,8 @@ interface ApiServices {
 
     @GET("api/Status/FillCourierStatusDDLMobile")
     suspend fun statusNotDelivered(
-        @Query("isActive") isActive: Boolean
+        @Query("isActive") isActive: Boolean,
+        @Query("statusTypeId") statusTypeId: Int
     ): Response<StatusNotDeliveredResponse>
 
     @GET("api/RefusalReason/GetAllRefusalReasonsByStstusIdMobile")

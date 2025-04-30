@@ -44,7 +44,8 @@ interface CourierDetailsRepository {
     ): Resource<DeliveredResponse>
 
     suspend fun getNotDeliveredStatus(
-        isActive: Boolean
+        isActive: Boolean,
+        statusTypeId : Int
     ): Flow<Resource<StatusNotDeliveredResponse>>
 
     suspend fun getNotDeliveredRefusalReasons(

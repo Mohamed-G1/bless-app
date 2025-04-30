@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.google.gson.annotations.SerializedName
 
 const val USER_SETTINGS = "userSettings"
 const val SHOULD_SHOW_ONBOARDING = "isAppOnboarding"
@@ -21,6 +22,12 @@ const val WAYBILL_FILTER_TYPE = "filter_type"
 const val PICKUP_FILTER_TYPE = "pickup_type"
 const val ROLE_ID = "role_id"
 const val COURIER_TYPE = "courier"
+const val DeliverStatusId = "DeliverStatusId"
+const val DeliverReasonId = "DeliverReasonId"
+const val InTransitStatusId = "InTransitStatusId"
+const val InTransitReasonId = "InTransitReasonId"
+const val CourierPickedupStatusId = "CourierPickedupStatusId"
+const val CourierPickedupReasonId = "CourierPickedupReasonId"
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = USER_SETTINGS)
 
@@ -37,5 +44,13 @@ object PreferencesKeys {
     val pickupFilterType = stringPreferencesKey(name = PICKUP_FILTER_TYPE)
     val userId = intPreferencesKey(name = USER_ID)
     val roleId = intPreferencesKey(name = ROLE_ID)
+
+    val deliverStatusId = stringPreferencesKey(name = DeliverStatusId)
+    val deliverReasonId = stringPreferencesKey(name = DeliverReasonId)
+    val inTransitStatusId = stringPreferencesKey(name = InTransitStatusId)
+    val inTransitReasonId = stringPreferencesKey(name = InTransitReasonId)
+    val courierPickedupStatusId = stringPreferencesKey(name = CourierPickedupStatusId)
+    val courierPickedupReasonId = stringPreferencesKey(name = CourierPickedupReasonId)
+
 
 }

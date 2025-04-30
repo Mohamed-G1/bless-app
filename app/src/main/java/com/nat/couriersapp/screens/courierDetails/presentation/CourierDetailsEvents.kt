@@ -6,6 +6,7 @@ sealed class CourierDetailsEvents {
 
     data class ClientNameChanged(val name: String) : CourierDetailsEvents()
     data class BarCodeScannerValue(val code: Long) : CourierDetailsEvents()
+    data class PickupBarCodeScannerValue(val code: Long) : CourierDetailsEvents()
     data object TriggerWaybillDeliveredApi : CourierDetailsEvents()
     data object TriggerPickupDeliveredApi : CourierDetailsEvents()
     data object TriggerPickupNotDeliveredApi : CourierDetailsEvents()

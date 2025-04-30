@@ -12,6 +12,7 @@ import com.nat.couriersapp.screens.courierDetails.domain.usecases.GetRefusalReas
 import com.nat.couriersapp.screens.courierDetails.domain.usecases.UpdateWaybillCourierStatusUseCase
 import com.nat.couriersapp.screens.courierDetails.domain.usecases.StatusNotDeliveredUseCase
 import com.nat.couriersapp.screens.courierDetails.domain.usecases.UpdatePickupCourierStatusUseCase
+import com.nat.couriersapp.screens.home.domain.models.CourierSheetTypes
 import com.nat.couriersapp.utils.getCurrentDate
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -81,6 +82,14 @@ class CourierDetailsViewModel(
                         callUpdateWaybillStatusWithBarCode()
                     }
 
+                    is CourierDetailsEvents.PickupBarCodeScannerValue -> {
+//                        callUpdateWaybillStatusWithBarCode()
+                        _state.update { it.copy(waybillSerial = event.code) }
+
+                        callPickupDeliveredApi()
+
+                    }
+
                     is CourierDetailsEvents.StatusChanged -> {
                         _state.update { it.copy(statusName = event.name, statusId = event.id) }
                         callRefusalReasonsApi()
@@ -129,6 +138,8 @@ class CourierDetailsViewModel(
     }
 
 
+
+
     private fun callWaybillDeliveredCourierApi() {
         _state.update { it.copy(isLoading = true, errorMessage = "") }
         executeSuspend(
@@ -144,7 +155,7 @@ class CourierDetailsViewModel(
                         longitude = _state.value.lng,
                         receiverName = _state.value.clientName,
                         receiverSSN = null,
-                        roleId = "6",
+                        roleId = getUserDataManager.readDeliverStatusId().first(),
                         userId = getUserDataManager.readUserId().first(),
                         userName = getUserDataManager.readName().first(),
                         waybillSerials = listOf(
@@ -178,7 +189,7 @@ class CourierDetailsViewModel(
         executeSuspend(
             block = {
                 updateWaybillCourierStatusUseCase(
-                    LastStatusId = 83,
+                    LastStatusId = getUserDataManager.readInTransitStatusId().first().toInt(),
                     Comment = "",
                     LastRefusalReasonId = _state.value.homeModel?.lastStatusId ?: 0,
                     ActionDate = getCurrentDate(),
@@ -291,13 +302,13 @@ class CourierDetailsViewModel(
         executeSuspend(
             block = {
                 updatePickupCourierStatusUseCase(
-                    LastStatusId = 79,
+                    LastStatusId = getUserDataManager.readCourierPickedupStatusId().first().toInt(),
                     Comment = _state.value.comments,
-                    LastRefusalReasonId = 142,
+                    LastRefusalReasonId = getUserDataManager.readCourierPickedupReasonId().first().toInt(),
                     ActionDate = getCurrentDate(),
                     UserId = getUserDataManager.readUserId().first(),
                     UserName = getUserDataManager.readName().first(),
-                    RoleId = "4",
+                    RoleId = getUserDataManager.readRoleId().first().toString(),
                     HubName = _state.value.homeModel?.hubName.orEmpty(),
                     Latitude = _state.value.lat,
                     Longitude = _state.value.lng,
@@ -325,7 +336,11 @@ class CourierDetailsViewModel(
 
     private fun callStatusNotDelivered() {
         executeFlow(block = {
-            statusNotDeliveredUseCase()
+            if (_state.value.homeModel?.courierType == CourierSheetTypes.waybill.name) {
+                statusNotDeliveredUseCase(statusTypeId = 1)
+            } else {
+                statusNotDeliveredUseCase(statusTypeId = 2)
+            }
         }, onLoading = { value ->
             _state.update { it.copy(isLoading = value) }
 

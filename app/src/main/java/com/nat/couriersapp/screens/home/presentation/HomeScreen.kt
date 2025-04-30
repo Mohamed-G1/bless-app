@@ -299,14 +299,14 @@ fun HomeScreen(
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-            val text = if (state.model?.obj?.data?.firstOrNull()?.lastStatusName == CourierSheetTypes.waybill.name) "قائمة الشحنات" else "قائمة الطلبيات"
+            val text = if (state.courierType == CourierSheetTypes.waybill.name) "قائمة الشحنات" else "قائمة الطلبيات"
 
             Text(
                 text = text, style = CompactTypography.labelMedium.copy(fontSize = 18.sp),
             )
             Spacer(Modifier.width(8.dp))
 
-            val countText = if (state.model?.obj?.data?.firstOrNull()?.lastStatusName == CourierSheetTypes.waybill.name) "شحنة" else "طلبية"
+            val countText = if (state.courierType == CourierSheetTypes.waybill.name) "شحنة" else "طلبية"
 
             val count =
                 StringBuilder().append("( ").append(state.model?.obj?.total ?: 0).append(" ").append(countText)

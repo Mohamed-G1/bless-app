@@ -89,12 +89,13 @@ class CourierDetailsRepositoryImpl(
     }
 
 
-    override suspend fun getNotDeliveredStatus(isActive: Boolean): Flow<Resource<StatusNotDeliveredResponse>> =
+    override suspend fun getNotDeliveredStatus(isActive: Boolean,statusTypeId : Int): Flow<Resource<StatusNotDeliveredResponse>> =
         flow {
             emit(Resource.Loading)
             val result = safeApiCall {
                 apiServices.statusNotDelivered(
-                    isActive = isActive
+                    isActive = isActive,
+                    statusTypeId = statusTypeId
                 )
             }
             emit(result)

@@ -52,5 +52,18 @@ data class UserModel(
     @SerializedName("UserPhotoPath")
     val userPhotoPath: Any?,
     @SerializedName("userroles")
-    val userroles: String?
+    val userroles: String?,
+
+    @SerializedName("DeliverStatusId")
+    val DeliverStatusId: String,
+    @SerializedName("DeliverReasonId")
+    val DeliverReasonId: String,
+    @SerializedName("InTransitStatusId")
+    val InTransitStatusId: String,
+    @SerializedName("InTransitReasonId")
+    val InTransitReasonId: String,
+    @SerializedName("CourierPickedupStatusId")
+    val CourierPickedupStatusId: String,
+    @SerializedName("CourierPickedupReasonId")
+    val CourierPickedupReasonId: String,
 )

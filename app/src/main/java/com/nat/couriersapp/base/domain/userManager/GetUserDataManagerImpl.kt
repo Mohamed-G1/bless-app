@@ -10,6 +10,42 @@ class GetUserDataManagerImpl(
     private val context: Context,
 
     ) : GetUserDataManager {
+    override fun readDeliverStatusId(): Flow<String> {
+        return context.dataStore.data.map { preferences ->
+            preferences[PreferencesKeys.deliverStatusId] ?: "6"
+        }
+    }
+
+    override fun readDeliverReasonId(): Flow<String> {
+        return context.dataStore.data.map { preferences ->
+            preferences[PreferencesKeys.deliverReasonId] ?: "62"
+        }
+    }
+
+    override fun readInTransitStatusId(): Flow<String> {
+        return context.dataStore.data.map { preferences ->
+            preferences[PreferencesKeys.inTransitStatusId] ?: "83"
+        }
+    }
+
+    override fun readInTransitReasonId(): Flow<String> {
+        return context.dataStore.data.map { preferences ->
+            preferences[PreferencesKeys.inTransitReasonId] ?: "145"
+        }
+    }
+
+    override fun readCourierPickedupStatusId(): Flow<String> {
+        return context.dataStore.data.map { preferences ->
+            preferences[PreferencesKeys.courierPickedupStatusId] ?: "79"
+        }
+    }
+
+    override fun readCourierPickedupReasonId(): Flow<String> {
+        return context.dataStore.data.map { preferences ->
+            preferences[PreferencesKeys.courierPickedupReasonId] ?: "142"
+        }
+    }
+
     override fun readToken(): Flow<String> {
         return context.dataStore.data.map { preferences ->
             preferences[PreferencesKeys.token] ?: ""
@@ -32,7 +68,7 @@ class GetUserDataManagerImpl(
 
     override fun readRoleId(): Flow<Int> {
         return context.dataStore.data.map { preferences ->
-            preferences[PreferencesKeys.roleId] ?: 0
+            preferences[PreferencesKeys.roleId] ?: 4
         }
     }
 

@@ -9,7 +9,7 @@ class StatusNotDeliveredUseCase(
     private val repository: CourierDetailsRepository
 ) {
 
-    suspend operator fun invoke(): Flow<Resource<StatusNotDeliveredResponse>> {
-        return repository.getNotDeliveredStatus(isActive = true)
+    suspend operator fun invoke(statusTypeId : Int): Flow<Resource<StatusNotDeliveredResponse>> {
+        return repository.getNotDeliveredStatus(isActive = true, statusTypeId = statusTypeId)
     }
 }
