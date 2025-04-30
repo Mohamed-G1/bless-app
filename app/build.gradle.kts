@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace = "com.nat.couriersapp"
+    namespace = "com.nat.greco"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.nat.couriersapp"
+        applicationId = "com.nat.greco"
         minSdk = 24
         targetSdk = 35
         versionCode = 1

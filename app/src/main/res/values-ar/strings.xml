@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Couriers App</string>
+    <string name="app_name">Greco App</string>
     <string name="home">الرئيسية</string>
-    <string name="scan">المسح</string>
-    <string name="conroller">لوحة التحكم</string>
-    <string name="more">المزيد</string>
+    <string name="clients">العملاء</string>
+    <string name="requests">الطلبات</string>
+    <string name="stock">المخزون</string>
     <string name="ok">ok</string>
     <string name="cancel">cancel</string>
     <string name="coruier_is_became_esay">الشحن أصبح سهلا</string>
