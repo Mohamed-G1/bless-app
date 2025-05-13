@@ -47,6 +47,7 @@ import com.nat.greco.base.permissions.LocationPermissionTextProvider
 import com.nat.greco.base.permissions.PermissionDialog
 import com.nat.greco.base.permissions.PermissionViewModel
 import com.nat.greco.ui.theme.CompactTypography
+import kotlinx.coroutines.delay
 
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @Composable
@@ -63,35 +64,40 @@ fun SplashScreen(
 
     var launchTheNavigator by remember { mutableStateOf(false) }
 
-    if (state.shouldNavigate && isLocationGranted ) {
-        LaunchedEffect(Unit) {
-            navigateToNext?.invoke()
-        }
-    }
+    LaunchedEffect(Unit) {
+        delay(1500)
+        navigateToNext?.invoke()
 
-    if (launchTheNavigator) {
-        LaunchedEffect(Unit) {
-            event?.invoke(SplashEvent.Navigate)
-//            navigateToNext?.invoke()
-        }
-        launchTheNavigator = false
     }
+//    if (state.shouldNavigate && isLocationGranted ) {
+//        LaunchedEffect(Unit) {
+//            navigateToNext?.invoke()
+//        }
+//    }
+
+//    if (launchTheNavigator) {
+//        LaunchedEffect(Unit) {
+//            event?.invoke(SplashEvent.Navigate)
+////            navigateToNext?.invoke()
+//        }
+//        launchTheNavigator = false
+//    }
 
 
     // This to recheck location permission after returning from settings
-    val lifecycleOwner = LocalLifecycleOwner.current
-    DisposableEffect(lifecycleOwner) {
-        val lifecycleObserver = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME) {
-                isLocationGranted = LocationPermissionsChecker.isLocationPermissionGranted(activity)
-            }
-
-        }
-        lifecycleOwner.lifecycle.addObserver(lifecycleObserver)
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(lifecycleObserver)
-        }
-    }
+//    val lifecycleOwner = LocalLifecycleOwner.current
+//    DisposableEffect(lifecycleOwner) {
+//        val lifecycleObserver = LifecycleEventObserver { _, event ->
+//            if (event == Lifecycle.Event.ON_RESUME) {
+//                isLocationGranted = LocationPermissionsChecker.isLocationPermissionGranted(activity)
+//            }
+//
+//        }
+//        lifecycleOwner.lifecycle.addObserver(lifecycleObserver)
+//        onDispose {
+//            lifecycleOwner.lifecycle.removeObserver(lifecycleObserver)
+//        }
+//    }
 
     val permissionsToRequest = arrayOf(
         android.Manifest.permission.ACCESS_FINE_LOCATION,
@@ -122,48 +128,48 @@ fun SplashScreen(
         }
     )
 
-    LaunchedEffect(Unit) {
-        if (LocationPermissionsChecker.isLocationPermissionGranted(context = activity).not()) {
-            multiplePermissionResultLauncher.launch(permissionsToRequest)
-        }
-    }
-
-    dialogQueue
-        .reversed()
-        .forEach { permission ->
-            // Show dialog only if location permission is not granted
-            if (LocationPermissionsChecker.isLocationPermissionGranted(context = activity).not()
-            ) {
-                PermissionDialog(
-                    permissionTextProvider = when (permission) {
-                        android.Manifest.permission.ACCESS_FINE_LOCATION -> {
-                            LocationPermissionTextProvider()
-                        }
-
-//                    android.Manifest.permission.CAMERA -> {
-//                        CameraPermissionTextProvider()
-//                    }
+//    LaunchedEffect(Unit) {
+//        if (LocationPermissionsChecker.isLocationPermissionGranted(context = activity).not()) {
+//            multiplePermissionResultLauncher.launch(permissionsToRequest)
+//        }
+//    }
 //
-//                    android.Manifest.permission.ACCESS_NOTIFICATION_POLICY -> {
-//                        NotificationsPermissionTextProvider()
-//                    }
-
-                        else -> return@forEach
-                    },
-                    isPermanentlyDeclined = !shouldShowRequestPermissionRationale(
-                        activity, permission
-                    ),
-                    onDismiss = viewModel::dismissDialog,
-                    onOkClick = {
-                        viewModel.dismissDialog()
-                        multiplePermissionResultLauncher.launch(
-                            arrayOf(permission)
-                        )
-                    },
-                    onGoToAppSettingsClick = activity::openAppSettings
-                )
-            }
-        }
+//    dialogQueue
+//        .reversed()
+//        .forEach { permission ->
+//            // Show dialog only if location permission is not granted
+//            if (LocationPermissionsChecker.isLocationPermissionGranted(context = activity).not()
+//            ) {
+//                PermissionDialog(
+//                    permissionTextProvider = when (permission) {
+//                        android.Manifest.permission.ACCESS_FINE_LOCATION -> {
+//                            LocationPermissionTextProvider()
+//                        }
+//
+////                    android.Manifest.permission.CAMERA -> {
+////                        CameraPermissionTextProvider()
+////                    }
+////
+////                    android.Manifest.permission.ACCESS_NOTIFICATION_POLICY -> {
+////                        NotificationsPermissionTextProvider()
+////                    }
+//
+//                        else -> return@forEach
+//                    },
+//                    isPermanentlyDeclined = !shouldShowRequestPermissionRationale(
+//                        activity, permission
+//                    ),
+//                    onDismiss = viewModel::dismissDialog,
+//                    onOkClick = {
+//                        viewModel.dismissDialog()
+//                        multiplePermissionResultLauncher.launch(
+//                            arrayOf(permission)
+//                        )
+//                    },
+//                    onGoToAppSettingsClick = activity::openAppSettings
+//                )
+//            }
+//        }
 
 
     Box(
@@ -179,7 +185,7 @@ fun SplashScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .offset {
-                    IntOffset(x = 0 , y = (-60))
+                    IntOffset(x = 0, y = (-60))
                 }// This moves the image up slightly, so text fits at the bottom
         )
 

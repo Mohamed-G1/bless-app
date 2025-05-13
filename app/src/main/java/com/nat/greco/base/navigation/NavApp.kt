@@ -225,7 +225,7 @@ private fun signOutFromHome(navController: NavController) {
  * */
 fun goToNextAfterSplash(navController: NavHostController, destination: Destinations) {
     when (destination) {
-        Destinations.Login -> goToLoginFromSplashScreen(navController)
+//        Destinations.Login -> goToLoginFromSplashScreen(navController)
         Destinations.Home -> goToHomeScreen(navController)
         else -> goToLoginFromSplashScreen(navController)
     }
