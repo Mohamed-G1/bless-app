@@ -76,6 +76,8 @@ fun HomeScreen(
     events: ((HomeEvents) -> Unit)? = null,
     onClick: ((HomeModel) -> Unit)? = null,
     navigateToNotification: (() -> Unit)? = null,
+    openNewRequestScreen: (() -> Unit)? = null,
+    openAddClientScreen: (() -> Unit)? = null,
     signOut: (() -> Unit)? = null
 ) {
     val context = LocalContext.current
@@ -423,11 +425,12 @@ fun HomeScreen(
             AddRequestSheetLayout(
                 onNewOrderClicked = {
                     floatingButtonBottomSheet = false
-                    addNewOrderBottomSheet = true
+//                    addNewOrderBottomSheet = true
+                    openNewRequestScreen?.invoke()
                 },
                 onNewClientClicked = {
                     floatingButtonBottomSheet = false
-                    addNewClientBottomSheet = true
+                    openAddClientScreen?.invoke()
                 }
             )
         }

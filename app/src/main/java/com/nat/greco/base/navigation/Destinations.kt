@@ -39,6 +39,10 @@ sealed class Destinations {
 
     @Serializable
     data object Notification : Destinations()
+    @Serializable
+    data object NewRequestScreen : Destinations()
+    @Serializable
+    data object AddNewClientScreen : Destinations()
 
     @Serializable
     data class CourierDetails(
