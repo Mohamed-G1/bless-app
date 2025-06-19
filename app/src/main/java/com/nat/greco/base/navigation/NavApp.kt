@@ -21,6 +21,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.nat.greco.base.navigation.Destinations.AddNewClientScreen
+import com.nat.greco.screens.AddNewClientScreen
+import com.nat.greco.screens.NewRequestScreen
 import com.nat.greco.screens.orders.OrdersScreen
 import com.nat.greco.screens.courierDetails.presentation.CourierDetailsScreen
 import com.nat.greco.screens.courierDetails.presentation.CourierDetailsViewModel
@@ -111,6 +114,14 @@ fun NavApp() {
                         if (navController.canNavigate)
                             navController.navigate(Destinations.Notification)
                     },
+                    openNewRequestScreen = {
+                        if (navController.canNavigate)
+                            navController.navigate(Destinations.NewRequestScreen)
+                    },
+                    openAddClientScreen = {
+                        if (navController.canNavigate)
+                            navController.navigate(Destinations.AddNewClientScreen)
+                    },
                     signOut = {
                         if (navController.canNavigate)
                             signOutFromHome(navController)
@@ -173,6 +184,22 @@ fun NavApp() {
 
             composable<Destinations.Stock> {
                 StockScreen()
+            }
+            composable<Destinations.NewRequestScreen> {
+                NewRequestScreen(
+                    onBackClicked = {
+                        if (navController.canNavigate)
+                            navController.navigateUp()
+                    }
+                )
+            }
+            composable<Destinations.AddNewClientScreen> {
+                AddNewClientScreen(
+                    onBackClicked = {
+                        if (navController.canNavigate)
+                            navController.navigateUp()
+                    }
+                )
             }
         }
 
