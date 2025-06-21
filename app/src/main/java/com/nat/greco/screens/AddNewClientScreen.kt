@@ -25,8 +25,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nat.greco.R
+import com.nat.greco.base.ui.appButton.AppButton
 import com.nat.greco.base.ui.textField.AppTextField
 import com.nat.greco.ui.theme.CompactTypography
+import com.nat.greco.ui.theme.MediumGray
 
 @Composable
 fun AddNewClientScreen(    onBackClicked: (() -> Unit)? = null,
@@ -49,7 +51,7 @@ fun AddNewClientScreen(    onBackClicked: (() -> Unit)? = null,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    "منتج جديد",
+                    "عميل جديد",
                     style = CompactTypography.headlineMedium.copy(fontSize = 18.sp)
                 )
 
@@ -99,7 +101,12 @@ fun AddNewClientScreen(    onBackClicked: (() -> Unit)? = null,
             Spacer(Modifier.height(8.dp))
 
             Title()
-
+            Spacer(Modifier.height(28.dp))
+            AppButton(
+                text = "اضافة",
+                onClick = {
+                }
+            )
 
         }
     }
@@ -118,7 +125,8 @@ private fun ClientName() {
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Text,
             imeAction = ImeAction.Next
-        )
+        ),
+        borderUnFocusColor = MediumGray
     )
 }
 
@@ -134,7 +142,8 @@ private fun ChooseLocation() {
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Text,
             imeAction = ImeAction.Next
-        )
+        ),
+        borderUnFocusColor = MediumGray
     )
 }
 
@@ -150,7 +159,8 @@ private fun Tax() {
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Text,
             imeAction = ImeAction.Next
-        )
+        ),
+        borderUnFocusColor = MediumGray
     )
 }
 @Composable
@@ -165,7 +175,8 @@ private fun Department() {
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Text,
             imeAction = ImeAction.Next
-        )
+        ),
+        borderUnFocusColor = MediumGray
     )
 }
 @Composable
@@ -180,7 +191,8 @@ private fun Tags() {
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Text,
             imeAction = ImeAction.Next
-        )
+        ),
+        borderUnFocusColor = MediumGray
     )
 }
 @Composable
@@ -195,7 +207,8 @@ private fun AddName() {
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Text,
             imeAction = ImeAction.Next
-        )
+        ),
+        borderUnFocusColor = MediumGray
     )
 }
 
@@ -211,7 +224,8 @@ private fun Phone() {
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Text,
             imeAction = ImeAction.Next
-        )
+        ),
+        borderUnFocusColor = MediumGray
     )
 }
 
@@ -227,7 +241,8 @@ private fun Email() {
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Text,
             imeAction = ImeAction.Next
-        )
+        ),
+        borderUnFocusColor = MediumGray
     )
 }
 
@@ -243,11 +258,12 @@ private fun Title() {
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Text,
             imeAction = ImeAction.Next
-        )
+        ),
+        borderUnFocusColor = MediumGray
     )
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun AddNewClientScreenPreview() {
     AddNewClientScreen()

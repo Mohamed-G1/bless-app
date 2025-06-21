@@ -43,6 +43,8 @@ sealed class Destinations {
     data object NewRequestScreen : Destinations()
     @Serializable
     data object AddNewClientScreen : Destinations()
+    @Serializable
+    data object OrderDetailsScreen : Destinations()
 
     @Serializable
     data class CourierDetails(

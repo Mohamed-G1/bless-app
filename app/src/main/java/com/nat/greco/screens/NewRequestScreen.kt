@@ -1,5 +1,6 @@
 package com.nat.greco.screens
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -27,14 +29,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.DarkGray
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nat.greco.R
+import com.nat.greco.base.ui.appButton.AppButton
 import com.nat.greco.base.ui.textField.AppTextField
+import com.nat.greco.screens.login.presentation.LoginEvents
 import com.nat.greco.ui.theme.CompactTypography
+import com.nat.greco.ui.theme.MediumGray
+import com.nat.greco.ui.theme.WhiteGray
 
 @Composable
 fun NewRequestScreen(
@@ -108,7 +115,7 @@ fun NewRequestScreen(
                 )
                 Spacer(modifier = Modifier.weight(1f))
 
-                Counter(onCounterChange = {}, modifier = Modifier .fillMaxWidth(.5f)
+                Counter(onCounterChange = {}, modifier = Modifier .fillMaxWidth(.51f)
                     .height(40.dp),)
             }
 
@@ -133,22 +140,32 @@ fun NewRequestScreen(
                 style = CompactTypography.headlineMedium.copy(fontSize = 16.sp)
             )
             Spacer(Modifier.height(8.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight(),
+                colors = CardDefaults.cardColors(containerColor = White),
+                border = BorderStroke(1.dp, color = WhiteGray)
             ) {
-                Text(
-                    "اجمالي",
-                    style = CompactTypography.headlineMedium.copy(fontSize = 14.sp)
-                )
+                Column(
+                    modifier = Modifier.padding(16.dp)
+                ) {
 
-                Text(
-                    "500 EGP",
-                    style = CompactTypography.headlineMedium.copy(fontSize = 14.sp)
-                )
-            }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        "اجمالي",
+                        style = CompactTypography.headlineMedium.copy(fontSize = 14.sp)
+                    )
+
+                    Text(
+                        "500 EGP",
+                        style = CompactTypography.headlineMedium.copy(fontSize = 14.sp)
+                    )
+                }
 
             Spacer(Modifier.height(8.dp))
 
@@ -185,6 +202,16 @@ fun NewRequestScreen(
                     style = CompactTypography.headlineMedium.copy(fontSize = 14.sp)
                 )
             }
+                }
+            }
+
+            Spacer(Modifier.height(28.dp))
+            AppButton(
+                text = "اضافة",
+                onClick = {
+                }
+            )
+
         }
     }
 }
@@ -204,7 +231,10 @@ private fun ChooseClient(
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Text,
             imeAction = ImeAction.Next
-        )
+        ),
+        borderUnFocusColor = MediumGray,
+
+
     )
 }
 
@@ -220,7 +250,8 @@ private fun ChooseLocation() {
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Text,
             imeAction = ImeAction.Next
-        )
+        ),
+        borderUnFocusColor = MediumGray
     )
 }
 @Composable
@@ -235,7 +266,8 @@ private fun ChoosePrice() {
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Text,
             imeAction = ImeAction.Next
-        )
+        ),
+        borderUnFocusColor = MediumGray
     )
 }
 @Composable
@@ -250,7 +282,8 @@ private fun ChoosePriceValue() {
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Text,
             imeAction = ImeAction.Next
-        )
+        ),
+        borderUnFocusColor = MediumGray
     )
 }
 @Composable
@@ -265,7 +298,8 @@ private fun ChooseDate() {
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Text,
             imeAction = ImeAction.Next
-        )
+        ),
+        borderUnFocusColor = MediumGray
     )
 }
 @Composable
@@ -280,7 +314,8 @@ private fun AddProduce() {
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Text,
             imeAction = ImeAction.Next
-        )
+        ),
+        borderUnFocusColor = MediumGray
     )
 }
 @Composable

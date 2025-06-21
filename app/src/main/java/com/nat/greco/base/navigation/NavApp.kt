@@ -24,6 +24,7 @@ import androidx.navigation.toRoute
 import com.nat.greco.base.navigation.Destinations.AddNewClientScreen
 import com.nat.greco.screens.AddNewClientScreen
 import com.nat.greco.screens.NewRequestScreen
+import com.nat.greco.screens.OrderDetailsScreen
 import com.nat.greco.screens.orders.OrdersScreen
 import com.nat.greco.screens.courierDetails.presentation.CourierDetailsScreen
 import com.nat.greco.screens.courierDetails.presentation.CourierDetailsViewModel
@@ -179,7 +180,12 @@ fun NavApp() {
             }
 
             composable<Destinations.Requests> {
-                OrdersScreen()
+                OrdersScreen(
+                    onOrderClicked = {
+                        if (navController.canNavigate)
+                            navController.navigate(Destinations.OrderDetailsScreen)
+                    }
+                )
             }
 
             composable<Destinations.Stock> {
@@ -195,6 +201,15 @@ fun NavApp() {
             }
             composable<Destinations.AddNewClientScreen> {
                 AddNewClientScreen(
+                    onBackClicked = {
+                        if (navController.canNavigate)
+                            navController.navigateUp()
+                    }
+                )
+            }
+
+            composable<Destinations.OrderDetailsScreen> {
+                OrderDetailsScreen(
                     onBackClicked = {
                         if (navController.canNavigate)
                             navController.navigateUp()
@@ -248,13 +263,15 @@ private fun signOutFromHome(navController: NavController) {
         }
     }
 }
+
 /** This function handle the destination from the splash screen to the appropriate screen
  * */
 fun goToNextAfterSplash(navController: NavHostController, destination: Destinations) {
     when (destination) {
 //        Destinations.Login -> goToLoginFromSplashScreen(navController)
         Destinations.Home -> goToHomeScreen(navController)
-        else -> goToLoginFromSplashScreen(navController)
+//        else -> goToLoginFromSplashScreen(navController)
+        else -> goToHomeScreen(navController)
     }
 }
 
