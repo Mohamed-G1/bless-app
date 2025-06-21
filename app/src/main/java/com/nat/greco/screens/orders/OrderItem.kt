@@ -34,10 +34,11 @@ import com.nat.greco.ui.theme.WhiteGray
 @Composable
 fun OrderItem(
     item: HomeModel? = null,
-    ) {
+    onClicked: (() -> Unit)? = null
+) {
 
     Card(
-
+        onClick = { onClicked?.invoke() },
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight(),
@@ -46,21 +47,31 @@ fun OrderItem(
     ) {
 
         Row(
-            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.End
         ) {
-            Image(painter = painterResource(R.drawable.splash_bg), contentDescription = null, modifier = Modifier.size(84.dp).clip(
-                RoundedCornerShape(12.dp)), contentScale = ContentScale.Crop)
+            Image(
+                painter = painterResource(R.drawable.splash_bg),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(84.dp)
+                    .clip(
+                        RoundedCornerShape(12.dp)
+                    ),
+                contentScale = ContentScale.Crop
+            )
 
 
-        Spacer(Modifier.width(8.dp))
+            Spacer(Modifier.width(8.dp))
             Column(
                 modifier = Modifier
                     .fillMaxWidth(),
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.spacedBy(8.dp)
-            ){
+            ) {
                 Row {
                     Text(
                         "الخميس 20 سبتمبر 2022",
@@ -69,7 +80,8 @@ fun OrderItem(
 
                 }
 
-                Row(modifier = Modifier.fillMaxWidth(),
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
@@ -82,7 +94,8 @@ fun OrderItem(
                     )
                 }
 
-                Row(modifier = Modifier.fillMaxWidth(),
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
@@ -95,7 +108,8 @@ fun OrderItem(
                     )
                 }
 
-                Row(modifier = Modifier.fillMaxWidth(),
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(

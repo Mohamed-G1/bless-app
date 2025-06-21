@@ -100,6 +100,8 @@ fun AppTextField(
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActions,
         colors = OutlinedTextFieldDefaults.colors(
+            unfocusedContainerColor = Color.White,
+            focusedContainerColor = Color.White,
             focusedBorderColor = borderFocusColor,
             focusedTextColor = textFocusColor,
             unfocusedBorderColor = borderUnFocusColor,
