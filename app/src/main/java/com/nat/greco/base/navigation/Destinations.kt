@@ -45,6 +45,26 @@ sealed class Destinations {
     data object AddNewClientScreen : Destinations()
     @Serializable
     data object OrderDetailsScreen : Destinations()
+    @Serializable
+    data object LastOrdersDetails : Destinations()
+    @Serializable
+    data object Accounts : Destinations()
+
+    @Serializable
+    data object Products : Destinations()
+    @Serializable
+    data object ProductDetails : Destinations()
+
+    @Serializable
+    data object Offers : Destinations()
+    @Serializable
+    data object ReceiveStock : Destinations()
+    @Serializable
+    data object EndDay : Destinations()
+    @Serializable
+    data object Returns : Destinations()
+    @Serializable
+    data object ReturnsDetails : Destinations()
 
     @Serializable
     data class CourierDetails(

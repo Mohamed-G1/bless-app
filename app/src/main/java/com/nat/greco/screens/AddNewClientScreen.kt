@@ -12,13 +12,23 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,11 +38,15 @@ import com.nat.greco.R
 import com.nat.greco.base.ui.appButton.AppButton
 import com.nat.greco.base.ui.textField.AppTextField
 import com.nat.greco.ui.theme.CompactTypography
+import com.nat.greco.ui.theme.MediumBlue
 import com.nat.greco.ui.theme.MediumGray
 
 @Composable
-fun AddNewClientScreen(    onBackClicked: (() -> Unit)? = null,
+fun AddNewClientScreen(
+    onBackClicked: (() -> Unit)? = null,
 ) {
+    var isSingleSelected by remember { mutableStateOf(false) }
+    var isMultiSelected by remember { mutableStateOf(false) }
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -79,6 +93,8 @@ fun AddNewClientScreen(    onBackClicked: (() -> Unit)? = null,
             Spacer(Modifier.height(8.dp))
             Tax()
             Spacer(Modifier.height(8.dp))
+            AttachTax()
+            Spacer(Modifier.height(8.dp))
             Department()
 
             Spacer(Modifier.height(8.dp))
@@ -101,6 +117,41 @@ fun AddNewClientScreen(    onBackClicked: (() -> Unit)? = null,
             Spacer(Modifier.height(8.dp))
 
             Title()
+
+            Spacer(Modifier.height(32.dp))
+
+            Text(
+                "اجمالي المبيعات",
+                style = CompactTypography.headlineMedium.copy(fontSize = 16.sp)
+            )
+            Spacer(Modifier.height(8.dp))
+            TotalSeals()
+
+
+
+            Spacer(Modifier.height(32.dp))
+
+            Text(
+                "اختر اذا كان لديك فرع واحد او اكثر",
+                style = CompactTypography.headlineMedium.copy(fontSize = 16.sp)
+            )
+            Spacer(Modifier.height(16.dp))
+
+            ChooseBranches(
+                inSingleSelected = isSingleSelected,
+                isMutliSelected = isMultiSelected,
+                onSingleSelected = {
+                    isSingleSelected = true
+                    isMultiSelected = false
+                },
+                onMutliSelected = {
+                    isSingleSelected = false
+                    isMultiSelected = true
+                }
+            )
+
+
+
             Spacer(Modifier.height(28.dp))
             AppButton(
                 text = "اضافة",
@@ -112,6 +163,71 @@ fun AddNewClientScreen(    onBackClicked: (() -> Unit)? = null,
     }
 }
 
+
+@Composable
+private fun TotalSeals() {
+    AppTextField(
+        modifier = Modifier.fillMaxWidth(),
+        placeholder = "ادخل اجمالي المبيعات",
+        label = "ادخل اجمالي المبيعات",
+        onValueChange = {
+//            event?.invoke(LoginEvents.UserNameChanged(it))
+        },
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Text,
+            imeAction = ImeAction.Next
+        ),
+        borderUnFocusColor = MediumGray
+    )
+}
+
+@Composable
+fun ChooseBranches(
+    inSingleSelected: Boolean,
+    isMutliSelected: Boolean,
+    onSingleSelected: () -> Unit,
+    onMutliSelected: () -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+
+        Column {
+            Text(
+                "فرع واحد",
+                style = CompactTypography.headlineMedium.copy(
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium
+                )
+            )
+            RadioButton(
+                selected = inSingleSelected,
+                onClick = { onSingleSelected.invoke() },
+                colors = RadioButtonDefaults.colors(
+                    selectedColor = MediumBlue
+                )
+            )
+        }
+        Column {
+            Text(
+                "اكثر من فرع",
+                style = CompactTypography.headlineMedium.copy(
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium
+                )
+            )
+            RadioButton(
+                selected = isMutliSelected,
+                onClick = { onMutliSelected.invoke() },
+                colors = RadioButtonDefaults.colors(
+                    selectedColor = MediumBlue
+                )
+            )
+        }
+
+    }
+}
 
 @Composable
 private fun ClientName() {
@@ -163,6 +279,26 @@ private fun Tax() {
         borderUnFocusColor = MediumGray
     )
 }
+
+@Composable
+private fun AttachTax() {
+    AppTextField(
+        modifier = Modifier.fillMaxWidth(),
+        placeholder = "إلحاق صورة الرقم الضريبي",
+        label = "إلحاق صورة الرقم الضريبي",
+        onValueChange = {
+//            event?.invoke(LoginEvents.UserNameChanged(it))
+        },
+
+        enabled = false,
+        readOnly = true,
+        isTrailingIcon = true,
+        trailingCompose = { Icon(imageVector = Icons.Default.AddCircle, contentDescription = "", tint = MediumGray)},
+        borderUnFocusColor = MediumGray,
+        borderFocusColor = MediumGray
+    )
+}
+
 @Composable
 private fun Department() {
     AppTextField(
@@ -179,6 +315,7 @@ private fun Department() {
         borderUnFocusColor = MediumGray
     )
 }
+
 @Composable
 private fun Tags() {
     AppTextField(
@@ -195,6 +332,7 @@ private fun Tags() {
         borderUnFocusColor = MediumGray
     )
 }
+
 @Composable
 private fun AddName() {
     AppTextField(
@@ -267,4 +405,10 @@ private fun Title() {
 @Composable
 private fun AddNewClientScreenPreview() {
     AddNewClientScreen()
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ChooseBra() {
+    ChooseBranches(false, false, {}) { }
 }

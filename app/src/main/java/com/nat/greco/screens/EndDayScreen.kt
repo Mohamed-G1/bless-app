@@ -1,22 +1,26 @@
-package com.nat.greco.screens.home.presentation.components
+package com.nat.greco.screens
 
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -29,23 +33,91 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nat.greco.R
-import com.nat.greco.screens.home.domain.models.CourierSheetTypes
+import com.nat.greco.base.ui.appButton.AppButton
 import com.nat.greco.screens.home.domain.models.HomeModel
+import com.nat.greco.screens.home.presentation.HomeState.Companion.dummyList
 import com.nat.greco.ui.theme.CompactTypography
 import com.nat.greco.ui.theme.DeliverGreen
 import com.nat.greco.ui.theme.Gray
-import com.nat.greco.ui.theme.NotDeliverRed
-import com.nat.greco.ui.theme.Orange
 import com.nat.greco.ui.theme.WhiteGray
 
 @Composable
-fun ListItem(
+fun EndDayScreen(onBackClicked: (() -> Unit)? = null) {
+
+    Box(
+        modifier = Modifier.fillMaxSize() .padding(vertical = 24.dp, horizontal = 16.dp)
+    ) {
+        Column(
+
+
+        ) {
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    "انهاء اليوم",
+                    style = CompactTypography.headlineMedium.copy(fontSize = 18.sp)
+                )
+
+                IconButton(onClick = { onBackClicked?.invoke() }) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_back),
+                        contentDescription = null
+                    )
+                }
+            }
+
+            Spacer(Modifier.height(16.dp))
+
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                itemsIndexed(items = dummyList) { index, item ->
+                    val isLast = index == dummyList.lastIndex
+                    ListItem(
+                        item = item,
+                        modifier = if (isLast) {
+                            Modifier.padding(bottom = 24.dp)
+                        } else {
+                            Modifier
+                        },
+                        onClick = { model ->
+//                    onClick?.invoke(model)
+                        }
+                    )
+                }
+            }
+
+
+            Spacer(Modifier.weight(1f))
+
+
+
+        }
+
+        AppButton(
+            modifier = Modifier.fillMaxWidth(.8f).align(Alignment.BottomCenter),
+            text = "انهاء اليوم",
+            onClick = {
+//                    onReceiveClicked?.invoke()
+            }
+        )
+
+    }
+
+
+}
+
+@Composable
+private fun ListItem(
     item: HomeModel? = null,
     modifier: Modifier = Modifier,
     onClick: ((HomeModel) -> Unit)? = null
@@ -86,7 +158,7 @@ fun ListItem(
 
 
                     Text(
-                        "العميل",
+                        "اسم التاجر",
                         style = CompactTypography.labelMedium.copy(color = Gray, fontSize = 12.sp)
                     )
 
@@ -96,94 +168,69 @@ fun ListItem(
                     )
                 }
 
-                DeliveryStatus(status = item?.lastStatusName.orEmpty())
+                DeliveryStatus(status = "تم")
 
             }
 
 
-            DeliveryStatusBar(status = item?.lastStatusName.orEmpty())
+            DeliveryStatusBar(status = "تم")
 
-            Row(
+            Column (
                 modifier = Modifier
                     .fillMaxWidth().padding(top = 8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+
             ) {
-
-                
-
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(4.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-
-                ) {
-                    IconButton(onClick = {
-
-                        val uri =
-                            Uri.parse("geo:0,0?q=${item?.consigneeDestinationAddress}")
-                        val intent = Intent(Intent.ACTION_VIEW, uri)
-                        intent.setPackage("com.google.android.apps.maps") // Explicitly use Google Maps app
-                        context.startActivity(intent)
-
-                    }) {
-                        Image(
-                            painter = painterResource(R.drawable.ic_location),
-                            contentDescription = null
-                        )
-                    }
-                    Text("الموقع", style = CompactTypography.bodyMedium.copy(fontSize = 12.sp))
-                }
-
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(4.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-
-                ) {
-                    IconButton(onClick = {
-                        val intent = Intent(
-                            Intent.ACTION_DIAL,
-                            Uri.parse("tel:${item?.consigneePhone}")
-                        )
-                        context.startActivity(intent)
-
-                    }){
-                        Image(
-                            painter = painterResource(R.drawable.ic_call),
-                            contentDescription = null
-                        )
-                    }
-
-                     Text("مكالمة", style = CompactTypography.bodyMedium.copy(fontSize = 12.sp))
-
-                }
-
-
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(4.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                Row (
+                    modifier = Modifier.fillMaxWidth(.6f),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
 
-                    IconButton(onClick = {
-                        try {
-                            val intent = Intent(Intent.ACTION_VIEW).apply {
-                                data =
-                                    Uri.parse("https://wa.me/${item?.consigneePhone}") // WhatsApp URL with phone number
-                            }
-                            context.startActivity(intent)
-                        } catch (e: Exception) {
-                            // Handle exception if WhatsApp is not installed or other issues
-                            Toast.makeText(context, "WhatsApp not installed", Toast.LENGTH_SHORT)
-                                .show()
-                        }
-                    }) {
-                        Image(
-                            painter = painterResource(R.drawable.ic_whats),
-                            contentDescription = null
-                        )
-                    }
-                    Text("واتساب", style = CompactTypography.bodyMedium.copy(fontSize = 12.sp))
+                    Text(
+                        "اجمالي التحصيل: ",
+                        style = CompactTypography.labelMedium.copy(color = Gray, fontSize = 12.sp)
+                    )
+
+                    Text(
+                        text =  "3000 EGP" ,
+                        style = CompactTypography.headlineLarge.copy(fontSize = 12.sp)
+                    )
                 }
 
+                Row (
+                    modifier = Modifier.fillMaxWidth(.6f),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+
+                    Text(
+                        "اجمالي المرتجع: ",
+                        style = CompactTypography.labelMedium.copy(color = Gray, fontSize = 12.sp)
+                    )
+
+                    Text(
+                        text =  "كرتونة 3" ,
+                        style = CompactTypography.headlineLarge.copy(fontSize = 12.sp)
+                    )
+                }
+
+                Row (
+                    modifier = Modifier.fillMaxWidth(.6f),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+
+                    Text(
+                        "اجمالي المخزون: ",
+                        style = CompactTypography.labelMedium.copy(color = Gray, fontSize = 12.sp)
+                    )
+
+                    Text(
+                        text =  "كرتونة 10"  ,
+                        style = CompactTypography.headlineLarge.copy(fontSize = 12.sp)
+                    )
+                }
             }
         }
     }
@@ -191,11 +238,10 @@ fun ListItem(
 
 
 @Composable
-fun DeliveryStatus(status: String) {
+private fun DeliveryStatus(status: String) {
     val color = when (status) {
-        "تم الزيارة" -> DeliverGreen
-        "قيد التنفيذ" -> Gray
-        "تم الغاء الزيارة" -> NotDeliverRed
+        "تم" -> DeliverGreen
+        "لم تم" -> Gray
         else -> Gray
     }
     Card(
@@ -221,18 +267,16 @@ fun DeliveryStatus(status: String) {
 }
 
 @Composable
-fun DeliveryStatusBar(status: String) {
+private fun DeliveryStatusBar(status: String) {
     val color = when (status) {
-        "تم الزيارة" -> DeliverGreen
-        "قيد التنفيذ" -> Gray
-        "تم الغاء الزيارة" -> NotDeliverRed
+        "تم" -> DeliverGreen
+        "لم تم" -> Gray
         else -> Gray
     }
 
     val icon = when (status) {
-        "تم الزيارة" -> painterResource(R.drawable.ic_check_circle)
-        "قيد التنفي" -> painterResource(R.drawable.ic_check_circle)
-        "تم الغاء الزيارة" -> painterResource(R.drawable.ic_cancel)
+        "تم" -> painterResource(R.drawable.ic_check_circle)
+        "لم تم" -> painterResource(R.drawable.ic_cancel)
         else -> painterResource(R.drawable.ic_filled_circle)
     }
 
@@ -269,20 +313,8 @@ fun DeliveryStatusBar(status: String) {
 
 }
 
-@Preview(locale = "ar")
+@Preview
 @Composable
-private fun ListItemPreview() {
-    ListItem()
-}
-
-@Preview(locale = "ar")
-@Composable
-private fun DeliveryStatusPreview() {
-    DeliveryStatus("Gamal")
-}
-
-@Preview(locale = "ar")
-@Composable
-private fun DeliveryStatusBarPreview() {
-    DeliveryStatusBar("Gamal")
+private fun EndDayScreenPreivew() {
+    EndDayScreen()
 }

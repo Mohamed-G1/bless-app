@@ -1,4 +1,4 @@
-package com.nat.greco.screens
+package com.nat.greco.screens.lastOrders
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -27,14 +27,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nat.greco.R
-import com.nat.greco.base.ui.appButton.AppButton
-import com.nat.greco.screens.orders.OrderItem
 import com.nat.greco.ui.theme.CompactTypography
 import com.nat.greco.ui.theme.Gray
 import com.nat.greco.ui.theme.WhiteGray
 
 @Composable
-fun OrderDetailsScreen( onBackClicked: (() -> Unit)? = null, navigateToReturn: (() -> Unit)? = null) {
+fun LastOrdersDetailsScreen(onBackClicked: (() -> Unit)? = null) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -121,55 +119,50 @@ fun OrderDetailsScreen( onBackClicked: (() -> Unit)? = null, navigateToReturn: (
 
 
 
-//            Card(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .wrapContentHeight(),
-//                colors = CardDefaults.cardColors(containerColor = White),
-//                border = BorderStroke(1.dp, color = WhiteGray)
-//            ) {
-//                Column(
-//                    modifier = Modifier.padding(16.dp)
-//                ) {
-//                    Text(
-//                        text = "اسم الشركة",
-//                        style = CompactTypography.headlineLarge.copy(fontSize = 14.sp)
-//                    )
-//                    Spacer(Modifier.height(8.dp))
-//                    Text(
-//                        text = "اسم الطلب",
-//                        style = CompactTypography.headlineLarge.copy(fontSize = 14.sp)
-//                    )
-//
-//                    Spacer(Modifier.height(8.dp))
-//                    Row(
-//                        modifier = Modifier.fillMaxWidth(),
-//                        horizontalArrangement = Arrangement.SpaceBetween
-//                    ) {
-//                        Text(
-//                            text = "1200 EGP",
-//                            style = CompactTypography.headlineLarge.copy(
-//                                fontSize = 14.sp,
-//                                color = Gray
-//                            )
-//                        )
-//
-//                        Text(
-//                            text = "5 (كرتونة)",
-//                            style = CompactTypography.headlineLarge.copy(
-//                                fontSize = 14.sp,
-//                                color = Gray
-//                            )
-//                        )
-//                    }
-//
-//                }
-//            }
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight(),
+                colors = CardDefaults.cardColors(containerColor = White),
+                border = BorderStroke(1.dp, color = WhiteGray)
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    Text(
+                        text = "اسم الشركة",
+                        style = CompactTypography.headlineLarge.copy(fontSize = 14.sp)
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        text = "اسم الطلب",
+                        style = CompactTypography.headlineLarge.copy(fontSize = 14.sp)
+                    )
 
-            OrderItem(
-                onClicked = {},
+                    Spacer(Modifier.height(8.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            text = "1200 EGP",
+                            style = CompactTypography.headlineLarge.copy(
+                                fontSize = 14.sp,
+                                color = Gray
+                            )
+                        )
 
-            )
+                        Text(
+                            text = "5 (كرتونة)",
+                            style = CompactTypography.headlineLarge.copy(
+                                fontSize = 14.sp,
+                                color = Gray
+                            )
+                        )
+                    }
+
+                }
+            }
         }
 
 
@@ -246,22 +239,12 @@ fun OrderDetailsScreen( onBackClicked: (() -> Unit)? = null, navigateToReturn: (
                     }
                 }
             }
-
-            Spacer(Modifier.height(16.dp))
-
-            AppButton(
-                modifier = Modifier.fillMaxWidth(.8f).align(Alignment.CenterHorizontally),
-                text = "مرتجع",
-                onClick = {
-                    navigateToReturn?.invoke()
-                }
-            )
         }
     }
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
-private fun OrderDetailsScreenPreview() {
-    OrderDetailsScreen()
+private fun LastOrdersDetailsScreenP() {
+    LastOrdersDetailsScreen()
 }

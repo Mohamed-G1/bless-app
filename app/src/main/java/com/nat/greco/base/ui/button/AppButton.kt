@@ -1,5 +1,6 @@
 package com.nat.greco.base.ui.button
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -15,25 +16,28 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nat.greco.ui.theme.CompactTypography
 import com.nat.greco.ui.theme.DarkGreen
+import com.nat.greco.ui.theme.MediumBlue
 
 @Composable
 fun AppButton(
     modifier: Modifier = Modifier,
-    text: String = "StayKsa",
-    buttonColor: Color = DarkGreen,
+    text: String = "Courier",
+    buttonColor: Color = MediumBlue,
     textColor: Color = Color.White,
-    textSize: TextUnit = 16.sp,
+    boarderColor: Color = MediumBlue,
+    textSize: TextUnit = 18.sp,
     onClick: (() -> Unit)? = null
 ) {
-    Surface(
+    Surface (
         onClick = { onClick?.invoke() },
         modifier = modifier.fillMaxWidth(),
         color = buttonColor,
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(12.dp),
+        border = BorderStroke(1.dp, boarderColor)
     ) {
         Text(
             text = text,
-            modifier = Modifier.padding(12.dp),
+            modifier = Modifier.padding(16.dp),
             style = CompactTypography.headlineMedium.copy(
                 color = textColor,
                 textAlign = TextAlign.Center,

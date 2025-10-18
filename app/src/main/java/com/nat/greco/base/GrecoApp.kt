@@ -5,7 +5,7 @@ import android.util.Log
 import com.google.firebase.messaging.FirebaseMessaging
 import com.nat.greco.base.domain.di.localDataSourceModule
 import com.nat.greco.base.network.di.networkModule
-import com.nat.greco.screens.courierDetails.di.courierDetailsModule
+import com.nat.greco.screens.clientDetails.di.courierDetailsModule
 import com.nat.greco.screens.home.di.homeModule
 import com.nat.greco.screens.login.di.userModule
 import com.nat.greco.screens.splash.di.splashModule

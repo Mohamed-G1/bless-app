@@ -1,10 +1,10 @@
 package com.nat.greco.base.network
 
-import com.nat.greco.screens.courierDetails.domain.models.CourierBody
-import com.nat.greco.screens.courierDetails.domain.models.DeliveredRequest
-import com.nat.greco.screens.courierDetails.domain.models.DeliveredResponse
-import com.nat.greco.screens.courierDetails.domain.models.RefusalReasonsResponse
-import com.nat.greco.screens.courierDetails.domain.models.StatusNotDeliveredResponse
+import com.nat.greco.screens.clientDetails.domain.models.CourierBody
+import com.nat.greco.screens.clientDetails.domain.models.DeliveredRequest
+import com.nat.greco.screens.clientDetails.domain.models.DeliveredResponse
+import com.nat.greco.screens.clientDetails.domain.models.RefusalReasonsResponse
+import com.nat.greco.screens.clientDetails.domain.models.StatusNotDeliveredResponse
 import com.nat.greco.screens.home.domain.models.HomeResponse
 import com.nat.greco.screens.login.domain.models.LoginRequest
 import com.nat.greco.screens.login.domain.models.UserResponse
