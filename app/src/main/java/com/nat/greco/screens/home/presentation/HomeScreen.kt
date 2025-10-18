@@ -51,6 +51,7 @@ import com.nat.greco.R
 import com.nat.greco.base.locationChecker.LocationHandler
 import com.nat.greco.base.locationChecker.LocationServiceReceiver
 import com.nat.greco.base.permissions.LocationPermissionDialog
+import com.nat.greco.base.ui.appButton.AppButton
 import com.nat.greco.base.ui.appLoading.FullLoading
 import com.nat.greco.base.ui.toast.ShowToast
 import com.nat.greco.screens.home.domain.models.CourierSheetTypes
@@ -76,6 +77,7 @@ fun HomeScreen(
     events: ((HomeEvents) -> Unit)? = null,
     onClick: ((HomeModel) -> Unit)? = null,
     navigateToNotification: (() -> Unit)? = null,
+    onEndDayClicked: (() -> Unit)? = null,
     openNewRequestScreen: (() -> Unit)? = null,
     openAddClientScreen: (() -> Unit)? = null,
     signOut: (() -> Unit)? = null
@@ -308,6 +310,14 @@ fun HomeScreen(
 //            Spacer(Modifier.width(8.dp))
                 Spacer(Modifier.weight(1f))
 
+                SearchTapItem(query = "انهاء اليوم",
+                    isSelected = courierType == CourierSheetTypes.All.name,
+                    onClick = {
+                        onEndDayClicked?.invoke()
+                    })
+
+                Spacer(Modifier.width(12.dp))
+
                 IconButton(onClick = {
 //                    if (courierType == CourierSheetTypes.waybill.name) {
 //                        showWaybillSortBottomSheet = true
@@ -320,7 +330,7 @@ fun HomeScreen(
                     )
                 }
 
-                Spacer(Modifier.width(24.dp))
+                Spacer(Modifier.width(12.dp))
 
                 IconButton(onClick = {
 //                    if (courierType == CourierSheetTypes.waybill.name) {

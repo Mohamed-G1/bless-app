@@ -1,4 +1,4 @@
-package com.nat.greco.screens.orders
+package com.nat.greco.screens.accounts
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -27,20 +27,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nat.greco.R
-import com.nat.greco.screens.home.domain.models.HomeModel
 import com.nat.greco.ui.theme.CompactTypography
 import com.nat.greco.ui.theme.Gray
 import com.nat.greco.ui.theme.MediumGray
 import com.nat.greco.ui.theme.WhiteGray
 
 @Composable
-fun OrderItem(
-    item: HomeModel? = null,
-    onClicked: (() -> Unit)? = null
-) {
+fun AccountListItem() {
 
     Card(
-        onClick = { onClicked?.invoke() },
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight(),
@@ -66,7 +61,7 @@ fun OrderItem(
 //                contentScale = ContentScale.Crop
 //            )
 
-            Icon(painter = painterResource(R.drawable.ic_add_shopping_cart),
+            Icon(painter = painterResource(R.drawable.ic_checklist),
                 contentDescription = "",
                 tint = MediumGray,
                 modifier = Modifier
@@ -74,7 +69,7 @@ fun OrderItem(
                     .clip(
                         RoundedCornerShape(12.dp)
                     ),
-                )
+            )
 
             Spacer(Modifier.width(8.dp))
             Column(
@@ -105,26 +100,13 @@ fun OrderItem(
                     )
                 }
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(
-                        text = "الكمية",
-                        style = CompactTypography.headlineLarge.copy(fontSize = 12.sp)
-                    )
-                    Text(
-                        text = "1 كرتونة ",
-                        style = CompactTypography.headlineLarge.copy(fontSize = 12.sp, color = Gray)
-                    )
-                }
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "السعر",
+                        text = "اجمالي الطلب",
                         style = CompactTypography.headlineLarge.copy(fontSize = 12.sp)
                     )
                     Text(
@@ -134,15 +116,29 @@ fun OrderItem(
                 }
 
 
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "الحالة",
+                        style = CompactTypography.headlineLarge.copy(fontSize = 12.sp)
+                    )
+                    Text(
+                        text = "مدفوع",
+                        style = CompactTypography.headlineLarge.copy(fontSize = 12.sp, color = Gray)
+                    )
+                }
+
+
             }
         }
 
     }
-
 }
 
 @Preview
 @Composable
-private fun OrderItemP() {
-    OrderItem()
+private fun AccountListItemP() {
+    AccountListItem()
 }

@@ -1,4 +1,4 @@
-package com.nat.greco.screens.orders
+package com.nat.greco.screens.productsList
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -30,17 +29,14 @@ import com.nat.greco.R
 import com.nat.greco.screens.home.domain.models.HomeModel
 import com.nat.greco.ui.theme.CompactTypography
 import com.nat.greco.ui.theme.Gray
-import com.nat.greco.ui.theme.MediumGray
 import com.nat.greco.ui.theme.WhiteGray
 
 @Composable
-fun OrderItem(
+fun ProductListItem(
     item: HomeModel? = null,
-    onClicked: (() -> Unit)? = null
-) {
+                     onClicked: (() -> Unit)? = null) {
 
     Card(
-        onClick = { onClicked?.invoke() },
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight(),
@@ -66,15 +62,6 @@ fun OrderItem(
 //                contentScale = ContentScale.Crop
 //            )
 
-            Icon(painter = painterResource(R.drawable.ic_add_shopping_cart),
-                contentDescription = "",
-                tint = MediumGray,
-                modifier = Modifier
-                    .size(70.dp)
-                    .clip(
-                        RoundedCornerShape(12.dp)
-                    ),
-                )
 
             Spacer(Modifier.width(8.dp))
             Column(
@@ -83,41 +70,41 @@ fun OrderItem(
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Row {
-                    Text(
-                        "الخميس 20 سبتمبر 2022",
-                        style = CompactTypography.headlineLarge.copy(fontSize = 12.sp, color = Gray)
-                    )
-
-                }
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(
-                        text = "رقم الطلب",
-                        style = CompactTypography.headlineLarge.copy(fontSize = 12.sp)
-                    )
-                    Text(
-                        text = "Ad1111",
-                        style = CompactTypography.headlineLarge.copy(fontSize = 12.sp, color = Gray)
-                    )
-                }
+//                Row {
+//                    Text(
+//                        "الخميس 20 سبتمبر 2022",
+//                        style = CompactTypography.headlineLarge.copy(fontSize = 12.sp, color = Gray)
+//                    )
+//
+//                }
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "الكمية",
+                        text = "اسم المنتج",
                         style = CompactTypography.headlineLarge.copy(fontSize = 12.sp)
                     )
                     Text(
-                        text = "1 كرتونة ",
+                        text = "البان",
                         style = CompactTypography.headlineLarge.copy(fontSize = 12.sp, color = Gray)
                     )
                 }
+
+//                Row(
+//                    modifier = Modifier.fillMaxWidth(),
+//                    horizontalArrangement = Arrangement.SpaceBetween
+//                ) {
+//                    Text(
+//                        text = "الكمية",
+//                        style = CompactTypography.headlineLarge.copy(fontSize = 12.sp)
+//                    )
+//                    Text(
+//                        text = "1 كرتونة ",
+//                        style = CompactTypography.headlineLarge.copy(fontSize = 12.sp, color = Gray)
+//                    )
+//                }
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -138,11 +125,11 @@ fun OrderItem(
         }
 
     }
-
 }
 
-@Preview
-@Composable
-private fun OrderItemP() {
-    OrderItem()
+    @Preview
+    @Composable
+    private fun ProductListItemP() {
+        ProductListItem()
+
 }

@@ -21,13 +21,20 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import com.nat.greco.base.navigation.Destinations.AddNewClientScreen
 import com.nat.greco.screens.AddNewClientScreen
+import com.nat.greco.screens.EndDayScreen
 import com.nat.greco.screens.NewRequestScreen
+import com.nat.greco.screens.OffersScreen
 import com.nat.greco.screens.OrderDetailsScreen
+import com.nat.greco.screens.Products
+import com.nat.greco.screens.ProductsDetails
+import com.nat.greco.screens.ReceiveStockScreen
+import com.nat.greco.screens.ReturnsDetailsScreen
+import com.nat.greco.screens.ReturnsScreen
+import com.nat.greco.screens.accounts.AccountsScreen
 import com.nat.greco.screens.orders.OrdersScreen
-import com.nat.greco.screens.courierDetails.presentation.CourierDetailsScreen
-import com.nat.greco.screens.courierDetails.presentation.CourierDetailsViewModel
+import com.nat.greco.screens.clientDetails.presentation.CourierDetailsScreen
+import com.nat.greco.screens.clientDetails.presentation.CourierDetailsViewModel
 import com.nat.greco.screens.home.domain.models.HomeModel
 import com.nat.greco.screens.home.presentation.HomeScreen
 import com.nat.greco.screens.home.presentation.HomeViewModel
@@ -38,6 +45,7 @@ import com.nat.greco.screens.more.StockScreen
 import com.nat.greco.screens.notifications.NotificationScreen
 import com.nat.greco.screens.productsList.ProductsListScreen
 import com.nat.greco.screens.clients.ClientsScreen
+import com.nat.greco.screens.lastOrders.LastOrdersDetailsScreen
 import com.nat.greco.screens.splash.presentation.SplashScreen
 import com.nat.greco.screens.splash.presentation.SplashViewModel
 import com.nat.greco.utils.canNavigate
@@ -127,6 +135,10 @@ fun NavApp() {
                         if (navController.canNavigate)
                             signOutFromHome(navController)
                     },
+                    onEndDayClicked = {
+                        if (navController.canNavigate)
+                            navController.navigate(Destinations.EndDay)
+                    }
                 )
             }
 
@@ -153,10 +165,17 @@ fun NavApp() {
                     onProductsListClicked = {
                         if (navController.canNavigate)
                             navController.navigate(Destinations.ProductsList)
+                    },
+                    onAccountsClicked = {
+                        if (navController.canNavigate)
+                            navController.navigate(Destinations.Accounts)
+                    },
+                    onOffersClicked = {
+                        if (navController.canNavigate)
+                            navController.navigate(Destinations.Offers)
+
                     }
                 )
-
-
             }
 
             composable<Destinations.Notification> {
@@ -167,12 +186,86 @@ fun NavApp() {
                     }
                 )
             }
+            composable<Destinations.EndDay> {
+                EndDayScreen(
+                    onBackClicked = {
+                        if (navController.canNavigate)
+                            navController.navigateUp()
+                    }
+                )
+            }
+            composable<Destinations.ReceiveStock> {
+                ReceiveStockScreen(
+                    onBackClicked = {
+                        if (navController.canNavigate)
+                            navController.navigateUp()
+                    },
+                    onConfirmClicked = {
+
+                    }
+                )
+            }
+
+            composable<Destinations.Products> {
+                Products(
+                    onBackClicked = {
+                        if (navController.canNavigate)
+                            navController.navigateUp()
+                    },
+                    navigateToProductDetails = {
+                        if (navController.canNavigate)
+                            navController.navigate(Destinations.ProductDetails)
+                    }
+                )
+            }
+            composable<Destinations.ProductDetails> {
+                ProductsDetails(
+                    onBackClicked = {
+                        if (navController.canNavigate)
+                            navController.navigateUp()
+                    },
+
+                    )
+            }
+
+            composable<Destinations.Accounts> {
+                AccountsScreen(
+                    onBackClicked = {
+                        if (navController.canNavigate)
+                            navController.navigateUp()
+                    }
+                )
+            }
 
             composable<Destinations.LastOrders> {
-                LastOrdersScreen()
+                LastOrdersScreen(
+                    onOrderClicked = {
+                        if (navController.canNavigate)
+                            navController.navigate(Destinations.LastOrdersDetails)
+                    },
+                    onBackClicked = {
+                        if (navController.canNavigate)
+                            navController.navigateUp()
+                    }
+                )
+            }
+
+            composable<Destinations.LastOrdersDetails> {
+                LastOrdersDetailsScreen(
+                    onBackClicked = {
+                        if (navController.canNavigate)
+                            navController.navigateUp()
+                    }
+                )
             }
             composable<Destinations.ProductsList> {
-                ProductsListScreen()
+                ProductsListScreen(
+
+                    onBackClicked = {
+                        if (navController.canNavigate)
+                            navController.navigateUp()
+                    },
+                )
             }
 
             composable<Destinations.Clients> {
@@ -189,13 +282,31 @@ fun NavApp() {
             }
 
             composable<Destinations.Stock> {
-                StockScreen()
+                StockScreen(
+                    onReceiveClicked = {
+                        if (navController.canNavigate)
+                            navController.navigate(Destinations.ReceiveStock)
+                    }
+                )
+            }
+
+            composable<Destinations.Offers> {
+                OffersScreen(
+                    onBackClicked = {
+                        if (navController.canNavigate)
+                            navController.navigateUp()
+                    }
+                )
             }
             composable<Destinations.NewRequestScreen> {
                 NewRequestScreen(
                     onBackClicked = {
                         if (navController.canNavigate)
                             navController.navigateUp()
+                    },
+                    navigateToProducts = {
+                        if (navController.canNavigate)
+                            navController.navigate(Destinations.Products)
                     }
                 )
             }
@@ -210,6 +321,32 @@ fun NavApp() {
 
             composable<Destinations.OrderDetailsScreen> {
                 OrderDetailsScreen(
+                    onBackClicked = {
+                        if (navController.canNavigate)
+                            navController.navigateUp()
+                    },
+                    navigateToReturn= {
+                        if (navController.canNavigate)
+                            navController.navigate(Destinations.Returns)
+                    }
+                )
+            }
+
+            composable<Destinations.Returns> {
+                ReturnsScreen(
+                    onBackClicked = {
+                        if (navController.canNavigate)
+                            navController.navigateUp()
+                    },
+                    navigateToReturnDetails = {
+                        if (navController.canNavigate)
+                            navController.navigate(Destinations.ReturnsDetails)
+                    }
+                )
+            }
+
+            composable<Destinations.ReturnsDetails> {
+                ReturnsDetailsScreen(
                     onBackClicked = {
                         if (navController.canNavigate)
                             navController.navigateUp()

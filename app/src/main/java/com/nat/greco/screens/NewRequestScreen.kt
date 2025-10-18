@@ -46,16 +46,18 @@ import com.nat.greco.ui.theme.WhiteGray
 @Composable
 fun NewRequestScreen(
     onBackClicked: (() -> Unit)? = null,
+    navigateToProducts: (() -> Unit)? = null,
+
 ) {
     Box(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxSize() .padding(vertical = 24.dp, horizontal = 16.dp)
     ) {
 
         Column(
             modifier = Modifier
                 .align(Alignment.TopCenter)
-                .padding(vertical = 24.dp, horizontal = 16.dp)
+
                 .verticalScroll(rememberScrollState())
         ) {
 
@@ -96,123 +98,19 @@ fun NewRequestScreen(
             Spacer(Modifier.height(8.dp))
             ChooseDate()
 
-            Spacer(Modifier.height(32.dp))
 
-            Text(
-                "اضف منتج",
-                style = CompactTypography.headlineMedium.copy(fontSize = 16.sp)
-            )
-            Spacer(Modifier.height(8.dp))
-            AddProduce()
-            Spacer(Modifier.height(8.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    "الكمية",
-                    style = CompactTypography.headlineMedium.copy(fontSize = 14.sp)
-                )
-                Spacer(modifier = Modifier.weight(1f))
 
-                Counter(onCounterChange = {}, modifier = Modifier .fillMaxWidth(.51f)
-                    .height(40.dp),)
-            }
 
-            Spacer(Modifier.height(8.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    "الوحدة (كرتونة)",
-                    style = CompactTypography.headlineMedium.copy(fontSize = 14.sp)
-                )
-                Spacer(modifier = Modifier.weight(1f))
-
-                Counter(onCounterChange = {}, modifier = Modifier  .fillMaxWidth(.6f)
-                    .height(40.dp),)
-            }
-            Spacer(Modifier.height(32.dp))
-
-            Text(
-                "الاجمالي",
-                style = CompactTypography.headlineMedium.copy(fontSize = 16.sp)
-            )
-            Spacer(Modifier.height(8.dp))
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight(),
-                colors = CardDefaults.cardColors(containerColor = White),
-                border = BorderStroke(1.dp, color = WhiteGray)
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp)
-                ) {
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(
-                        "اجمالي",
-                        style = CompactTypography.headlineMedium.copy(fontSize = 14.sp)
-                    )
-
-                    Text(
-                        "500 EGP",
-                        style = CompactTypography.headlineMedium.copy(fontSize = 14.sp)
-                    )
-                }
-
-            Spacer(Modifier.height(8.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    "ضريبة",
-                    style = CompactTypography.headlineMedium.copy(fontSize = 14.sp)
-                )
-
-                Text(
-                    "500 EGP",
-                    style = CompactTypography.headlineMedium.copy(fontSize = 14.sp)
-                )
-            }
-
-            Spacer(Modifier.height(8.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    "اجمالي + ضريبة",
-                    style = CompactTypography.headlineMedium.copy(fontSize = 14.sp)
-                )
-
-                Text(
-                    "1000 EGP",
-                    style = CompactTypography.headlineMedium.copy(fontSize = 14.sp)
-                )
-            }
-                }
-            }
-
-            Spacer(Modifier.height(28.dp))
-            AppButton(
-                text = "اضافة",
-                onClick = {
-                }
-            )
 
         }
+
+        AppButton(
+            text = "اضافة منتج",
+            modifier = Modifier.align(Alignment.BottomCenter),
+            onClick = {
+                navigateToProducts?.invoke()
+            }
+        )
     }
 }
 
