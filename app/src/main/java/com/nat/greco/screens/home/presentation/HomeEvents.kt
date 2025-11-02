@@ -1,6 +1,8 @@
 package com.nat.greco.screens.home.presentation
 
 sealed class HomeEvents {
+    data object CallRoutes : HomeEvents()
+    data class DataChanged(val date : String) : HomeEvents()
     data class CallWaybillCouriers(val query: String) : HomeEvents()
     data class CallPickupCouriers(val query: String) : HomeEvents()
     data class CallAllCouriers(val query: String) : HomeEvents()

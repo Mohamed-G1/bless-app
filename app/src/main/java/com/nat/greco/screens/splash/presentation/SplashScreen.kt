@@ -64,16 +64,12 @@ fun SplashScreen(
 
     var launchTheNavigator by remember { mutableStateOf(false) }
 
-    LaunchedEffect(Unit) {
-        delay(1500)
-        navigateToNext?.invoke()
 
+    if (state.shouldNavigate) {
+        LaunchedEffect(Unit) {
+            navigateToNext?.invoke()
+        }
     }
-//    if (state.shouldNavigate && isLocationGranted ) {
-//        LaunchedEffect(Unit) {
-//            navigateToNext?.invoke()
-//        }
-//    }
 
 //    if (launchTheNavigator) {
 //        LaunchedEffect(Unit) {

@@ -2,6 +2,7 @@ package com.nat.greco.screens.login.presentation
 
 import androidx.lifecycle.viewModelScope
 import com.nat.greco.R
+import com.nat.greco.base.BaseRequest
 import com.nat.greco.base.BaseViewModel
 import com.nat.greco.screens.login.domain.models.LoginRequest
 import com.nat.greco.screens.login.domain.usecases.LoginUseCase
@@ -18,7 +19,7 @@ class LoginViewModel(
     private val saveUserUseCase: SaveUserUseCase
 ) : BaseViewModel() {
 
-    private val _state = MutableStateFlow(LoginState())
+    private val _state = MutableStateFlow(defaultLoginState())
     val state = _state.asStateFlow()
 
     private val _intentChannel = Channel<LoginEvents>(Channel.UNLIMITED)
@@ -37,8 +38,12 @@ class LoginViewModel(
         viewModelScope.launch {
             _intentChannel.consumeAsFlow().collect { event ->
                 when (event) {
-                    is LoginEvents.UserNameChanged -> {
-                        _state.update { it.copy(userName = event.userName) }
+                    is LoginEvents.LocationFetched ->{
+                        _state.update { it.copy(lat = event.lat, lang = event.long) }
+
+                    }
+                    is LoginEvents.PhoneNumberChanged -> {
+                        _state.update { it.copy(mobile = event.phone) }
                     }
 
                     is LoginEvents.PasswordChanged -> {
@@ -47,39 +52,47 @@ class LoginViewModel(
 
                     is LoginEvents.SubmitUser -> {
                         if (isValidData(
-                                userName = state.value.userName.orEmpty(),
+                                mobile = state.value.mobile.orEmpty(),
                                 password = state.value.password.orEmpty()
                             )
                         ) {
                             _state.update { it.copy(errorMessage = "", isLoading = true) }
                             executeSuspend(
                                 block = {
-                                    useCase(
-                                        request = LoginRequest(
-                                            UserName = state.value.userName.orEmpty(),
-                                            Password = state.value.password.orEmpty()
+                                    useCase.invoke(
+                                        request = BaseRequest(
+                                            params = LoginRequest(
+                                                mobile = state.value.mobile.orEmpty(),
+                                                password = state.value.password.orEmpty(),
+                                                fcm_token = "123456",
+                                                location_length = state.value.lat.orEmpty(),
+                                                location_circles = state.value.lang.orEmpty()
+                                            )
                                         )
                                     )
                                 },
                                 onSuccess = { data ->
-                                    // this line because the api is returned success in the user is exist or not exist
-                                    val errorMessage =
-                                        if (data?.message.equals("Login Successful")
-                                                .not()
-                                        ) data?.message else null
-                                    _state.update {
-                                        it.copy(
-                                            isLoading = false,
-                                            errorMessage = errorMessage,
-                                            navigateToHome = data?.status ?: false
 
-                                        )
-                                    }
-                                    if (data?.obj != null)
+                                    if (data?.result?.code != 200) {
+                                        _state.update {
+                                            it.copy(
+                                                isLoading = false,
+                                                errorMessage = data?.result?.message,
+                                            )
+                                        }
+                                    } else {
                                         viewModelScope.launch {
-                                            saveUserUseCase(response = data)
+                                            saveUserUseCase(response = data.result.data)
                                         }
 
+                                        _state.update {
+                                            it.copy(
+                                                isLoading = false,
+                                                errorMessage = data.result.message,
+                                                navigateToHome = true
+                                            )
+                                        }
+                                    }
                                 },
                                 onFailure = { message ->
                                     _state.update {
@@ -148,13 +161,25 @@ class LoginViewModel(
     }
 
 
-    private fun isValidData(userName: String, password: String): Boolean {
+    private fun isValidData(mobile: String, password: String): Boolean {
+        val egyptianPhonePattern = Regex("^01[0-2,5][0-9]{8}\$") // Only Egyptian numbers
+
         return when {
-            userName.isEmpty() -> {
+            mobile.isEmpty() -> {
                 _state.update {
                     it.copy(
-                        isValidUserName = false,
-                        userNameValidationMessage = R.string.please_fill_username
+                        isValidMobile = false,
+                        mobileValidationMessage = R.string.please_fill_mobile
+                    )
+                }
+                false
+            }
+
+            !mobile.matches(egyptianPhonePattern) -> {
+                _state.update {
+                    it.copy(
+                        isValidMobile = false,
+                        mobileValidationMessage = R.string.please_fill_mobile
                     )
                 }
                 false
@@ -163,7 +188,7 @@ class LoginViewModel(
             password.isEmpty() -> {
                 _state.update {
                     it.copy(
-                        isValidUserName = true,
+                        isValidMobile = true,
                         isValidPassword = false,
                         passwordValidationMessage = R.string.please_fill_password
                     )
@@ -173,7 +198,7 @@ class LoginViewModel(
 
             else -> {
                 _state.update {
-                    it.copy(isValidUserName = true, isValidPassword = true)
+                    it.copy(isValidMobile = true, isValidPassword = true)
                 }
                 true
             }

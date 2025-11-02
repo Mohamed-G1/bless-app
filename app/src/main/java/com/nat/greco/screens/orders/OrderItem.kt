@@ -1,7 +1,6 @@
 package com.nat.greco.screens.orders
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,13 +20,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nat.greco.R
-import com.nat.greco.screens.home.domain.models.HomeModel
+import com.nat.greco.screens.routeDetails.domain.models.OrderHistoryResponse
 import com.nat.greco.ui.theme.CompactTypography
 import com.nat.greco.ui.theme.Gray
 import com.nat.greco.ui.theme.MediumGray
@@ -35,12 +33,12 @@ import com.nat.greco.ui.theme.WhiteGray
 
 @Composable
 fun OrderItem(
-    item: HomeModel? = null,
-    onClicked: (() -> Unit)? = null
+    item: OrderHistoryResponse? = null,
+    onClicked: ((OrderHistoryResponse) -> Unit)? = null
 ) {
 
     Card(
-        onClick = { onClicked?.invoke() },
+        onClick = { onClicked?.invoke(item!!) },
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight(),
@@ -66,7 +64,8 @@ fun OrderItem(
 //                contentScale = ContentScale.Crop
 //            )
 
-            Icon(painter = painterResource(R.drawable.ic_add_shopping_cart),
+            Icon(
+                painter = painterResource(R.drawable.ic_add_shopping_cart),
                 contentDescription = "",
                 tint = MediumGray,
                 modifier = Modifier
@@ -74,7 +73,7 @@ fun OrderItem(
                     .clip(
                         RoundedCornerShape(12.dp)
                     ),
-                )
+            )
 
             Spacer(Modifier.width(8.dp))
             Column(
@@ -85,7 +84,7 @@ fun OrderItem(
             ) {
                 Row {
                     Text(
-                        "الخميس 20 سبتمبر 2022",
+                        item?.date_order.orEmpty(),
                         style = CompactTypography.headlineLarge.copy(fontSize = 12.sp, color = Gray)
                     )
 
@@ -100,7 +99,7 @@ fun OrderItem(
                         style = CompactTypography.headlineLarge.copy(fontSize = 12.sp)
                     )
                     Text(
-                        text = "Ad1111",
+                        text = item?.name.orEmpty(),
                         style = CompactTypography.headlineLarge.copy(fontSize = 12.sp, color = Gray)
                     )
                 }
@@ -114,7 +113,7 @@ fun OrderItem(
                         style = CompactTypography.headlineLarge.copy(fontSize = 12.sp)
                     )
                     Text(
-                        text = "1 كرتونة ",
+                        text = item?.amount_total.toString(),
                         style = CompactTypography.headlineLarge.copy(fontSize = 12.sp, color = Gray)
                     )
                 }
@@ -128,7 +127,7 @@ fun OrderItem(
                         style = CompactTypography.headlineLarge.copy(fontSize = 12.sp)
                     )
                     Text(
-                        text = "3100 EGP",
+                        text = item?.amount_untaxed.toString(),
                         style = CompactTypography.headlineLarge.copy(fontSize = 12.sp, color = Gray)
                     )
                 }

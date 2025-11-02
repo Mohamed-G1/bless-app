@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -21,6 +22,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.White
@@ -30,16 +32,25 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nat.greco.R
-import com.nat.greco.screens.home.presentation.HomeState.Companion.dummyList
-import com.nat.greco.screens.orders.OrderItem
+import com.nat.greco.base.ui.appLoading.FullLoading
+import com.nat.greco.base.ui.toast.ShowToast
+import com.nat.greco.screens.accounts.presentation.AccountsEvents
+import com.nat.greco.screens.accounts.presentation.AccountsState
 import com.nat.greco.ui.theme.CompactTypography
 import com.nat.greco.ui.theme.Gray
 import com.nat.greco.ui.theme.WhiteGray
 
 @Composable
 fun AccountsScreen(
+    state: AccountsState,
+    events: ((AccountsEvents) -> Unit)? = null,
+    customer_id: Int = 0,
     onBackClicked: (() -> Unit)? = null
 ) {
+    LaunchedEffect(Unit) {
+        events?.invoke(AccountsEvents.CustomerIdChanged(customer_id))
+    }
+
     Box {
         Column(
             modifier = Modifier
@@ -68,58 +79,62 @@ fun AccountsScreen(
                 }
             }
             Spacer(Modifier.height(16.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.End
-            ) {
-                IconButton(onClick = {
-//                    if (courierType == CourierSheetTypes.waybill.name) {
-//                        showWaybillSortBottomSheet = true
-//                    } else {
-//                        showPickupSortBottomSheet = true
-//                    }
-                }) {
-                    Image(
-                        painter = painterResource(R.drawable.ic_sort), contentDescription = null
-                    )
-                }
-
-                Spacer(Modifier.width(24.dp))
-
-                IconButton(onClick = {
-//                    if (courierType == CourierSheetTypes.waybill.name) {
-//                        showWaybillFilterBottomSheet = true
-//                    } else {
-//                        showPickupFilterBottomSheet = true
-//                    }
-                }) {
-                    Image(
-                        painter = painterResource(R.drawable.ic_filter), contentDescription = null
-                    )
-                }
-
-
-            }
-
-            Spacer(modifier = Modifier.height(24.dp))
+//            Row(
+//                modifier = Modifier.fillMaxWidth(),
+//                verticalAlignment = Alignment.CenterVertically,
+//                horizontalArrangement = Arrangement.End
+//            ) {
+//                IconButton(onClick = {
+////                    if (courierType == CourierSheetTypes.waybill.name) {
+////                        showWaybillSortBottomSheet = true
+////                    } else {
+////                        showPickupSortBottomSheet = true
+////                    }
+//                }) {
+//                    Image(
+//                        painter = painterResource(R.drawable.ic_sort), contentDescription = null
+//                    )
+//                }
+//
+//                Spacer(Modifier.width(24.dp))
+//
+//                IconButton(onClick = {
+////                    if (courierType == CourierSheetTypes.waybill.name) {
+////                        showWaybillFilterBottomSheet = true
+////                    } else {
+////                        showPickupFilterBottomSheet = true
+////                    }
+//                }) {
+//                    Image(
+//                        painter = painterResource(R.drawable.ic_filter), contentDescription = null
+//                    )
+//                }
+//
+//
+//            }
+//
+//            Spacer(modifier = Modifier.height(24.dp))
 
             LazyColumn(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                itemsIndexed(items = dummyList) { index, item ->
-                    AccountListItem()
+                items(state.model?.result?.data ?: listOf()) { item ->
+                    AccountListItem(
+                        data = item
+                    )
                 }
             }
         }
 
 
-        Column(modifier = Modifier
+        Column(
+            modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter)
                 .wrapContentHeight()
-                .padding(16.dp)) {
+                .padding(16.dp)
+        ) {
             Text(
                 "تفاصيل الحساب",
                 style = CompactTypography.headlineMedium.copy(fontSize = 18.sp)
@@ -144,23 +159,30 @@ fun AccountsScreen(
                             style = CompactTypography.headlineLarge.copy(fontSize = 14.sp)
                         )
                         Text(
-                            text = "1000 EGP",
+                            text = state.model?.result?.total_remaining_amount.toString() + " EGP",
                             style = CompactTypography.headlineLarge.copy(
                                 fontSize = 14.sp,
                                 color = Gray
                             )
                         )
                     }
-
-
                 }
             }
         }
     }
+
+    if (state.errorMessage.isNotEmpty() == true) {
+        ShowToast(state.errorMessage)
+    }
+
+    if (state.isLoading) {
+        FullLoading()
+    }
 }
+
 
 @Preview
 @Composable
 private fun AccountsScreenPreview() {
-    AccountsScreen()
+    AccountsScreen(customer_id = 0, state = AccountsState())
 }

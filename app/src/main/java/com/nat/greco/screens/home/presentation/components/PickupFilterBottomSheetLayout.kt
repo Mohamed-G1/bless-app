@@ -24,7 +24,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.nat.greco.base.ui.appButton.AppButton
-import com.nat.greco.screens.home.domain.models.PickupFilterOptions
 import com.nat.greco.ui.theme.CompactTypography
 import com.nat.greco.ui.theme.MediumBlue
 import com.nat.greco.ui.theme.WhiteGray
@@ -36,7 +35,7 @@ fun PickupFilterBottomSheetLayout(
     alreadySelectedFilter: String
 ) {
 
-    val pickupFiltersList = PickupFilterOptions.entries
+//    val pickupFiltersList = PickupFilterOptions.entries
 
     var selectedFilter by remember {
         mutableStateOf(alreadySelectedFilter)
@@ -48,15 +47,15 @@ fun PickupFilterBottomSheetLayout(
             .padding(16.dp)
     ) {
 
-        pickupFiltersList.forEach { filter ->
-            PickupFilterItem(
-                filter = filter,
-                onClick = {
-                    selectedFilter = filter.value
-                },
-                alreadySelectedFilter = selectedFilter
-            )
-        }
+//        pickupFiltersList.forEach { filter ->
+//            PickupFilterItem(
+//                filter = filter,
+//                onClick = {
+//                    selectedFilter = filter.value
+//                },
+//                alreadySelectedFilter = selectedFilter
+//            )
+//        }
 
         Spacer(modifier = Modifier.height(98.dp))
 
@@ -93,41 +92,41 @@ fun PickupFilterBottomSheetLayout(
 }
 
 
-@Composable
-fun PickupFilterItem(
-    filter: PickupFilterOptions,
-    onClick: (String) -> Unit,
-    alreadySelectedFilter: String
-
-) {
-    Column {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                text = filter.value,
-                style = CompactTypography.labelMedium.copy(color = Color.Gray)
-            )
-
-            RadioButton(
-                selected = alreadySelectedFilter == filter.value,
-                onClick = {
-                    onClick.invoke(filter.value)
-                },
-                colors = RadioButtonDefaults.colors(
-                    selectedColor = MediumBlue,
-                    unselectedColor = MediumBlue
-                )
-            )
-
-        }
-
-        Spacer(modifier = Modifier.height(4.dp))
-        HorizontalDivider(thickness = .5.dp, color = WhiteGray)
-    }
-}
+//@Composable
+//fun PickupFilterItem(
+//    filter: PickupFilterOptions,
+//    onClick: (String) -> Unit,
+//    alreadySelectedFilter: String
+//
+//) {
+//    Column {
+//        Row(
+//            modifier = Modifier.fillMaxWidth(),
+//            verticalAlignment = Alignment.CenterVertically,
+//            horizontalArrangement = Arrangement.SpaceBetween
+//        ) {
+//            Text(
+//                text = filter.value,
+//                style = CompactTypography.labelMedium.copy(color = Color.Gray)
+//            )
+//
+//            RadioButton(
+//                selected = alreadySelectedFilter == filter.value,
+//                onClick = {
+//                    onClick.invoke(filter.value)
+//                },
+//                colors = RadioButtonDefaults.colors(
+//                    selectedColor = MediumBlue,
+//                    unselectedColor = MediumBlue
+//                )
+//            )
+//
+//        }
+//
+//        Spacer(modifier = Modifier.height(4.dp))
+//        HorizontalDivider(thickness = .5.dp, color = WhiteGray)
+//    }
+//}
 
 @Preview
 @Composable

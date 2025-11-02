@@ -25,14 +25,19 @@ fun AppButton(
     textColor: Color = Color.White,
     boarderColor: Color = MediumBlue,
     textSize: TextUnit = 18.sp,
+    enabled: Boolean = true,
     onClick: (() -> Unit)? = null
 ) {
-    Surface (
+    val currentButtonColor = if (enabled) buttonColor else buttonColor.copy(alpha = 0.38f)
+    val currentBorderColor = if (enabled) boarderColor else boarderColor.copy(alpha = 0.38f)
+
+    Surface(
         onClick = { onClick?.invoke() },
+        enabled = enabled,
         modifier = modifier.fillMaxWidth(),
-        color = buttonColor,
+        color = currentButtonColor,
         shape = RoundedCornerShape(12.dp),
-        border = BorderStroke(1.dp, boarderColor)
+        border = BorderStroke(1.dp, currentBorderColor)
     ) {
         Text(
             text = text,

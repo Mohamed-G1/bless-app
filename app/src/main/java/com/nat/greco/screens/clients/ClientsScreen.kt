@@ -26,7 +26,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nat.greco.R
-import com.nat.greco.screens.home.presentation.HomeState.Companion.dummyList
 import com.nat.greco.screens.home.presentation.components.ListItem
 import com.nat.greco.ui.theme.CompactTypography
 import com.nat.greco.ui.theme.DarkBlue
@@ -89,11 +88,11 @@ fun ClientsScreen() {
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            itemsIndexed(items = dummyList) { index, item ->
-                ClientItem(
-                    item = item
-                )
-            }
+//            itemsIndexed(items = dummyList) { index, item ->
+//                ClientItem(
+//                    item = item
+//                )
+//            }
         }
     }
 }

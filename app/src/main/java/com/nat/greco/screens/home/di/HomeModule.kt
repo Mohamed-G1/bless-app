@@ -2,7 +2,7 @@ package com.nat.greco.screens.home.di
 
 import com.nat.greco.screens.home.data.repository.HomeRepositoryImpl
 import com.nat.greco.screens.home.domain.repository.HomeRepository
-import com.nat.greco.screens.home.domain.usecases.GetCouriersUseCase
+import com.nat.greco.screens.home.domain.usecases.GetRoutesUseCase
 import com.nat.greco.screens.home.domain.usecases.SendLocationUseCase
 import com.nat.greco.screens.home.presentation.HomeViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -14,7 +14,7 @@ val homeModule = module {
     }
 
     single {
-        GetCouriersUseCase(get())
+        GetRoutesUseCase(get())
     }
 
     single { SendLocationUseCase(get()) }

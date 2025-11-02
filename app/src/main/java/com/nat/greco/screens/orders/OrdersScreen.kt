@@ -25,7 +25,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nat.greco.R
 import com.nat.greco.screens.clients.ClientItem
-import com.nat.greco.screens.home.presentation.HomeState.Companion.dummyList
 import com.nat.greco.ui.theme.CompactTypography
 
 @Composable
@@ -86,12 +85,12 @@ fun OrdersScreen(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            itemsIndexed(items = dummyList) { index, item ->
-                OrderItem(
-                    onClicked = {onOrderClicked?.invoke()},
-                    item = item
-                )
-            }
+//            itemsIndexed(items = dummyList) { index, item ->
+//                OrderItem(
+//                    onClicked = {onOrderClicked?.invoke()},
+//                    item = item
+//                )
+//            }
         }
     }
 }

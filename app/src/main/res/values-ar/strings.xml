@@ -11,6 +11,9 @@
     <string name="in_your_hand">و في متناول يدك</string>
     <string name="please_fill_username">إسم المستخدم غير صحيح</string>
     <string name="please_fill_password">كلمة المرور غير صحيحة</string>
+    <string name="please_fill_mobile">رقم المستخدم غير صحيح</string>
+    <string name="enter_your_phone">إكتب رقم الموبايل</string>
+    <string name="phone">رقم الموبايل</string>
 
     <string name="enter_your_password">إكتب كلمة السر</string>
     <string name="enter_your_username">إكتب الإسم</string>

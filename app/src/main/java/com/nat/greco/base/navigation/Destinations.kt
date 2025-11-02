@@ -3,7 +3,7 @@ package com.nat.greco.base.navigation
 import android.annotation.SuppressLint
 import androidx.annotation.DrawableRes
 import com.nat.greco.R
-import com.nat.greco.screens.home.domain.models.HomeModel
+import com.nat.greco.screens.home.domain.models.Route
 import kotlinx.serialization.Serializable
 
 /**
@@ -31,44 +31,81 @@ sealed class Destinations {
     data object Stock : Destinations()
 
     @Serializable
-    data object LastOrders : Destinations()
+    data object OrderHistory : Destinations()
 
     @Serializable
-    data object ProductsList : Destinations()
+    data class DealingProducts(
+        val customerid: Int
+    ) : Destinations()
 
 
     @Serializable
     data object Notification : Destinations()
-    @Serializable
-    data object NewRequestScreen : Destinations()
-    @Serializable
-    data object AddNewClientScreen : Destinations()
-    @Serializable
-    data object OrderDetailsScreen : Destinations()
-    @Serializable
-    data object LastOrdersDetails : Destinations()
-    @Serializable
-    data object Accounts : Destinations()
 
     @Serializable
-    data object Products : Destinations()
+    data object NewRequestScreen : Destinations()
+
+    @Serializable
+    data object AddNewClientScreen : Destinations()
+
+    @Serializable
+    data object OrderDetailsScreen : Destinations()
+
+    @Serializable
+    data class OrderHistoryDetails(
+        val encodedOrderLines: String,
+        val orderDate: String,
+        val orderNumber: String,
+        val amount_untaxed: String,
+        val amount_tax: String,
+        val amount_total: String
+    )// Now expects the URL-encoded JSON string    )
+
+    @Serializable
+    data class Accounts
+        (
+        val customerid: Int
+    ) : Destinations()
+
+    @Serializable
+    data class Products(
+        val customerid: Int
+    ) : Destinations()
+
+    @Serializable
+    data class Contracts(
+        val contract: String
+    ) : Destinations()
+
     @Serializable
     data object ProductDetails : Destinations()
 
     @Serializable
     data object Offers : Destinations()
+
     @Serializable
     data object ReceiveStock : Destinations()
+
     @Serializable
-    data object EndDay : Destinations()
+    data class DayDetails(
+        val date: String
+    ) : Destinations()
+
     @Serializable
     data object Returns : Destinations()
+
     @Serializable
     data object ReturnsDetails : Destinations()
 
     @Serializable
-    data class CourierDetails(
-        val homeModel: HomeModel
+    data class RouteDetails(
+        val roues: Route,
+        val note: String
+    ) : Destinations()
+
+    @Serializable
+    data class PriceList(
+        val customerid: Int
     ) : Destinations()
 
 }

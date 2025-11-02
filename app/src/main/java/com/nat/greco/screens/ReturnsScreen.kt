@@ -40,7 +40,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nat.greco.R
 import com.nat.greco.base.ui.appButton.AppButton
-import com.nat.greco.screens.home.domain.models.HomeModel
 import com.nat.greco.screens.orders.OrderItem
 import com.nat.greco.ui.theme.CompactTypography
 import com.nat.greco.ui.theme.Gray
@@ -281,7 +280,6 @@ fun ReturnsScreen(
 
 @Composable
 fun ReturnItem(
-    item: HomeModel? = null,
     onClicked: (() -> Unit)? = null
 ) {
 

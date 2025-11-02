@@ -1,9 +1,12 @@
 package com.nat.greco.screens.home.data.repository
 
+import com.nat.greco.base.BaseRequest
+import com.nat.greco.base.BaseResponse
 import com.nat.greco.base.network.ApiServices
 import com.nat.greco.base.network.Resource
 import com.nat.greco.base.network.safeApiCall
 import com.nat.greco.screens.home.domain.models.HomeResponse
+import com.nat.greco.screens.home.domain.models.RouteRequest
 import com.nat.greco.screens.home.domain.repository.HomeRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -13,24 +16,13 @@ class HomeRepositoryImpl(
     private val apiServices: ApiServices
 ) : HomeRepository {
 
-    override suspend fun getCouriers(
-        userId: Int,
-        date: String,
-        type: String,
-        clientId: String,
-        keyword: String,
-        filterQuery: String
-    ): Flow<Resource<HomeResponse>> = flow {
+
+    override suspend fun getRoutes(
+        request: BaseRequest<RouteRequest>
+    ): Flow<Resource<BaseResponse<HomeResponse>>> = flow {
         emit(Resource.Loading)
         val result = safeApiCall {
-            apiServices.getCouriers(
-                userId = userId,
-                date = date,
-                type = type,
-                clientId = clientId,
-                keyword = keyword,
-                filterQuery = filterQuery
-            )
+            apiServices.getRoutes(request)
         }
         emit(result)
     }.catch { exception ->

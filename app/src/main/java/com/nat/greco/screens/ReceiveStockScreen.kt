@@ -41,8 +41,7 @@ import androidx.compose.ui.unit.sp
 import com.nat.greco.R
 import com.nat.greco.base.ui.appButton.AppButton
 import com.nat.greco.base.ui.textField.AppTextField
-import com.nat.greco.screens.home.domain.models.HomeModel
-import com.nat.greco.screens.home.presentation.HomeState.Companion.dummyList
+
 import com.nat.greco.ui.theme.CompactTypography
 import com.nat.greco.ui.theme.DarkBlue
 import com.nat.greco.ui.theme.Gray
@@ -109,14 +108,14 @@ fun ReceiveStockScreen(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             contentPadding = PaddingValues(8.dp) // Optional padding
         ) {
-            items(dummyList) { item ->
-                StockItem(
-                    onClicked = {
-                        // onOrderClicked?.invoke()
-                    },
-                    item = item
-                )
-            }
+//            items(dummyList) { item ->
+//                StockItem(
+//                    onClicked = {
+//                        // onOrderClicked?.invoke()
+//                    },
+//                    item = item
+//                )
+//            }
         }
 
         Spacer(Modifier.weight(1f))
@@ -129,89 +128,6 @@ fun ReceiveStockScreen(
     }
 }
 
-@Composable
-private fun StockItem(
-    item: HomeModel? = null,
-    onClicked: (() -> Unit)? = null
-) {
-    Card(
-        onClick = { onClicked?.invoke() },
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight(),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        border = BorderStroke(2.dp, WhiteGray)
-    ) {
-
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Image(
-                painter = painterResource(R.drawable.greco_product),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(84.dp)
-                    .clip(
-                        RoundedCornerShape(12.dp)
-                    ),
-                contentScale = ContentScale.Crop
-            )
-
-
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "اسم المنتج",
-                    style = CompactTypography.headlineLarge.copy(fontSize = 12.sp)
-                )
-                Text(
-                    text = "البان",
-                    style = CompactTypography.headlineLarge.copy(fontSize = 12.sp, color = Gray)
-                )
-            }
-
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "الكمية",
-                    style = CompactTypography.headlineLarge.copy(fontSize = 15.sp)
-                )
-                Text(
-                    text = "1 كرتونة",
-                    style = CompactTypography.headlineLarge.copy(fontSize = 15.sp),
-
-                    )
-            }
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "السعر",
-                    style = CompactTypography.headlineLarge.copy(fontSize = 12.sp)
-                )
-                Text(
-                    text = "3100 EGP",
-                    style = CompactTypography.headlineLarge.copy(fontSize = 12.sp, color = Gray)
-                )
-            }
-
-
-        }
-
-    }
-}
 
 @Composable
 private fun SearchField(

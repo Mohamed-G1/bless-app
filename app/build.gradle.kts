@@ -28,7 +28,7 @@ android {
     buildTypes {
         debug {
             isMinifyEnabled = false
-            buildConfigField("String", "BASE_URL", "\"http://mecsmobileapi.natlab.net/\"")
+            buildConfigField("String", "BASE_URL", "\" https://elwarda-test.odoo.com/\"")
 //            buildConfigField(
 //                "String",
 //                "CLIENT_ID",
@@ -43,7 +43,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            buildConfigField("String", "BASE_URL", "\"http://mecsmobileapi.natlab.net/\"")
+            buildConfigField("String", "BASE_URL", "\" https://elwarda-test.odoo.com/\"")
 //            buildConfigField(
 //                "String",
 //                "CLIENT_ID",

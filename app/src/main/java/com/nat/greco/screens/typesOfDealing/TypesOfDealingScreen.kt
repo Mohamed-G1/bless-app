@@ -24,7 +24,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nat.greco.R
-import com.nat.greco.screens.home.presentation.HomeState.Companion.dummyList
 import com.nat.greco.screens.orders.OrderItem
 import com.nat.greco.ui.theme.CompactTypography
 

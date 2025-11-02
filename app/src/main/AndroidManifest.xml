@@ -29,6 +29,7 @@
         <activity
             android:name="com.nat.greco.MainActivity"
             android:exported="true"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Greco">
             <intent-filter>

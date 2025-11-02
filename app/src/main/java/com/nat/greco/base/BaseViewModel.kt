@@ -8,10 +8,10 @@ import kotlinx.coroutines.launch
 
 abstract class BaseViewModel : ViewModel() {
 
-    fun <T> executeSuspend(
-        block: suspend () -> Resource<T>,
-        onSuccess: (T?) -> Unit,
-        onFailure: (String) -> Unit,
+    inline fun <reified T> executeSuspend(
+        crossinline block: suspend () -> Resource<T>,
+        crossinline onSuccess: (T?) -> Unit,
+        crossinline onFailure: (String) -> Unit,
     ) {
         viewModelScope.launch {
             val result = block()

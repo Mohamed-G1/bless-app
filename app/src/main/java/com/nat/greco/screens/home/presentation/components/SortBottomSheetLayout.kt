@@ -24,7 +24,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.nat.greco.base.ui.appButton.AppButton
-import com.nat.greco.screens.home.domain.models.SortOptions
 import com.nat.greco.ui.theme.CompactTypography
 import com.nat.greco.ui.theme.MediumBlue
 import com.nat.greco.ui.theme.WhiteGray
@@ -36,7 +35,7 @@ fun SortBottomSheetLayout(
     alreadySelectedSort: String
 ) {
 
-    val filtersList = SortOptions.entries
+//    val filtersList = SortOptions.entries
 
     var selectedFilter by remember {
         mutableStateOf(alreadySelectedSort)
@@ -47,15 +46,15 @@ fun SortBottomSheetLayout(
             .wrapContentSize()
             .padding(16.dp)
     ) {
-        filtersList.forEach { filter ->
-            SortItem(
-                filter = filter,
-                onClick = {
-                    selectedFilter = filter.name
-                },
-                alreadySelectedFilter = selectedFilter
-            )
-        }
+//        filtersList.forEach { filter ->
+//            SortItem(
+//                filter = filter,
+//                onClick = {
+//                    selectedFilter = filter.name
+//                },
+//                alreadySelectedFilter = selectedFilter
+//            )
+//        }
 
         Spacer(modifier = Modifier.height(98.dp))
 
@@ -92,47 +91,47 @@ fun SortBottomSheetLayout(
 }
 
 
-@Composable
-fun SortItem(
-    filter: SortOptions,
-    onClick: (String) -> Unit,
-    alreadySelectedFilter: String
+//@Composable
+//fun SortItem(
+//    filter: SortOptions,
+//    onClick: (String) -> Unit,
+//    alreadySelectedFilter: String
+//
+//) {
+//    Column {
+//        Row(
+//            modifier = Modifier.fillMaxWidth(),
+//            verticalAlignment = Alignment.CenterVertically,
+//            horizontalArrangement = Arrangement.SpaceBetween
+//        ) {
+//            Text(
+//                text = filter.value,
+//                style = CompactTypography.labelMedium.copy(color = Color.Gray)
+//            )
+//
+//            RadioButton(
+//                selected = alreadySelectedFilter == filter.name,
+//                onClick = {
+//                    onClick.invoke(filter.value)
+//                },
+//                colors = RadioButtonDefaults.colors(
+//                    selectedColor = MediumBlue,
+//                    unselectedColor = MediumBlue
+//                )
+//            )
+//
+//        }
+//
+//        Spacer(modifier = Modifier.height(4.dp))
+//        HorizontalDivider(thickness = .5.dp, color = WhiteGray)
+//    }
+//}
 
-) {
-    Column {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                text = filter.value,
-                style = CompactTypography.labelMedium.copy(color = Color.Gray)
-            )
-
-            RadioButton(
-                selected = alreadySelectedFilter == filter.name,
-                onClick = {
-                    onClick.invoke(filter.value)
-                },
-                colors = RadioButtonDefaults.colors(
-                    selectedColor = MediumBlue,
-                    unselectedColor = MediumBlue
-                )
-            )
-
-        }
-
-        Spacer(modifier = Modifier.height(4.dp))
-        HorizontalDivider(thickness = .5.dp, color = WhiteGray)
-    }
-}
-
-@Preview
-@Composable
-private fun SortBottomSheetLayoutPreview() {
-    SortBottomSheetLayout(
-        {}, {},
-        alreadySelectedSort = SortOptions.LowestAmount.value
-    )
-}
+//@Preview
+//@Composable
+//private fun SortBottomSheetLayoutPreview() {
+//    SortBottomSheetLayout(
+//        {}, {},
+//        alreadySelectedSort = SortOptions.LowestAmount.value
+//    )
+//}

@@ -5,14 +5,11 @@ import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
@@ -29,29 +26,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nat.greco.R
-import com.nat.greco.screens.home.domain.models.CourierSheetTypes
-import com.nat.greco.screens.home.domain.models.HomeModel
+import com.nat.greco.screens.home.domain.models.Route
 import com.nat.greco.ui.theme.CompactTypography
 import com.nat.greco.ui.theme.DeliverGreen
 import com.nat.greco.ui.theme.Gray
 import com.nat.greco.ui.theme.NotDeliverRed
-import com.nat.greco.ui.theme.Orange
 import com.nat.greco.ui.theme.WhiteGray
 
 @Composable
 fun ListItem(
-    item: HomeModel? = null,
+    item: Route? = null,
     modifier: Modifier = Modifier,
-    onClick: ((HomeModel) -> Unit)? = null
+    onClick: ((Route) -> Unit)? = null
 ) {
-    val context = LocalContext.current
-
+val context = LocalContext.current
     Card(
         onClick = {
             if (item != null) {
@@ -91,17 +84,19 @@ fun ListItem(
                     )
 
                     Text(
-                        text =  item?.consigneeName.orEmpty() ,
+                        text =  item?.customer_id?.name.orEmpty() ,
                         style = CompactTypography.headlineLarge.copy(fontSize = 12.sp)
                     )
                 }
 
-                DeliveryStatus(status = item?.lastStatusName.orEmpty())
+                DeliveryStatus(is_visited = item?.is_visited == true,
+                    is_collected = item?.is_collected == true
+                )
 
             }
 
 
-            DeliveryStatusBar(status = item?.lastStatusName.orEmpty())
+            DeliveryStatusBar(item?.is_visited == true)
 
             Row(
                 modifier = Modifier
@@ -120,7 +115,7 @@ fun ListItem(
                     IconButton(onClick = {
 
                         val uri =
-                            Uri.parse("geo:0,0?q=${item?.consigneeDestinationAddress}")
+                            Uri.parse("geo:0,0?q=${item?.customer_id?.address}")
                         val intent = Intent(Intent.ACTION_VIEW, uri)
                         intent.setPackage("com.google.android.apps.maps") // Explicitly use Google Maps app
                         context.startActivity(intent)
@@ -142,7 +137,7 @@ fun ListItem(
                     IconButton(onClick = {
                         val intent = Intent(
                             Intent.ACTION_DIAL,
-                            Uri.parse("tel:${item?.consigneePhone}")
+                            Uri.parse("tel:${item?.customer_id?.phone}")
                         )
                         context.startActivity(intent)
 
@@ -167,7 +162,7 @@ fun ListItem(
                         try {
                             val intent = Intent(Intent.ACTION_VIEW).apply {
                                 data =
-                                    Uri.parse("https://wa.me/${item?.consigneePhone}") // WhatsApp URL with phone number
+                                    Uri.parse("https://wa.me/${item?.customer_id?.phone}") // WhatsApp URL with phone number
                             }
                             context.startActivity(intent)
                         } catch (e: Exception) {
@@ -191,13 +186,15 @@ fun ListItem(
 
 
 @Composable
-fun DeliveryStatus(status: String) {
-    val color = when (status) {
-        "تم الزيارة" -> DeliverGreen
-        "قيد التنفيذ" -> Gray
-        "تم الغاء الزيارة" -> NotDeliverRed
-        else -> Gray
+fun DeliveryStatus(is_visited: Boolean,is_collected: Boolean ) {
+    val color = when (is_visited) {
+        true -> DeliverGreen
+        false -> Gray
     }
+
+    val visitedStatus = if (is_visited) "تم الزيارة" else "قيد التنفيذ"
+//    val collectedStatus = if (is_collected) "تم التحصيل" else "لم يتم التحصيل
+
     Card(
         modifier = Modifier.wrapContentSize(),
         colors = CardDefaults.cardColors(containerColor = color),
@@ -206,7 +203,7 @@ fun DeliveryStatus(status: String) {
         ) {
 
         Text(
-            status,
+            visitedStatus,
             style = CompactTypography.labelMedium.copy(
                 color = WhiteGray,
                 textAlign = TextAlign.Center
@@ -221,19 +218,15 @@ fun DeliveryStatus(status: String) {
 }
 
 @Composable
-fun DeliveryStatusBar(status: String) {
-    val color = when (status) {
-        "تم الزيارة" -> DeliverGreen
-        "قيد التنفيذ" -> Gray
-        "تم الغاء الزيارة" -> NotDeliverRed
-        else -> Gray
+fun DeliveryStatusBar(is_visited: Boolean) {
+    val color = when (is_visited) {
+        true -> DeliverGreen
+        false -> Gray
     }
 
-    val icon = when (status) {
-        "تم الزيارة" -> painterResource(R.drawable.ic_check_circle)
-        "قيد التنفي" -> painterResource(R.drawable.ic_check_circle)
-        "تم الغاء الزيارة" -> painterResource(R.drawable.ic_cancel)
-        else -> painterResource(R.drawable.ic_filled_circle)
+    val icon = when (is_visited) {
+        true -> painterResource(R.drawable.ic_check_circle)
+        false -> painterResource(R.drawable.ic_check_circle)
     }
 
     Box(
@@ -278,11 +271,11 @@ private fun ListItemPreview() {
 @Preview(locale = "ar")
 @Composable
 private fun DeliveryStatusPreview() {
-    DeliveryStatus("Gamal")
+    DeliveryStatus(true, true)
 }
 
 @Preview(locale = "ar")
 @Composable
 private fun DeliveryStatusBarPreview() {
-    DeliveryStatusBar("Gamal")
+    DeliveryStatusBar(true)
 }

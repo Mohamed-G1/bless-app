@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
@@ -26,7 +25,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -51,42 +49,35 @@ import com.nat.greco.R
 import com.nat.greco.base.locationChecker.LocationHandler
 import com.nat.greco.base.locationChecker.LocationServiceReceiver
 import com.nat.greco.base.permissions.LocationPermissionDialog
-import com.nat.greco.base.ui.appButton.AppButton
 import com.nat.greco.base.ui.appLoading.FullLoading
 import com.nat.greco.base.ui.toast.ShowToast
-import com.nat.greco.screens.home.domain.models.CourierSheetTypes
-import com.nat.greco.screens.home.domain.models.HomeModel
-import com.nat.greco.screens.home.presentation.HomeState.Companion.dummyList
-import com.nat.greco.screens.home.presentation.components.AddRequestSheetLayout
+import com.nat.greco.screens.home.domain.models.Route
+import com.nat.greco.screens.home.presentation.components.AddNewOrderAndClientSheetLayout
 import com.nat.greco.screens.home.presentation.components.ListItem
 import com.nat.greco.screens.home.presentation.components.NewClientSheetLayout
 import com.nat.greco.screens.home.presentation.components.NewOrderSheetLayout
-import com.nat.greco.screens.home.presentation.components.PickupFilterBottomSheetLayout
-import com.nat.greco.screens.home.presentation.components.WaybillFilterBottomSheetLayout
-import com.nat.greco.screens.home.presentation.components.SortBottomSheetLayout
 import com.nat.greco.screens.home.presentation.components.SearchTapItem
 import com.nat.greco.ui.theme.CompactTypography
 import com.nat.greco.ui.theme.DarkBlue
 import com.nat.greco.ui.theme.MediumBlue
-import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     state: HomeState,
     events: ((HomeEvents) -> Unit)? = null,
-    onClick: ((HomeModel) -> Unit)? = null,
+    onClick: ((Route, String) -> Unit)? = null,
     navigateToNotification: (() -> Unit)? = null,
-    onEndDayClicked: (() -> Unit)? = null,
+    onDayDetailsClicked: ((String) -> Unit)? = null,
     openNewRequestScreen: (() -> Unit)? = null,
     openAddClientScreen: (() -> Unit)? = null,
     signOut: (() -> Unit)? = null
 ) {
     val context = LocalContext.current
 
-    var selectedTap by remember {
-        mutableStateOf(CourierSheetTypes.All.name)
-    }
+//    var selectedTap by remember {
+//        mutableStateOf(CourierSheetTypes.All.name)
+//    }
     var showWaybillSortBottomSheet by remember { mutableStateOf(false) }
     var showPickupSortBottomSheet by remember { mutableStateOf(false) }
 
@@ -102,7 +93,7 @@ fun HomeScreen(
     var showPickupFilterBottomSheet by remember { mutableStateOf(false) }
     val locationError by remember { mutableStateOf("") }
 
-    var courierType by remember { mutableStateOf(state.courierType ?: CourierSheetTypes.All.name) }
+//    var courierType by remember { mutableStateOf(state.courierType ?: CourierSheetTypes.All.name) }
 
     var shouldShowDialog by remember { mutableStateOf(false) }
 
@@ -115,6 +106,11 @@ fun HomeScreen(
         }
     ))
 
+
+    LaunchedEffect(Unit) {
+        events?.invoke(HomeEvents.DataChanged("21/10/2025"))
+        events?.invoke(HomeEvents.CallRoutes)
+    }
     // Register the receiver
     DisposableEffect(context) {
         try {
@@ -283,10 +279,10 @@ fun HomeScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                SearchTapItem(query = "الكل",
-                    isSelected = courierType == CourierSheetTypes.All.name,
-                    onClick = {
-                    })
+//                SearchTapItem(query = "الكل",
+//                    isSelected = courierType == CourierSheetTypes.All.name,
+//                    onClick = {
+//                    })
 
                 Spacer(Modifier.width(8.dp))
 
@@ -311,10 +307,11 @@ fun HomeScreen(
                 Spacer(Modifier.weight(1f))
 
                 SearchTapItem(query = "انهاء اليوم",
-                    isSelected = courierType == CourierSheetTypes.All.name,
+                    isSelected = true,
                     onClick = {
-                        onEndDayClicked?.invoke()
-                    })
+                        onDayDetailsClicked?.invoke(state.date.orEmpty())
+                    }
+                )
 
                 Spacer(Modifier.width(12.dp))
 
@@ -378,8 +375,9 @@ fun HomeScreen(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                itemsIndexed(items = dummyList) {index, item ->
-                    val isLast = index == dummyList.lastIndex
+
+                itemsIndexed(state.model?.routes ?: listOf()){index,item ->
+                    val isLast = index == state.model?.routes?.lastIndex
                     ListItem(
                         item = item,
                         modifier = if (isLast) {
@@ -388,7 +386,7 @@ fun HomeScreen(
                             Modifier
                         },
                         onClick = { model ->
-                            onClick?.invoke(model)
+                            onClick?.invoke(model, item.note)
                         }
                     )
                 }
@@ -432,7 +430,7 @@ fun HomeScreen(
                 floatingButtonBottomSheet = false
             }, sheetState = sheetState, containerColor = White
         ) {
-            AddRequestSheetLayout(
+            AddNewOrderAndClientSheetLayout(
                 onNewOrderClicked = {
                     floatingButtonBottomSheet = false
 //                    addNewOrderBottomSheet = true
@@ -452,20 +450,20 @@ fun HomeScreen(
                 showWaybillSortBottomSheet = false
             }, sheetState = sheetState, containerColor = White
         ) {
-            SortBottomSheetLayout(onClick = { sort ->
-                if (sort.equals(state.waybillSortType)) {
-                    showWaybillSortBottomSheet = false
-                } else {
-                    events?.invoke(HomeEvents.WaybillSortTypeClicked(sort))
-                    showWaybillSortBottomSheet = false
-                }
-
-
-            }, onResetClick = {
-                events?.invoke(HomeEvents.ResetWaybillSortClicked)
-                showWaybillSortBottomSheet = false
-            }, alreadySelectedSort = state.waybillSortType.orEmpty()
-            )
+//            SortBottomSheetLayout(onClick = { sort ->
+////                if (sort.equals(state.waybillSortType)) {
+////                    showWaybillSortBottomSheet = false
+////                } else {
+////                    events?.invoke(HomeEvents.WaybillSortTypeClicked(sort))
+////                    showWaybillSortBottomSheet = false
+////                }
+//
+//
+//            }, onResetClick = {
+//                events?.invoke(HomeEvents.ResetWaybillSortClicked)
+//                showWaybillSortBottomSheet = false
+//            }, alreadySelectedSort = state.waybillSortType.orEmpty()
+//            )
         }
 
     }
@@ -476,20 +474,20 @@ fun HomeScreen(
                 showPickupSortBottomSheet = false
             }, sheetState = sheetState, containerColor = White
         ) {
-            SortBottomSheetLayout(onClick = { sort ->
-                if (sort.equals(state.pickupSortType)) {
-                    showPickupSortBottomSheet = false
-                } else {
-                    events?.invoke(HomeEvents.PickupSortTypeClicked(sort))
-                    showPickupSortBottomSheet = false
-                }
-
-
-            }, onResetClick = {
-                events?.invoke(HomeEvents.ResetPickupSortClicked)
-                showPickupSortBottomSheet = false
-            }, alreadySelectedSort = state.pickupSortType.orEmpty()
-            )
+//            SortBottomSheetLayout(onClick = { sort ->
+////                if (sort.equals(state.pickupSortType)) {
+////                    showPickupSortBottomSheet = false
+////                } else {
+////                    events?.invoke(HomeEvents.PickupSortTypeClicked(sort))
+////                    showPickupSortBottomSheet = false
+////                }
+//
+//
+//            }, onResetClick = {
+//                events?.invoke(HomeEvents.ResetPickupSortClicked)
+//                showPickupSortBottomSheet = false
+//            }, alreadySelectedSort = state.pickupSortType.orEmpty()
+//            )
         }
     }
 
@@ -499,21 +497,21 @@ fun HomeScreen(
                 showWaybillFilterBottomSheet = false
             }, sheetState = sheetState, containerColor = White
         ) {
-            WaybillFilterBottomSheetLayout(
-                onClick = { filter ->
-                    if (filter.equals(state.waybillFilterType)) {
-                        showWaybillFilterBottomSheet = false
-                    } else {
-                        events?.invoke(HomeEvents.WaybillFilterTypeClicked(filter))
-                        showWaybillFilterBottomSheet = false
-                    }
-
-
-                }, onResetClick = {
-                    events?.invoke(HomeEvents.WaybillResetFilterClicked)
-                    showWaybillFilterBottomSheet = false
-                }, alreadySelectedFilter = state.waybillFilterType.orEmpty()
-            )
+//            WaybillFilterBottomSheetLayout(
+//                onClick = { filter ->
+//                    if (filter.equals(state.waybillFilterType)) {
+//                        showWaybillFilterBottomSheet = false
+//                    } else {
+//                        events?.invoke(HomeEvents.WaybillFilterTypeClicked(filter))
+//                        showWaybillFilterBottomSheet = false
+//                    }
+//
+//
+//                }, onResetClick = {
+//                    events?.invoke(HomeEvents.WaybillResetFilterClicked)
+//                    showWaybillFilterBottomSheet = false
+//                }, alreadySelectedFilter = state.waybillFilterType.orEmpty()
+//            )
         }
 
     }
@@ -524,24 +522,27 @@ fun HomeScreen(
                 showPickupFilterBottomSheet = false
             }, sheetState = sheetState, containerColor = White
         ) {
-            PickupFilterBottomSheetLayout(
-                onClick = { filter ->
-                    if (filter.equals(state.pickupFilterType)) {
-                        showPickupFilterBottomSheet = false
-                    } else {
-                        events?.invoke(HomeEvents.PickupFilterTypeClicked(filter))
-                        showPickupFilterBottomSheet = false
-                    }
-
-
-                }, onResetClick = {
-                    events?.invoke(HomeEvents.PickupResetFilterClicked)
-                    showPickupFilterBottomSheet = false
-                }, alreadySelectedFilter = state.pickupFilterType.orEmpty()
-            )
+//            PickupFilterBottomSheetLayout(
+//                onClick = { filter ->
+//                    if (filter.equals(state.pickupFilterType)) {
+//                        showPickupFilterBottomSheet = false
+//                    } else {
+//                        events?.invoke(HomeEvents.PickupFilterTypeClicked(filter))
+//                        showPickupFilterBottomSheet = false
+//                    }
+//
+//
+//                }, onResetClick = {
+//                    events?.invoke(HomeEvents.PickupResetFilterClicked)
+//                    showPickupFilterBottomSheet = false
+//                }, alreadySelectedFilter = state.pickupFilterType.orEmpty()
+//            )
         }
     }
 
+    if (state.errorMessage?.isNotEmpty() == true && (state.errorMessage != "Token is not valid")) {
+        ShowToast(state.errorMessage)
+    }
 
     if (state.isLoading) {
         FullLoading()
@@ -553,9 +554,9 @@ fun HomeScreen(
 //    }
 //
 //    // if the user is unauthorized, sign out
-//    if (state.errorCode == 401) {
-//        signOut?.invoke()
-//    }
+    if (state.errorMessage == "Token is not valid") {
+        signOut?.invoke()
+    }
 }
 
 @Preview(locale = "ar")

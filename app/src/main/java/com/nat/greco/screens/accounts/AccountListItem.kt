@@ -27,13 +27,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nat.greco.R
+import com.nat.greco.screens.accounts.models.Data
 import com.nat.greco.ui.theme.CompactTypography
 import com.nat.greco.ui.theme.Gray
 import com.nat.greco.ui.theme.MediumGray
 import com.nat.greco.ui.theme.WhiteGray
 
 @Composable
-fun AccountListItem() {
+fun AccountListItem(
+    data: Data? = null
+) {
 
     Card(
         modifier = Modifier
@@ -80,7 +83,7 @@ fun AccountListItem() {
             ) {
                 Row {
                     Text(
-                        "الخميس 20 سبتمبر 2022",
+                        data?.invoice_date.orEmpty(),
                         style = CompactTypography.headlineLarge.copy(fontSize = 12.sp, color = Gray)
                     )
 
@@ -95,7 +98,7 @@ fun AccountListItem() {
                         style = CompactTypography.headlineLarge.copy(fontSize = 12.sp)
                     )
                     Text(
-                        text = "Ad1111",
+                        text = data?.name.orEmpty(),
                         style = CompactTypography.headlineLarge.copy(fontSize = 12.sp, color = Gray)
                     )
                 }
@@ -110,7 +113,7 @@ fun AccountListItem() {
                         style = CompactTypography.headlineLarge.copy(fontSize = 12.sp)
                     )
                     Text(
-                        text = "3100 EGP",
+                        text = data?.amount_total.toString(),
                         style = CompactTypography.headlineLarge.copy(fontSize = 12.sp, color = Gray)
                     )
                 }
@@ -125,7 +128,7 @@ fun AccountListItem() {
                         style = CompactTypography.headlineLarge.copy(fontSize = 12.sp)
                     )
                     Text(
-                        text = "مدفوع",
+                        text = data?.payment_state.orEmpty(),
                         style = CompactTypography.headlineLarge.copy(fontSize = 12.sp, color = Gray)
                     )
                 }

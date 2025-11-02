@@ -20,6 +20,8 @@ const val PICKUP_SORT_TYPE = "pickup_sort_type"
 const val WAYBILL_FILTER_TYPE = "filter_type"
 const val PICKUP_FILTER_TYPE = "pickup_type"
 const val ROLE_ID = "role_id"
+const val MOBILE = "MOBILE"
+const val EMAIL = "EMAIL"
 const val COURIER_TYPE = "courier"
 const val DeliverStatusId = "DeliverStatusId"
 const val DeliverReasonId = "DeliverReasonId"
@@ -34,6 +36,8 @@ object PreferencesKeys {
     val shouldShowOnboarding = booleanPreferencesKey(name = SHOULD_SHOW_ONBOARDING)
     val isLoggedIn = booleanPreferencesKey(name = IS_LOGGED_IN)
     val token = stringPreferencesKey(name = TOKEN)
+    val mobile = stringPreferencesKey(name = MOBILE)
+    val email = stringPreferencesKey(name = EMAIL)
     val refreshToken = stringPreferencesKey(name = REFRESH_TOKEN)
     val userName = stringPreferencesKey(name = USER_NAME)
     val courierType = stringPreferencesKey(name = COURIER_TYPE)
