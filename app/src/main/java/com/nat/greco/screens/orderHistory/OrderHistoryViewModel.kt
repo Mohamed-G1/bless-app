@@ -5,7 +5,7 @@ import com.nat.greco.base.BaseRequest
 import com.nat.greco.base.BaseViewModel
 import com.nat.greco.base.domain.userManager.GetUserDataManager
 import com.nat.greco.screens.routeDetails.domain.models.OrderHistoryRequest
-import com.nat.greco.screens.routeDetails.domain.models.OrderLine
+import com.nat.greco.screens.routeDetails.domain.models.OrderHistoryLine
 import com.nat.greco.screens.routeDetails.domain.usecases.GetOrderHistoryUseCase
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -42,20 +42,20 @@ class OrderHistoryViewModel(
                 when (event) {
 
                     is OrderHistoryEvents.GetOrderHistory -> {
-                        callOrderHistoryApi()
+                        callOrderHistoryApi(customerId = event.id)
                     }
                 }
             }
         }
     }
 
-    private fun callOrderHistoryApi() {
+    private fun callOrderHistoryApi(customerId: Int) {
         executeFlow(block = {
             getOrderHistoryUseCase.invoke(
                 request = BaseRequest(
                     params = OrderHistoryRequest(
                         token = getUserDataManager.readToken().first(),
-                        customer_id = 275422
+                        customer_id = customerId
                     )
                 )
             )
@@ -63,42 +63,45 @@ class OrderHistoryViewModel(
             _state.update { it.copy(isLoading = value) }
 
         }, onSuccess = { result ->
-            result?.result?.data?.forEach {
-                _state.update {
-                    it.copy(
-                        amount_tax = it.amount_tax,
-                        amount_total = it.amount_total,
-                        amount_untaxed = it.amount_untaxed,
-                        date_order = it.date_order,
-                        order_id = it.order_id,
-                        name = it.name
-                    )
-                }
-            }
 
             _state.update { it.copy(model = result?.result?.data ?: listOf()) }
 
-
-            val allLines: List<OrderLine> =
-                result?.result?.data?.flatMap { it.order_lines } ?: emptyList()
-
-
-            allLines.forEach { line ->
-                _state.update {
-                    it.copy(
-                        discount = line.discount,
-                        id = line.id,
-                        price_subtotal = line.price_subtotal,
-                        price_unit = line.price_unit,
-//                        product_id = line.product_id,
-                        product_uom = line.product_uom,
-                        product_uom_qty = line.product_uom_qty,
-                        qty_delivered = line.qty_delivered,
-//                        taxes = line.taxes
-                    )
-                }
-//                println("Line Item: ${line.product_id.name}") // or line.product_name if you have it
-            }
+//            result?.result?.data?.forEach {
+//                _state.update {
+//                    it.copy(
+//                        amount_tax = it.amount_tax,
+//                        amount_total = it.amount_total,
+//                        amount_untaxed = it.amount_untaxed,
+//                        date_order = it.date_order,
+//                        order_id = it.order_id,
+//                        name = it.name
+//                    )
+//                }
+//            }
+//
+//            _state.update { it.copy(model = result?.result?.data ?: listOf()) }
+//
+//
+//            val allLines: List<OrderHistoryLine> =
+//                result?.result?.data?.flatMap { it.order_lines } ?: emptyList()
+//
+//
+//            allLines.forEach { line ->
+//                _state.update {
+//                    it.copy(
+//                        discount = line.discount,
+//                        id = line.id,
+//                        price_subtotal = line.price_subtotal,
+//                        price_unit = line.price_unit,
+////                        product_id = line.product_id,
+//                        product_uom = line.product_uom,
+//                        product_uom_qty = line.product_uom_qty,
+//                        qty_delivered = line.qty_delivered,
+////                        taxes = line.taxes
+//                    )
+//                }
+////                println("Line Item: ${line.product_id.name}") // or line.product_name if you have it
+//            }
 
 
         }, onFailure = { error, _ ->

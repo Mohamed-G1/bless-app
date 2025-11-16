@@ -22,23 +22,23 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import com.nat.greco.screens.AddNewClientScreen
+import com.nat.greco.screens.addNewClient.presentation.AddNewCustomerScreen
 import com.nat.greco.screens.ContractsScreen
 import com.nat.greco.screens.dayDetails.presentation.DayDetailsScreen
-import com.nat.greco.screens.addNewOrders.AddNewOrderScreen
-import com.nat.greco.screens.OffersScreen
-import com.nat.greco.screens.OrderDetailsScreen
+import com.nat.greco.screens.addNewOrders.presentation.chooseCustomer.ChooseCustomerScreen
+import com.nat.greco.screens.promotionsList.presentation.PromotionScreen
+import com.nat.greco.screens.orderDetails.presentation.OrderDetailsScreen
 import com.nat.greco.screens.addNewOrders.presentation.AddNewProductsScreen
-import com.nat.greco.screens.ProductsDetails
-import com.nat.greco.screens.ReceiveStockScreen
+import com.nat.greco.screens.confirmOrder.ConfirmOrderScreen
+import com.nat.greco.screens.receviceStock.presentation.ReceiveStockScreen
 import com.nat.greco.screens.ReturnsDetailsScreen
-import com.nat.greco.screens.ReturnsScreen
+import com.nat.greco.screens.returnsScreen.ReturnsScreen
 import com.nat.greco.screens.accounts.AccountsScreen
 import com.nat.greco.screens.accounts.presentation.AccountsViewModel
+import com.nat.greco.screens.addNewClient.presentation.AddNewCustomerViewModel
 import com.nat.greco.screens.addNewOrders.presentation.NewProductsViewModel
-import com.nat.greco.screens.routeDetails.domain.models.OrderLine
-import com.nat.greco.screens.orders.OrdersScreen
+import com.nat.greco.screens.addNewOrders.presentation.chooseCustomer.ChooseCustomerViewModel
+import com.nat.greco.screens.orders.presentation.OrdersScreen
 import com.nat.greco.screens.routeDetails.presentation.RouteDetailsScreen
 import com.nat.greco.screens.routeDetails.presentation.RouteDetailsViewModel
 import com.nat.greco.screens.home.presentation.HomeScreen
@@ -49,14 +49,22 @@ import com.nat.greco.screens.login.presentation.LoginViewModel
 import com.nat.greco.screens.stocks.peresentation.StockScreen
 import com.nat.greco.screens.notifications.NotificationScreen
 import com.nat.greco.screens.dealingProducts.peresentation.DealingProductsScreen
-import com.nat.greco.screens.clients.ClientsScreen
+import com.nat.greco.screens.clients.CustomersScreen
+import com.nat.greco.screens.clients.CustomersViewModel
+import com.nat.greco.screens.confirmOrder.ConfirmOrderViewModel
 import com.nat.greco.screens.dayDetails.presentation.DayDetailsViewModel
 import com.nat.greco.screens.dealingProducts.peresentation.DealingProductsViewModel
 import com.nat.greco.screens.home.domain.models.Route
+import com.nat.greco.screens.orderDetails.presentation.OrderDetailsViewModel
 import com.nat.greco.screens.orderHistory.OrderHistoryDetailsScreen
+import com.nat.greco.screens.orderHistory.OrderHistoryDetailsViewModel
 import com.nat.greco.screens.orderHistory.OrderHistoryViewModel
+import com.nat.greco.screens.orders.presentation.OrdersViewModel
 import com.nat.greco.screens.priceList.presentation.PriceListScreen
 import com.nat.greco.screens.priceList.presentation.PriceListViewModel
+import com.nat.greco.screens.promotionsList.presentation.PromotionViewModel
+import com.nat.greco.screens.receviceStock.presentation.ReceiveStockViewModel
+import com.nat.greco.screens.returnsScreen.ReturnsViewModel
 import com.nat.greco.screens.splash.presentation.SplashScreen
 import com.nat.greco.screens.splash.presentation.SplashViewModel
 import com.nat.greco.screens.stocks.peresentation.StockViewModel
@@ -135,9 +143,9 @@ fun NavApp() {
                         if (navController.canNavigate)
                             navController.navigate(Destinations.Notification)
                     },
-                    openNewRequestScreen = {
+                    openNewOrderScreen = {
                         if (navController.canNavigate)
-                            navController.navigate(Destinations.Products)
+                            navController.navigate(Destinations.NewOrderScreen)
                     },
                     openAddClientScreen = {
                         if (navController.canNavigate)
@@ -172,9 +180,9 @@ fun NavApp() {
                         if (navController.canNavigate)
                             navController.navigateUp()
                     },
-                    onLastOrdersClicked = {
+                    onLastOrdersClicked = { id ->
                         if (navController.canNavigate)
-                            navController.navigate(Destinations.OrderHistory)
+                            navController.navigate(Destinations.OrderHistory(id))
                     },
                     onDealingProductsClicked = { id ->
                         if (navController.canNavigate)
@@ -188,9 +196,9 @@ fun NavApp() {
                                 )
                             )
                     },
-                    onOffersClicked = {
+                    onPromotionsClicked = { id ->
                         if (navController.canNavigate)
-                            navController.navigate(Destinations.Offers)
+                            navController.navigate(Destinations.Promotions(id))
 
                     },
                     openNewProductsScreen = { id ->
@@ -256,7 +264,11 @@ fun NavApp() {
                 )
             }
             composable<Destinations.ReceiveStock> {
+                val viewModel: ReceiveStockViewModel = koinViewModel()
+                val state by viewModel.state.collectAsStateWithLifecycle()
                 ReceiveStockScreen(
+                    state = state,
+                    events = viewModel::sendEvent,
                     onBackClicked = {
                         if (navController.canNavigate)
                             navController.navigateUp()
@@ -279,14 +291,20 @@ fun NavApp() {
                         if (navController.canNavigate)
                             navController.navigateUp()
                     },
-                    navigateToProductDetails = {
+                    navigateToConfirmOrder = { id ->
                         if (navController.canNavigate)
-                            navController.navigate(Destinations.ProductDetails)
+                            navController.navigate(Destinations.ConfirmOrder(id))
                     }
                 )
             }
-            composable<Destinations.ProductDetails> {
-                ProductsDetails(
+            composable<Destinations.ConfirmOrder> {
+                val args = it.toRoute<Destinations.ConfirmOrder>()
+                val viewModel: ConfirmOrderViewModel = koinViewModel()
+                val state by viewModel.state.collectAsStateWithLifecycle()
+                ConfirmOrderScreen(
+                    id = args.id,
+                    state = state,
+                    events = viewModel::sendEvent,
                     onBackClicked = {
                         if (navController.canNavigate)
                             navController.navigateUp()
@@ -311,23 +329,20 @@ fun NavApp() {
             }
 
             composable<Destinations.OrderHistory> {
+                val args = it.toRoute<Destinations.OrderHistory>()
                 val gson = Gson()
 
                 val viewModel: OrderHistoryViewModel = koinViewModel()
                 val state by viewModel.state.collectAsStateWithLifecycle()
                 OrderHistoryScreen(
+                    customerId = args.id,
                     state = state,
                     events = viewModel::sendEvent,
-                    onOrderClicked = { model, date, number, amount_untaxed,
-                                       amount_tax,
-                                       amount_total ->
+                    onOrderClicked = { id ->
                         if (navController.canNavigate) {
-                            val jsonString = gson.toJson(model)
                             navController.navigate(
                                 Destinations.OrderHistoryDetails(
-                                    jsonString, date, number, amount_untaxed,
-                                    amount_tax,
-                                    amount_total
+                                    id
                                 )
                             )
                         }
@@ -343,25 +358,14 @@ fun NavApp() {
                 )
             }
 
-            composable<Destinations.OrderHistoryDetails>
-            { backStackEntry ->
-
-                // 1. Get the route object which now contains the encoded string
+            composable<Destinations.OrderHistoryDetails> { backStackEntry ->
                 val args = backStackEntry.toRoute<Destinations.OrderHistoryDetails>()
-                val jsonString = args.encodedOrderLines
-                val gson = Gson()
-                // 3. URL-decode the string argument
-                val orderLines: List<OrderLine> = gson.fromJson(
-                    jsonString,
-                    object : TypeToken<List<OrderLine>>() {}.type
-                )                // 4. Deserialize the JSON string back into your List<OrderLine> object
+                val viewModel: OrderHistoryDetailsViewModel = koinViewModel()
+                val state by viewModel.state.collectAsStateWithLifecycle()
                 OrderHistoryDetailsScreen(
-                    model = orderLines,
-                    orderDate = args.orderDate,
-                    orderNumber = args.orderNumber,
-                    amount_untaxed = args.amount_untaxed,
-                    amount_tax = args.amount_tax,
-                    amount_total = args.amount_total,
+                    orderId = args.id,
+                    state = state,
+                    events = viewModel::sendEvent,
                     onBackClicked = {
                         if (navController.canNavigate)
                             navController.navigateUp()
@@ -384,14 +388,19 @@ fun NavApp() {
             }
 
             composable<Destinations.Clients> {
-                ClientsScreen()
+                val viewModel: CustomersViewModel = koinViewModel()
+                val state by viewModel.state.collectAsStateWithLifecycle()
+                CustomersScreen(state = state)
             }
 
             composable<Destinations.Requests> {
+                val viewModel: OrdersViewModel = koinViewModel()
+                val state by viewModel.state.collectAsStateWithLifecycle()
                 OrdersScreen(
-                    onOrderClicked = {
+                    state = state,
+                    onOrderClicked = { model ->
                         if (navController.canNavigate)
-                            navController.navigate(Destinations.OrderDetailsScreen)
+                            navController.navigate(Destinations.OrderDetailsScreen(model))
                     }
                 )
             }
@@ -409,28 +418,41 @@ fun NavApp() {
                 )
             }
 
-            composable<Destinations.Offers> {
-                OffersScreen(
+            composable<Destinations.Promotions> {
+                val args = it.toRoute<Destinations.Promotions>()
+                val viewModel: PromotionViewModel = koinViewModel()
+                val state by viewModel.state.collectAsStateWithLifecycle()
+                PromotionScreen(
+                    customerId = args.customerId,
+                    state = state,
+                    events = viewModel::sendEvent,
                     onBackClicked = {
                         if (navController.canNavigate)
                             navController.navigateUp()
                     }
                 )
             }
-            composable<Destinations.NewRequestScreen> {
-                AddNewOrderScreen(
+            composable<Destinations.NewOrderScreen> {
+                val viewModel : ChooseCustomerViewModel = koinViewModel()
+                val state by viewModel.state.collectAsStateWithLifecycle()
+                ChooseCustomerScreen(
+                    state = state,
                     onBackClicked = {
                         if (navController.canNavigate)
                             navController.navigateUp()
                     },
-                    navigateToProducts = {
+                    navigateToProducts = { id ->
                         if (navController.canNavigate)
-                            navController.navigate(Destinations.Products)
+                            navController.navigate(Destinations.Products(id))
                     }
                 )
             }
             composable<Destinations.AddNewClientScreen> {
-                AddNewClientScreen(
+                val viewModel: AddNewCustomerViewModel = koinViewModel()
+                val state by viewModel.state.collectAsStateWithLifecycle()
+                AddNewCustomerScreen(
+                    state = state,
+                    events = viewModel::sendEvent,
                     onBackClicked = {
                         if (navController.canNavigate)
                             navController.navigateUp()
@@ -439,20 +461,32 @@ fun NavApp() {
             }
 
             composable<Destinations.OrderDetailsScreen> {
+                val args = it.toRoute<Destinations.OrderDetailsScreen>()
+                val viewModel: OrderDetailsViewModel = koinViewModel()
+                val state by viewModel.state.collectAsStateWithLifecycle()
                 OrderDetailsScreen(
+                    orderId = args.orderId,
+                    state = state,
+                    events = viewModel::sendEvent,
                     onBackClicked = {
                         if (navController.canNavigate)
                             navController.navigateUp()
                     },
-                    navigateToReturn = {
+                    navigateToReturn = { id ->
                         if (navController.canNavigate)
-                            navController.navigate(Destinations.Returns)
+                            navController.navigate(Destinations.Returns(id))
                     }
                 )
             }
 
             composable<Destinations.Returns> {
+                val args = it.toRoute<Destinations.Returns>()
+                val viewModel: ReturnsViewModel = koinViewModel()
+                val state by viewModel.state.collectAsStateWithLifecycle()
                 ReturnsScreen(
+                    orderId = args.orderId,
+                    state = state,
+                    events = viewModel::sendEvent,
                     onBackClicked = {
                         if (navController.canNavigate)
                             navController.navigateUp()

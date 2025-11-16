@@ -19,6 +19,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,23 +29,23 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nat.greco.R
-import com.nat.greco.screens.routeDetails.domain.models.OrderLine
+import com.nat.greco.screens.routeDetails.domain.models.OrderHistoryLine
 import com.nat.greco.ui.theme.CompactTypography
 import com.nat.greco.ui.theme.Gray
 import com.nat.greco.ui.theme.WhiteGray
 
 @Composable
 fun OrderHistoryDetailsScreen(
-    model: List<OrderLine> = listOf(),
-    orderDate: String? = null,
-    orderNumber: String? = null,
-    amount_untaxed: String? = null,
-    amount_tax: String? = null,
-    amount_total: String? = null,
+    orderId : Int,
+    state : OrderHistoryDetailsState,
+    events: ((OrderHistoryDetailsEvents) -> Unit) ? =null,
+
     onBackClicked: (() -> Unit)? = null
 ) {
 
-    val lines = remember(model) { model }
+    LaunchedEffect(orderId) {
+        events?.invoke(OrderHistoryDetailsEvents.OrderIdChanged(orderId))
+    }
 
     Box(
         modifier = Modifier
@@ -96,7 +97,7 @@ fun OrderHistoryDetailsScreen(
                             style = CompactTypography.headlineLarge.copy(fontSize = 14.sp)
                         )
                         Text(
-                            text = orderNumber.orEmpty(),
+                            text = state.model?.name.orEmpty(),
                             style = CompactTypography.headlineLarge.copy(
                                 fontSize = 14.sp,
                                 color = Gray
@@ -114,7 +115,7 @@ fun OrderHistoryDetailsScreen(
                             style = CompactTypography.headlineLarge.copy(fontSize = 14.sp)
                         )
                         Text(
-                            text = orderDate.orEmpty(),
+                            text = state.model?.date_order.orEmpty(),
                             style = CompactTypography.headlineLarge.copy(
                                 fontSize = 14.sp,
                                 color = Gray
@@ -131,8 +132,10 @@ fun OrderHistoryDetailsScreen(
 
 
 
-            LazyColumn {
-                items(lines) { item ->
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(state.model?.order_lines ?: listOf()) { item ->
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -231,7 +234,7 @@ fun OrderHistoryDetailsScreen(
                             style = CompactTypography.headlineLarge.copy(fontSize = 14.sp)
                         )
                         Text(
-                            text = amount_untaxed.toString(),
+                            text = state.model?.amount_untaxed.toString() +" EGP",
                             style = CompactTypography.headlineLarge.copy(
                                 fontSize = 14.sp,
                                 color = Gray
@@ -249,7 +252,7 @@ fun OrderHistoryDetailsScreen(
                             style = CompactTypography.headlineLarge.copy(fontSize = 14.sp)
                         )
                         Text(
-                            text = "$amount_tax %",
+                            text = state.model?.amount_tax.toString() +" EGP",
                             style = CompactTypography.headlineLarge.copy(
                                 fontSize = 14.sp,
                                 color = Gray
@@ -267,7 +270,7 @@ fun OrderHistoryDetailsScreen(
                             style = CompactTypography.headlineLarge.copy(fontSize = 14.sp)
                         )
                         Text(
-                            text = amount_total.toString(),
+                            text = state.model?.amount_total.toString() +" EGP",
                             style = CompactTypography.headlineLarge.copy(
                                 fontSize = 14.sp,
                                 color = Gray
@@ -283,5 +286,5 @@ fun OrderHistoryDetailsScreen(
 @Preview
 @Composable
 private fun LastOrdersDetailsScreenP() {
-    OrderHistoryDetailsScreen()
+    OrderHistoryDetailsScreen(0, state = OrderHistoryDetailsState())
 }

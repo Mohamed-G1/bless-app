@@ -84,7 +84,7 @@ class DayDetailsViewModel(
     }
 
     private fun endDate() {
-        _state.update { it.copy(isLoading = true) }
+        _state.update { it.copy(isLoading = true, error = "") }
         executeSuspend(
             block = {
                 endDayUseCase.invoke(
@@ -97,16 +97,21 @@ class DayDetailsViewModel(
                 )
             },
             onSuccess = { result ->
-                    _state.update {
-                        it.copy(
-                            model = result, isLoading = false
-                        )
-                    }
+                _state.update {
+                    it.copy(
+                        error = result?.result?.message, isLoading = false
+                    )
+                }
 
 
             },
             onFailure = { error ->
-                _state.update { it.copy(error = error, isLoading = false) }
+                _state.update {
+                    it.copy(
+                        error = error,
+                        isLoading = false
+                    )
+                }
 
             }
         )

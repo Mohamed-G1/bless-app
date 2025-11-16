@@ -31,7 +31,7 @@ sealed class Destinations {
     data object Stock : Destinations()
 
     @Serializable
-    data object OrderHistory : Destinations()
+    data class OrderHistory(val id: Int) : Destinations()
 
     @Serializable
     data class DealingProducts(
@@ -43,22 +43,19 @@ sealed class Destinations {
     data object Notification : Destinations()
 
     @Serializable
-    data object NewRequestScreen : Destinations()
+    data object NewOrderScreen : Destinations()
 
     @Serializable
     data object AddNewClientScreen : Destinations()
 
     @Serializable
-    data object OrderDetailsScreen : Destinations()
+    data class OrderDetailsScreen(
+        val  orderId : Int
+    ) : Destinations()
 
     @Serializable
     data class OrderHistoryDetails(
-        val encodedOrderLines: String,
-        val orderDate: String,
-        val orderNumber: String,
-        val amount_untaxed: String,
-        val amount_tax: String,
-        val amount_total: String
+        val id: Int
     )// Now expects the URL-encoded JSON string    )
 
     @Serializable
@@ -78,10 +75,14 @@ sealed class Destinations {
     ) : Destinations()
 
     @Serializable
-    data object ProductDetails : Destinations()
+    data class ConfirmOrder(
+        val id : Int
+    ) : Destinations()
 
     @Serializable
-    data object Offers : Destinations()
+    data class Promotions(
+        val customerId : Int
+    ) : Destinations()
 
     @Serializable
     data object ReceiveStock : Destinations()
@@ -92,7 +93,9 @@ sealed class Destinations {
     ) : Destinations()
 
     @Serializable
-    data object Returns : Destinations()
+    data class Returns(
+        val orderId : Int
+    ) : Destinations()
 
     @Serializable
     data object ReturnsDetails : Destinations()

@@ -113,7 +113,7 @@ fun AccountListItem(
                         style = CompactTypography.headlineLarge.copy(fontSize = 12.sp)
                     )
                     Text(
-                        text = data?.amount_total.toString(),
+                        text = data?.amount_total.toString() + " EGP",
                         style = CompactTypography.headlineLarge.copy(fontSize = 12.sp, color = Gray)
                     )
                 }

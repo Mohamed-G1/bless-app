@@ -1,6 +1,5 @@
 package com.nat.greco.screens.orderHistory
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Icon
@@ -20,32 +18,28 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nat.greco.R
 import com.nat.greco.base.ui.appLoading.FullLoading
 import com.nat.greco.base.ui.toast.ShowToast
-import com.nat.greco.screens.routeDetails.domain.models.OrderLine
-import com.nat.greco.screens.orders.OrderItem
+import com.nat.greco.screens.routeDetails.domain.models.OrderHistoryLine
 import com.nat.greco.ui.theme.CompactTypography
 
 @Composable
 fun OrderHistoryScreen(
+    customerId : Int,
     state: OrderHistoryState,
     events: ((OrderHistoryEvents) -> Unit)? = null,
     onBackClicked: (() -> Unit)? = null,
     onOrderClicked: ((
-        List<OrderLine>,
-        String,
-        String,
-        String,
-        String,
-        String,
+       Int
     ) -> Unit)? = null
 ) {
 
-    LaunchedEffect(Unit) {
-        events?.invoke(OrderHistoryEvents.GetOrderHistory)
+    LaunchedEffect(customerId) {
+        events?.invoke(OrderHistoryEvents.GetOrderHistory(id = customerId))
     }
 
     Column(
@@ -119,15 +113,10 @@ fun OrderHistoryScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             itemsIndexed(items = state.model) { index, item ->
-                OrderItem(
+                OrderHistoryItem(
                     onClicked = { order ->
                         onOrderClicked?.invoke(
-                            order.order_lines,
-                            item.date_order,
-                            item.name,
-                            item.amount_untaxed.toString(),
-                            item.amount_tax.toString(),
-                            item.amount_total.toString()
+                            order.id
                         )
                     },
                     item = item
@@ -143,4 +132,10 @@ fun OrderHistoryScreen(
     if (state.isLoading) {
         FullLoading()
     }
+}
+
+@Preview
+@Composable
+private fun OrderHistorypreview() {
+    OrderHistoryScreen(0,OrderHistoryState())
 }

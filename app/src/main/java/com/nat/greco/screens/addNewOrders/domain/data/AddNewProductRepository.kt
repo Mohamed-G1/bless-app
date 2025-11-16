@@ -4,9 +4,9 @@ import com.nat.greco.base.BaseRequest
 import com.nat.greco.base.BaseResponse
 import com.nat.greco.base.network.Resource
 import com.nat.greco.screens.addNewOrders.models.AddToCartRequest
-import com.nat.greco.screens.addNewOrders.models.AddToCartResponse
 import com.nat.greco.screens.addNewOrders.models.NewProductRequest
 import com.nat.greco.screens.addNewOrders.models.NewProductsResponse
+import com.nat.greco.screens.addNewOrders.models.addTocart.AddToCartResponse
 import kotlinx.coroutines.flow.Flow
 
 interface AddNewProductRepository {
@@ -16,5 +16,5 @@ interface AddNewProductRepository {
 
     suspend fun addToCart(
         request: BaseRequest<AddToCartRequest>
-    ): Flow<Resource<BaseResponse<AddToCartResponse>>>
+    ): Flow<Resource<AddToCartResponse>>
 }

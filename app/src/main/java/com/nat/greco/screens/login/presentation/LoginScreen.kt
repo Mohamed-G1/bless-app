@@ -224,7 +224,7 @@ fun LoginScreen(
                 )
                 Spacer(Modifier.size(8.dp))
                 Text(
-                    text = "جار الحصول علي بيانات الموقوع",
+                    text = "جار الحصول علي بيانات الموقع",
                     color = Color.Gray,
                     style = CompactTypography.bodyMedium
                 )

@@ -20,16 +20,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.nat.greco.base.navigation.Destinations
 import com.nat.greco.base.ui.imageLoader.AppImageLoading
-import com.nat.greco.screens.stocks.models.returnsModel.Data
+import com.nat.greco.screens.stocks.models.returnsModel.ReturnedListData
 import com.nat.greco.ui.theme.CompactTypography
 import com.nat.greco.ui.theme.Gray
 import com.nat.greco.ui.theme.WhiteGray
 
 @Composable
  fun ReturnItem(
-    item: Data? = null,
+    item: ReturnedListData? = null,
     onClicked: (() -> Unit)? = null
 ) {
     Card(

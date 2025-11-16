@@ -64,6 +64,8 @@ fun StockScreen(
             .padding(vertical = 24.dp, horizontal = 16.dp),
     ) {
         LazyColumn(
+            modifier = Modifier
+                .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             item {
@@ -172,7 +174,7 @@ fun StockScreen(
                         LazyVerticalGrid(
                             columns = GridCells.Fixed(2),
                             modifier = Modifier
-                                .fillMaxWidth()
+                                .fillMaxSize()
                                 .heightIn(max = 1000.dp), // prevent infinite height inside LazyColumn
                             verticalArrangement = Arrangement.spacedBy(12.dp),
                             horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -315,7 +317,8 @@ private fun StockSearchField(
         ),
         keyboardActions = KeyboardActions(
             onGo = {
-                events?.invoke(StockEvents.TriggerSearchStock)
+                if (state.stockSearchQuery.isNotBlank())
+                    events?.invoke(StockEvents.TriggerSearchStock)
             }
         ),
         trailingCompose = {
@@ -359,7 +362,8 @@ private fun ReturnsSearchField(
         ),
         keyboardActions = KeyboardActions(
             onGo = {
-                events?.invoke(StockEvents.TriggerSearchReturns)
+                if (state.returnsSearchQuery.isNotBlank())
+                    events?.invoke(StockEvents.TriggerSearchReturns)
             }
         ),
         trailingCompose = {

@@ -70,7 +70,7 @@ class HomeViewModel(
                 _state.update { it.copy(isLoading = value) }
             },
             onSuccess = { result ->
-                if (result?.result?.code != 200) {
+                if (result?.result?.code != 200 || result.result.message == "Token is not valid") {
                     // error
                     _state.update { it.copy(errorMessage = result?.result?.message) }
                 } else {
@@ -146,6 +146,7 @@ class HomeViewModel(
                 when (event) {
                     is HomeEvents.DataChanged -> {
                         _state.update { it.copy(date = event.date) }
+                        callGetRoutesApi()
                     }
                     is HomeEvents.RefreshCouriers -> {
 //                        if (_state.value.courierType == CourierSheetTypes.waybill.name){

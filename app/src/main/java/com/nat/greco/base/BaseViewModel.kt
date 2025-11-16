@@ -24,11 +24,11 @@ abstract class BaseViewModel : ViewModel() {
     }
 
     // This function for flow operations
-    fun <T> executeFlow(
-        block: suspend () -> Flow<Resource<T>>,
-        onLoading: (Boolean) -> Unit,
-        onSuccess: (T?) -> Unit,
-        onFailure: (String, Int) -> Unit,
+    inline fun <reified T> executeFlow(
+        crossinline block: suspend () -> Flow<Resource<T>>,
+        crossinline onLoading: (Boolean) -> Unit,
+        crossinline onSuccess: (T?) -> Unit,
+        crossinline onFailure: (String, Int) -> Unit,
     ) {
         viewModelScope.launch {
             block().collect { result ->

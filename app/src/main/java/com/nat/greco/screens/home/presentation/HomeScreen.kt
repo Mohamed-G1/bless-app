@@ -2,9 +2,9 @@ package com.nat.greco.screens.home.presentation
 
 import android.content.IntentFilter
 import android.location.LocationManager
+import android.os.Build
 import android.util.Log
-import android.widget.Toast
-import androidx.compose.foundation.Image
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,7 +24,6 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -35,17 +34,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.nat.greco.R
+import com.nat.greco.base.ui.datePicker.AppDatePicker
 import com.nat.greco.base.locationChecker.LocationHandler
 import com.nat.greco.base.locationChecker.LocationServiceReceiver
 import com.nat.greco.base.permissions.LocationPermissionDialog
@@ -58,9 +57,13 @@ import com.nat.greco.screens.home.presentation.components.NewClientSheetLayout
 import com.nat.greco.screens.home.presentation.components.NewOrderSheetLayout
 import com.nat.greco.screens.home.presentation.components.SearchTapItem
 import com.nat.greco.ui.theme.CompactTypography
-import com.nat.greco.ui.theme.DarkBlue
 import com.nat.greco.ui.theme.MediumBlue
+import com.nat.greco.utils.convertDateStringToMillis
+import com.nat.greco.utils.formattedDateToEnglish
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
@@ -69,7 +72,7 @@ fun HomeScreen(
     onClick: ((Route, String) -> Unit)? = null,
     navigateToNotification: (() -> Unit)? = null,
     onDayDetailsClicked: ((String) -> Unit)? = null,
-    openNewRequestScreen: (() -> Unit)? = null,
+    openNewOrderScreen: (() -> Unit)? = null,
     openAddClientScreen: (() -> Unit)? = null,
     signOut: (() -> Unit)? = null
 ) {
@@ -80,6 +83,7 @@ fun HomeScreen(
 //    }
     var showWaybillSortBottomSheet by remember { mutableStateOf(false) }
     var showPickupSortBottomSheet by remember { mutableStateOf(false) }
+    var selectedDate by rememberSaveable { mutableStateOf("") }
 
     var isLocationEnabled by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(
@@ -96,6 +100,7 @@ fun HomeScreen(
 //    var courierType by remember { mutableStateOf(state.courierType ?: CourierSheetTypes.All.name) }
 
     var shouldShowDialog by remember { mutableStateOf(false) }
+    var isDatePickerOpen by remember { mutableStateOf(false) }
 
     val locationServiceReceiver = rememberUpdatedState(LocationServiceReceiver(
         context = context,
@@ -108,7 +113,7 @@ fun HomeScreen(
 
 
     LaunchedEffect(Unit) {
-        events?.invoke(HomeEvents.DataChanged("21/10/2025"))
+        events?.invoke(HomeEvents.DataChanged(selectedDate.ifEmpty { LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy", java.util.Locale.ENGLISH)) }))
         events?.invoke(HomeEvents.CallRoutes)
     }
     // Register the receiver
@@ -216,8 +221,7 @@ fun HomeScreen(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 val name =
-                    StringBuilder().append("أهلاً").append(" ").append(state.userName.orEmpty())
-                        .append(" !").toString()
+                    StringBuilder().append("أهلاً").append(" ").append(state.userName.orEmpty()).toString()
 
                 Text(
                     text = name,
@@ -227,45 +231,45 @@ fun HomeScreen(
                 )
 
 
-                IconButton(onClick = {
-                    Toast.makeText(
-                        context,
-                        "This feature will be available soon",
-                        Toast.LENGTH_SHORT
-                    )
-                        .show()
-                }) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_scan),
-                        contentDescription = null,
-                        tint = DarkBlue
-                    )
-                }
-
-                IconButton(onClick = {
-                    Toast.makeText(
-                        context,
-                        "This feature will be available soon",
-                        Toast.LENGTH_SHORT
-                    )
-                        .show()
-                }) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_message),
-                        contentDescription = null,
-                        tint = DarkBlue
-                    )
-                }
-
-                IconButton(onClick = {
-                    navigateToNotification?.invoke()
-                }) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_notification),
-                        contentDescription = null,
-                        tint = DarkBlue
-                    )
-                }
+//                IconButton(onClick = {
+//                    Toast.makeText(
+//                        context,
+//                        "This feature will be available soon",
+//                        Toast.LENGTH_SHORT
+//                    )
+//                        .show()
+//                }) {
+//                    Icon(
+//                        painter = painterResource(R.drawable.ic_scan),
+//                        contentDescription = null,
+//                        tint = DarkBlue
+//                    )
+//                }
+//
+//                IconButton(onClick = {
+//                    Toast.makeText(
+//                        context,
+//                        "This feature will be available soon",
+//                        Toast.LENGTH_SHORT
+//                    )
+//                        .show()
+//                }) {
+//                    Icon(
+//                        painter = painterResource(R.drawable.ic_message),
+//                        contentDescription = null,
+//                        tint = DarkBlue
+//                    )
+//                }
+//
+//                IconButton(onClick = {
+//                    navigateToNotification?.invoke()
+//                }) {
+//                    Icon(
+//                        painter = painterResource(R.drawable.ic_notification),
+//                        contentDescription = null,
+//                        tint = DarkBlue
+//                    )
+//                }
 
 
             }
@@ -314,41 +318,45 @@ fun HomeScreen(
                 )
 
                 Spacer(Modifier.width(12.dp))
-
-                IconButton(onClick = {
-//                    if (courierType == CourierSheetTypes.waybill.name) {
-//                        showWaybillSortBottomSheet = true
-//                    } else {
-//                        showPickupSortBottomSheet = true
-//                    }
-                }) {
-                    Image(
-                        painter = painterResource(R.drawable.ic_sort), contentDescription = null
-                    )
-                }
-
-                Spacer(Modifier.width(12.dp))
-
-                IconButton(onClick = {
-//                    if (courierType == CourierSheetTypes.waybill.name) {
-//                        showWaybillFilterBottomSheet = true
-//                    } else {
-//                        showPickupFilterBottomSheet = true
-//                    }
-                }) {
-                    Image(
-                        painter = painterResource(R.drawable.ic_filter), contentDescription = null
-                    )
-                }
+                SearchTapItem(query = "اختر التاريخ",
+                    isSelected = true,
+                    onClick = {
+                        isDatePickerOpen = true
+                    }
+                )
+//                IconButton(onClick = {
+////                    if (courierType == CourierSheetTypes.waybill.name) {
+////                        showWaybillSortBottomSheet = true
+////                    } else {
+////                        showPickupSortBottomSheet = true
+////                    }
+//                }) {
+//                    Image(
+//                        painter = painterResource(R.drawable.ic_sort), contentDescription = null
+//                    )
+//                }
+//
+//                Spacer(Modifier.width(12.dp))
+//
+//                IconButton(onClick = {
+////                    if (courierType == CourierSheetTypes.waybill.name) {
+////                        showWaybillFilterBottomSheet = true
+////                    } else {
+////                        showPickupFilterBottomSheet = true
+////                    }
+//                }) {
+//                    Image(
+//                        painter = painterResource(R.drawable.ic_filter), contentDescription = null
+//                    )
+//                }
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
 
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-
                 Text(
                     text = "خط السير", style = CompactTypography.labelMedium.copy(fontSize = 18.sp),
                 )
@@ -356,7 +364,7 @@ fun HomeScreen(
 
 
                 val count =
-                    StringBuilder().append("( ").append(3).append("").append("")
+                    StringBuilder().append("( ").append(state.model?.routes?.size ?: 0).append("").append("")
                         .append(" )").toString()
 
                 Text(
@@ -367,10 +375,7 @@ fun HomeScreen(
                     ),
                 )
             }
-
-
             Spacer(modifier = Modifier.height(24.dp))
-
             LazyColumn(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -393,7 +398,6 @@ fun HomeScreen(
             }
         }
 
-
         FloatingActionButton(
             onClick = { floatingButtonBottomSheet = true },
             containerColor = MediumBlue,
@@ -403,6 +407,22 @@ fun HomeScreen(
             Icon(Icons.Default.Add, contentDescription = "Add", tint = White)
         }
     }
+
+    if (isDatePickerOpen) {
+        AppDatePicker(
+            onDateSelected = {
+                isDatePickerOpen = false
+                selectedDate = it?.formattedDateToEnglish().orEmpty()
+                events?.invoke(HomeEvents.DataChanged(it?.formattedDateToEnglish().orEmpty()))
+
+            },
+            initialSelectedDateMillis = selectedDate.convertDateStringToMillis(),
+            onDismiss = { isDatePickerOpen = false })
+    }
+
+
+
+
 
     if (addNewOrderBottomSheet){
         ModalBottomSheet(
@@ -434,7 +454,7 @@ fun HomeScreen(
                 onNewOrderClicked = {
                     floatingButtonBottomSheet = false
 //                    addNewOrderBottomSheet = true
-                    openNewRequestScreen?.invoke()
+                    openNewOrderScreen?.invoke()
                 },
                 onNewClientClicked = {
                     floatingButtonBottomSheet = false
@@ -559,6 +579,7 @@ fun HomeScreen(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(locale = "ar")
 @Composable
 private fun HomeScreenPreview() {

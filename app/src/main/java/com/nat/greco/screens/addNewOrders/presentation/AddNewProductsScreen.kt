@@ -64,7 +64,7 @@ import com.nat.greco.base.ui.imageLoader.AppImageLoading
 import com.nat.greco.base.ui.textField.AppTextField
 import com.nat.greco.base.ui.toast.ShowToast
 import com.nat.greco.screens.UnitOfMeasureSheet
-import com.nat.greco.screens.addNewOrders.models.Data
+import com.nat.greco.screens.addNewOrders.models.StockListData
 import com.nat.greco.screens.addNewOrders.models.SelectedUnit
 
 import com.nat.greco.ui.theme.CompactTypography
@@ -80,6 +80,7 @@ fun AddNewProductsScreen(
     state: NewProductsState,
     events: ((NewProductsEvents) -> Unit)? = null,
     onBackClicked: (() -> Unit)? = null,
+    navigateToConfirmOrder: ((Int) -> Unit)? = null,
     navigateToProductDetails: (() -> Unit)? = null,
     customerId: Int
 ) {
@@ -89,7 +90,7 @@ fun AddNewProductsScreen(
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
-    var selectedProduct by remember { mutableStateOf<Data?>(null) }
+    var selectedProduct by remember { mutableStateOf<StockListData?>(null) }
     val selectedUnits = remember { mutableStateListOf<SelectedUnit>() }
 
     val selectedProducts by remember(selectedUnits) {
@@ -106,14 +107,22 @@ fun AddNewProductsScreen(
     }
 
 
-    Column(
-        modifier = Modifier.padding(
-            vertical = 24.dp,
-            horizontal = 16.dp
-        )
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(
+                vertical = 24.dp,
+                horizontal = 16.dp
+            )
     ) {
 
-        Column {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(
+                    bottom = 24.dp
+                )
+        ) {
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -141,7 +150,11 @@ fun AddNewProductsScreen(
 
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2), // Use GridCells.Adaptive(minSize) for adaptive columns
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        bottom = 80.dp
+                    ),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 contentPadding = PaddingValues(8.dp) // Optional padding
@@ -167,8 +180,8 @@ fun AddNewProductsScreen(
         }
 
 
-        Spacer(Modifier.weight(1f))
         AppButton(
+            modifier = Modifier.align(Alignment.BottomCenter),
             text = "اضافة الي العربة",
             onClick = {
                 if (selectedUnits.isEmpty())
@@ -209,8 +222,9 @@ fun AddNewProductsScreen(
         FullLoading()
     }
 
-    if (state.navigateBack) {
-        onBackClicked?.invoke()
+    if (state.navigateToConfirmOrder) {
+        navigateToConfirmOrder?.invoke(state.addToCartModel?.result?.data?.id ?: 0)
+        events?.invoke(NewProductsEvents.NavigationCompleted)
     }
 }
 
@@ -241,7 +255,7 @@ fun mergeSelectedUnits(
 
 @Composable
 private fun ProductItem(
-    data: Data? = null,
+    data: StockListData? = null,
     onClicked: (() -> Unit)? = null,
     isSelected: Boolean,
     selectedCount: Int

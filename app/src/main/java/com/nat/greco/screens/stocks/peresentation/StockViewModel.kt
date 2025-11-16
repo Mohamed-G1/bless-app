@@ -69,7 +69,7 @@ class StockViewModel(
                     }
 
                     is StockEvents.ClearStockSearchQuery -> {
-                        _state.update { it.copy(stockSearchQuery = "",) }
+                        _state.update { it.copy(stockSearchQuery = "") }
                         callStockApi()
                     }
 
@@ -81,6 +81,7 @@ class StockViewModel(
                     is StockEvents.TriggerSearchStock -> {
                         callSearchStockApi()
                     }
+
                     is StockEvents.TriggerSearchReturns -> {
                         callSearchReturnsApi()
                     }
@@ -90,6 +91,7 @@ class StockViewModel(
     }
 
     private fun callSearchStockApi() {
+        _state.update { it.copy(error = "") }
         executeFlow(block = {
             searchStockUseCase.invoke(
                 request = BaseRequest(
@@ -104,16 +106,23 @@ class StockViewModel(
             _state.update { it.copy(isLoading = value) }
 
         }, onSuccess = { result ->
-            _state.update { it.copy(stockList = result?.result?.data ?: listOf()) }
+            if (result?.result?.data?.isEmpty() == true){
+                _state.update { it.copy(error = result.result.message) }
+
+            }else{
+                _state.update { it.copy(stockList = result?.result?.data ?: listOf()) }
+            }
 
         }, onFailure = { error, _ ->
             _state.update { it.copy(error = error) }
+
         }
 
         )
     }
 
     private fun callSearchReturnsApi() {
+        _state.update { it.copy(error = "") }
         executeFlow(block = {
             searchReturnsUseCase.invoke(
                 request = BaseRequest(
@@ -128,7 +137,12 @@ class StockViewModel(
             _state.update { it.copy(isLoading = value) }
 
         }, onSuccess = { result ->
-            _state.update { it.copy(returnsList = result?.result?.data ?: listOf()) }
+            if (result?.result?.data?.isEmpty() == true){
+                _state.update { it.copy(error = result.result.message) }
+
+            }else{
+                _state.update { it.copy(returnsList = result?.result?.data ?: listOf()) }
+            }
 
         }, onFailure = { error, _ ->
             _state.update { it.copy(error = error) }
@@ -173,7 +187,12 @@ class StockViewModel(
             _state.update { it.copy(isLoading = value) }
 
         }, onSuccess = { result ->
-            _state.update { it.copy(returnsList = result?.result?.data ?: listOf()) }
+            if (result?.result?.data?.isEmpty() == true){
+                _state.update { it.copy(error = result.result.message) }
+
+            }else{
+                _state.update { it.copy(returnsList = result?.result?.data ?: listOf()) }
+            }
 
         }, onFailure = { error, _ ->
             _state.update { it.copy(error = error) }

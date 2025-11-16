@@ -7,4 +7,7 @@ val orderHistoryModule = module {
     viewModel {
         OrderHistoryViewModel(get(), get())
     }
+    viewModel {
+        OrderHistoryDetailsViewModel(get(), get())
+    }
 }

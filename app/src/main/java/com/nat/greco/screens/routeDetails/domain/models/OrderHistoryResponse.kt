@@ -10,5 +10,5 @@ data class OrderHistoryResponse(
     val date_order: String,
     val id: Int,
     val name: String,
-    val order_lines: List<OrderLine>
+    val order_lines: List<OrderHistoryLine>
 )

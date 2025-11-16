@@ -71,6 +71,17 @@ fun createSignatureBitmap(
 
     return bitmap
 }
+fun String.formattedDateToEnglish(): String {
+    return try {
+        val parser = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH).apply { isLenient = false }
+        val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
+        val date = parser.parse(this) ?: return this
+        formatter.format(date)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        this
+    }
+}
 
 @RequiresApi(Build.VERSION_CODES.O)
 fun getCurrentDate(): String {
@@ -133,7 +144,7 @@ fun String.toTimeAgo(dateFormat: String = "dd-MM-yyyy HH:mm"): String {
 
 
 fun Long.formattedDateFromMillis(): String {
-    val date = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+    val date = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
     date.timeZone = TimeZone.getTimeZone("UTC") // Set this according to your timezone needs
     return date.format(this)
 }

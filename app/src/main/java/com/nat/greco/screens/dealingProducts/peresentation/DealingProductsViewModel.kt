@@ -6,10 +6,6 @@ import com.nat.greco.base.BaseViewModel
 import com.nat.greco.base.domain.userManager.GetUserDataManager
 import com.nat.greco.screens.dealingProducts.domain.usecases.GetDealingProductsUseCase
 import com.nat.greco.screens.dealingProducts.models.DealingProductsRequest
-import com.nat.greco.screens.orderHistory.OrderHistoryEvents
-import com.nat.greco.screens.orderHistory.OrderHistoryState
-import com.nat.greco.screens.routeDetails.domain.models.OrderHistoryRequest
-import com.nat.greco.screens.routeDetails.domain.models.OrderLine
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

@@ -4,10 +4,14 @@ import com.nat.greco.base.BaseRequest
 import com.nat.greco.base.BaseResponse
 import com.nat.greco.screens.accounts.models.AccountsRequest
 import com.nat.greco.screens.accounts.models.AccountsResponse
+import com.nat.greco.screens.addNewClient.domain.models.AddCustomerRequest
+import com.nat.greco.screens.addNewClient.domain.models.CustomerRequest
+import com.nat.greco.screens.addNewClient.domain.models.CustomerResponse
 import com.nat.greco.screens.addNewOrders.models.AddToCartRequest
-import com.nat.greco.screens.addNewOrders.models.AddToCartResponse
+import com.nat.greco.screens.addNewOrders.models.StockListData
 import com.nat.greco.screens.addNewOrders.models.NewProductRequest
 import com.nat.greco.screens.addNewOrders.models.NewProductsResponse
+import com.nat.greco.screens.addNewOrders.models.addTocart.AddToCartResponse
 import com.nat.greco.screens.dayDetails.domain.models.DayDetailsRequest
 import com.nat.greco.screens.dayDetails.domain.models.DayDetailsResponse
 import com.nat.greco.screens.dealingProducts.models.DealingProductsRequest
@@ -23,13 +27,23 @@ import com.nat.greco.screens.home.domain.models.HomeResponse
 import com.nat.greco.screens.home.domain.models.RouteRequest
 import com.nat.greco.screens.login.domain.models.LoginRequest
 import com.nat.greco.screens.login.domain.models.LoginResponse
+import com.nat.greco.screens.orders.domain.models.OrderDetailsRequest
+import com.nat.greco.screens.orders.domain.models.OrdersRequest
+import com.nat.greco.screens.orders.domain.models.OrdersResponse
 import com.nat.greco.screens.priceList.domain.models.PriceListRequest
 import com.nat.greco.screens.priceList.domain.models.PriceListResponse
+import com.nat.greco.screens.promotionsList.domain.models.PromotionRequest
+import com.nat.greco.screens.promotionsList.domain.models.PromotionResponse
+import com.nat.greco.screens.receviceStock.domain.models.ConfirmReceiveStockRequest
+import com.nat.greco.screens.receviceStock.domain.models.ReceiveStockRequest
+import com.nat.greco.screens.receviceStock.domain.models.ReceiveStockResponse
+import com.nat.greco.screens.returnsScreen.ReturnsRequest
 import com.nat.greco.screens.routeDetails.domain.models.ConfirmedAndCancelledReasonsResponse
 import com.nat.greco.screens.routeDetails.domain.models.ConfirmedAndCancelledRequest
 import com.nat.greco.screens.routeDetails.domain.models.TriggeredConfirmedAndCancelledResponse
 import com.nat.greco.screens.stocks.models.SearchRequest
 import com.nat.greco.screens.stocks.models.StockRequest
+import com.nat.greco.screens.stocks.models.returnsModel.ReturnedListData
 import com.nat.greco.screens.stocks.models.returnsModel.ReturnsStockResponse
 import retrofit2.Response
 import retrofit2.http.Body
@@ -70,7 +84,7 @@ interface ApiServices {
     @POST("api/add_to_cart")
     suspend fun addToCart(
         @Body request: BaseRequest<AddToCartRequest>
-    ): Response<BaseResponse<AddToCartResponse>>
+    ): Response<AddToCartResponse>
 
 
     @POST("api/products_of_dealing")
@@ -115,17 +129,67 @@ interface ApiServices {
     @POST("api/end_day")
     suspend fun endDay(
         @Body request: BaseRequest<DayDetailsRequest>
-    ): Response<DayDetailsResponse>
+    ): Response<BaseResponse<Any>>
 
     @POST("api/search_products")
     suspend fun searchWithStock(
         @Body request: BaseRequest<SearchRequest>
-    ): Response<NewProductsResponse>
+    ): Response<BaseResponse<List<StockListData>>>
 
     @POST("api/search_products")
     suspend fun searchWithReturns(
         @Body request: BaseRequest<SearchRequest>
-    ): Response<ReturnsStockResponse>
+    ): Response<BaseResponse<List<ReturnedListData>>>
+
+    @POST("api/get_order_assigned")
+    suspend fun getOrdersList(
+        @Body request: BaseRequest<OrdersRequest>
+    ): Response<BaseResponse<List<OrdersResponse>>>
+
+    @POST("api/confirm_order")
+    suspend fun confirmOrder(
+        @Body request: BaseRequest<OrderDetailsRequest>
+    ): Response<BaseResponse<Any>>
+
+
+    @POST("api/get_order_id")
+    suspend fun getOrdersDetails(
+        @Body request: BaseRequest<OrderDetailsRequest>
+    ): Response<BaseResponse<OrdersResponse>>
+
+
+    @POST("api/get_transfer_assigned")
+    suspend fun getReceiveStockList(
+        @Body request: BaseRequest<ReceiveStockRequest>
+    ): Response<BaseResponse<List<ReceiveStockResponse>>>
+
+    @POST("api/confirm_transfer")
+    suspend fun confirmReceiveStock(
+        @Body request: BaseRequest<ConfirmReceiveStockRequest>
+    ): Response<BaseResponse<ReceiveStockResponse>>
+
+    @POST("api/return_products")
+    suspend fun sendReturns(
+        @Body request: BaseRequest<ReturnsRequest>
+    ): Response<BaseResponse<Any>>
+
+    @POST("api/customer_promotion")
+    suspend fun getPromotionList(
+        @Body request: BaseRequest<PromotionRequest>
+    ): Response<BaseResponse<List<PromotionResponse>>>
+
+    @POST("api/get_customer_assigned")
+    suspend fun getCustomers(
+        @Body request: BaseRequest<CustomerRequest>
+    ): Response<BaseResponse<List<CustomerResponse>>>
+
+    @POST("api/create_customer")
+    suspend fun addNewCustomer(
+        @Body request: BaseRequest<AddCustomerRequest>
+    ): Response<BaseResponse<Any>>
+
+
+
 
 
 

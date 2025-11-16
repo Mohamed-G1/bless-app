@@ -21,14 +21,14 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nat.greco.base.ui.imageLoader.AppImageLoading
-import com.nat.greco.screens.addNewOrders.models.Data
+import com.nat.greco.screens.addNewOrders.models.StockListData
 import com.nat.greco.ui.theme.CompactTypography
 import com.nat.greco.ui.theme.Gray
 import com.nat.greco.ui.theme.WhiteGray
 
 @Composable
  fun StockItem(
-    item: Data? = null,
+    item: StockListData? = null,
     onClicked: (() -> Unit)? = null
 ) {
     Card(

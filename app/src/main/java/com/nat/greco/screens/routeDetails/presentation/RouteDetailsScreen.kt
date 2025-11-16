@@ -60,12 +60,10 @@ import androidx.compose.ui.unit.sp
 import androidx.core.text.HtmlCompat
 import com.journeyapps.barcodescanner.ScanContract
 import com.nat.greco.R
-import com.nat.greco.base.locationChecker.LocationHandler
 import com.nat.greco.base.ui.appButton.AppButton
 import com.nat.greco.base.ui.appLoading.FullLoading
 import com.nat.greco.base.ui.toast.ShowToast
 import com.nat.greco.screens.routeDetails.presentation.compoenets.CollectSheetLayout
-import com.nat.greco.screens.routeDetails.presentation.compoenets.DeliveredBottomSheet
 import com.nat.greco.screens.routeDetails.presentation.compoenets.NotDeliveredBottomSheet
 import com.nat.greco.screens.routeDetails.presentation.compoenets.RefusalReasonsBottomSheet
 import com.nat.greco.screens.home.domain.models.Route
@@ -77,7 +75,6 @@ import com.nat.greco.ui.theme.DeliverGreen
 import com.nat.greco.ui.theme.MediumBlue
 import com.nat.greco.ui.theme.NotDeliverRed
 import com.nat.greco.ui.theme.WhiteGray
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -88,9 +85,9 @@ fun RouteDetailsScreen(
     note: String? = null,
     onBackClicked: (() -> Unit)? = null,
     onDealingProductsClicked: ((Int) -> Unit)? = null,
-    onLastOrdersClicked: (() -> Unit)? = null,
+    onLastOrdersClicked: ((Int) -> Unit)? = null,
     onAccountsClicked: ((Int) -> Unit)? = null,
-    onOffersClicked: (() -> Unit)? = null,
+    onPromotionsClicked: ((Int) -> Unit)? = null,
     openNewProductsScreen: ((Int) -> Unit)? = null,
     openPriceListScreen: ((Int) -> Unit)? = null,
     openContractsScreen: ((String) -> Unit)? = null,
@@ -349,7 +346,7 @@ fun RouteDetailsScreen(
                             )
                             Spacer(Modifier.height(8.dp))
                             Text(
-                                route?.customer_id?.phone.orEmpty(),
+                                route?.customer_id?.mobile.orEmpty(),
                                 style = CompactTypography.labelMedium.copy(
                                     fontSize = 13.sp,
                                     fontWeight = FontWeight.Bold,
@@ -591,7 +588,7 @@ fun RouteDetailsScreen(
                 ) {
                     IconButton(
                         onClick = {
-                            onLastOrdersClicked?.invoke()
+                            onLastOrdersClicked?.invoke(state.homeModel?.customer_id?.id ?: 0)
                         }) {
                         Image(
                             painter = painterResource(R.drawable.ic_send_message),
@@ -618,7 +615,7 @@ fun RouteDetailsScreen(
                 ) {
                     IconButton(
                         onClick = {
-                            onOffersClicked?.invoke()
+                            onPromotionsClicked?.invoke(route?.customer_id?.id ?: 0)
                         }) {
                         Image(
                             painter = painterResource(R.drawable.ic_send_message),
@@ -845,7 +842,7 @@ fun RouteDetailsScreen(
     }
 
     if (state.navigateBack) {
-        onBackClicked?.invoke()
+//        onBackClicked?.invoke()
     }
 
 

@@ -1,15 +1,14 @@
 package com.nat.greco.screens.addNewOrders.data
 
 import com.nat.greco.base.BaseRequest
-import com.nat.greco.base.BaseResponse
 import com.nat.greco.base.network.ApiServices
 import com.nat.greco.base.network.Resource
 import com.nat.greco.base.network.safeApiCall
 import com.nat.greco.screens.addNewOrders.domain.data.AddNewProductRepository
 import com.nat.greco.screens.addNewOrders.models.AddToCartRequest
-import com.nat.greco.screens.addNewOrders.models.AddToCartResponse
 import com.nat.greco.screens.addNewOrders.models.NewProductRequest
 import com.nat.greco.screens.addNewOrders.models.NewProductsResponse
+import com.nat.greco.screens.addNewOrders.models.addTocart.AddToCartResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
@@ -28,7 +27,7 @@ class AddNewProductRepositoryImpl(
             emit(Resource.Error(message = exception.message.orEmpty()))
         }
 
-    override suspend fun addToCart(request: BaseRequest<AddToCartRequest>): Flow<Resource<BaseResponse<AddToCartResponse>>> =
+    override suspend fun addToCart(request: BaseRequest<AddToCartRequest>): Flow<Resource<AddToCartResponse>> =
             flow {
                 emit(Resource.Loading)
                 val result = safeApiCall {

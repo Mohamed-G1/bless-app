@@ -1,6 +1,7 @@
 package com.nat.greco.screens.dayDetails.data
 
 import com.nat.greco.base.BaseRequest
+import com.nat.greco.base.BaseResponse
 import com.nat.greco.base.network.ApiServices
 import com.nat.greco.base.network.Resource
 import com.nat.greco.base.network.safeApiCall
@@ -25,7 +26,7 @@ class DayDetailsRepositoryImpl(
             emit(Resource.Error(e.message.toString()))
         }
 
-    override suspend fun endDay(request: BaseRequest<DayDetailsRequest>): Resource<DayDetailsResponse> =
+    override suspend fun endDay(request: BaseRequest<DayDetailsRequest>): Resource<BaseResponse<Any>> =
         safeApiCall {
             apiServices.endDay(request)
         }
