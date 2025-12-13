@@ -19,9 +19,10 @@ import com.nat.greco.ui.theme.MediumBlue
 fun SearchTapItem(
     query: String,
     isSelected: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    mainColor: Color = MediumBlue
 ) {
-    val cardColor = if (isSelected) MediumBlue else LightGray
+    val cardColor = if (isSelected) mainColor else LightGray
     val textColor = if (isSelected) Color.White else Color.DarkGray.copy(alpha = .4f)
     Card(
         onClick = { onClick.invoke() },

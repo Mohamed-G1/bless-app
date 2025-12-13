@@ -5,13 +5,21 @@ import com.nat.greco.base.BaseResponse
 import com.nat.greco.screens.accounts.models.AccountsRequest
 import com.nat.greco.screens.accounts.models.AccountsResponse
 import com.nat.greco.screens.addNewClient.domain.models.AddCustomerRequest
+import com.nat.greco.screens.addNewClient.domain.models.AreasResponse
+import com.nat.greco.screens.addNewClient.domain.models.CitiesRequest
+import com.nat.greco.screens.addNewClient.domain.models.CountryResponse
 import com.nat.greco.screens.addNewClient.domain.models.CustomerRequest
 import com.nat.greco.screens.addNewClient.domain.models.CustomerResponse
+import com.nat.greco.screens.addNewClient.domain.models.StatesRequest
+import com.nat.greco.screens.addNewClient.domain.models.StatesResponse
 import com.nat.greco.screens.addNewOrders.models.AddToCartRequest
 import com.nat.greco.screens.addNewOrders.models.StockListData
 import com.nat.greco.screens.addNewOrders.models.NewProductRequest
 import com.nat.greco.screens.addNewOrders.models.NewProductsResponse
 import com.nat.greco.screens.addNewOrders.models.addTocart.AddToCartResponse
+import com.nat.greco.screens.collect.domain.models.CollectRequest
+import com.nat.greco.screens.collect.domain.models.CollectResponse
+import com.nat.greco.screens.collect.domain.models.CreatePaymentRequest
 import com.nat.greco.screens.dayDetails.domain.models.DayDetailsRequest
 import com.nat.greco.screens.dayDetails.domain.models.DayDetailsResponse
 import com.nat.greco.screens.dealingProducts.models.DealingProductsRequest
@@ -30,6 +38,7 @@ import com.nat.greco.screens.login.domain.models.LoginResponse
 import com.nat.greco.screens.orders.domain.models.OrderDetailsRequest
 import com.nat.greco.screens.orders.domain.models.OrdersRequest
 import com.nat.greco.screens.orders.domain.models.OrdersResponse
+import com.nat.greco.screens.orders.domain.models.ReturnsResponse
 import com.nat.greco.screens.priceList.domain.models.PriceListRequest
 import com.nat.greco.screens.priceList.domain.models.PriceListResponse
 import com.nat.greco.screens.promotionsList.domain.models.PromotionRequest
@@ -146,6 +155,35 @@ interface ApiServices {
         @Body request: BaseRequest<OrdersRequest>
     ): Response<BaseResponse<List<OrdersResponse>>>
 
+
+    @POST("api/get_countries")
+    suspend fun getCountriesList(
+        @Body request: BaseRequest<CustomerRequest>
+    ): Response<BaseResponse<List<CountryResponse>>>
+
+    @POST("api/get_states")
+    suspend fun getStatesList(
+        @Body request: BaseRequest<StatesRequest>
+    ): Response<BaseResponse<List<StatesResponse>>>
+
+    @POST("api/get_cities")
+    suspend fun getCitiesList(
+        @Body request: BaseRequest<CitiesRequest>
+    ): Response<BaseResponse<List<StatesResponse>>>
+
+
+    @POST("api/get_areas")
+    suspend fun getAreasList(
+        @Body request: BaseRequest<CustomerRequest>
+    ): Response<BaseResponse<List<AreasResponse>>>
+
+
+    @POST("api/get_return_order_assigned")
+    suspend fun returnsOrderList(
+        @Body request: BaseRequest<OrdersRequest>
+    ): Response<BaseResponse<List<ReturnsResponse>>>
+
+
     @POST("api/confirm_order")
     suspend fun confirmOrder(
         @Body request: BaseRequest<OrderDetailsRequest>
@@ -187,6 +225,20 @@ interface ApiServices {
     suspend fun addNewCustomer(
         @Body request: BaseRequest<AddCustomerRequest>
     ): Response<BaseResponse<Any>>
+
+
+  @POST("api/get_journals")
+    suspend fun getJournals(
+        @Body request: BaseRequest<CollectRequest>
+    ): Response<BaseResponse<List<CollectResponse>>>
+
+
+    @POST("api/create_payment")
+    suspend fun createPayment(
+        @Body request: BaseRequest<CreatePaymentRequest>
+    ): Response<BaseResponse<Any>>
+
+
 
 
 

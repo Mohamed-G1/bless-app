@@ -1,4 +1,4 @@
-package com.nat.greco.application.base.presentation.dialog
+package com.nat.greco.base.ui.dialog
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
@@ -33,16 +33,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.nat.greco.R
 import com.nat.greco.ui.theme.CompactTypography
+import com.nat.greco.ui.theme.MediumBlue
+import com.nat.greco.ui.theme.NotDeliverRed
 import com.nat.greco.ui.theme.WhiteGray
 
 @Composable
 fun AppDialog(
     onConfirm: ((isConfirmed: Boolean) -> Unit)? = null,
     onDismiss: ((isDismiss: Boolean) -> Unit)? = null,
-    @StringRes dialogMessage: Int = R.string.app_name,
+     dialogMessage: String = "",
+
     dialogStringMessage: String = "",
-    @StringRes confirmButtonTitle: Int = R.string.ok,
-    @StringRes cancelButtonTitle: Int = R.string.cancel,
+    confirmButtonTitle: String = "",
+    cancelButtonTitle: String = "",
 //    icon: Painter = painterResource(id = R.drawable.flash_yellow),
     showActionButtons: Boolean = true,
 ) {
@@ -77,9 +80,7 @@ fun AppDialog(
 //                Image(painter = icon, contentDescription = null, modifier = Modifier.size(120.dp))
                 Text(
                     text = dialogStringMessage.ifBlank {
-                        stringResource(
-                            id = dialogMessage
-                        )
+                        dialogMessage
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -98,11 +99,11 @@ fun AppDialog(
                         Button(
                             onClick = { onConfirm?.invoke(true) },
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.primary
+                                containerColor = MediumBlue
                             )
                         ) {
                             Text(
-                                text = stringResource(id = confirmButtonTitle),
+                                text = confirmButtonTitle,
                                 modifier = Modifier.padding(horizontal = 12.dp),
                                 style = CompactTypography.bodyMedium.copy(color = Color.White)
                             )
@@ -111,14 +112,14 @@ fun AppDialog(
                         Button(
                             onClick = { onDismiss?.invoke(true) },
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = Color.White
+                                containerColor = NotDeliverRed
                             ),
                             border = BorderStroke(1.dp, WhiteGray)
                         ) {
                             Text(
-                                text = stringResource(id = cancelButtonTitle),
+                                text = cancelButtonTitle,
                                 modifier = Modifier.padding(horizontal = 12.dp),
-                                style = CompactTypography.bodyMedium.copy(color = Color.LightGray)
+                                style = CompactTypography.bodyMedium.copy(color = Color.White)
                             )
                         }
                     }

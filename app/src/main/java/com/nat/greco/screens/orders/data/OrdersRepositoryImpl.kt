@@ -8,6 +8,7 @@ import com.nat.greco.base.network.safeApiCall
 import com.nat.greco.screens.orders.domain.models.OrderDetailsRequest
 import com.nat.greco.screens.orders.domain.models.OrdersRequest
 import com.nat.greco.screens.orders.domain.models.OrdersResponse
+import com.nat.greco.screens.orders.domain.models.ReturnsResponse
 import com.nat.greco.screens.orders.domain.repository.OrdersRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -21,6 +22,17 @@ class OrdersRepositoryImpl(
         emit(Resource.Loading)
         val result = safeApiCall {
             apiServices.getOrdersList(request)
+        }
+        emit(result)
+    }.catch { e ->
+        emit(Resource.Error(e.message.toString()))
+    }
+
+    override suspend fun getReturnsList(request: BaseRequest<OrdersRequest>): Flow<Resource<BaseResponse<List<ReturnsResponse>>>> = flow {
+
+        emit(Resource.Loading)
+        val result = safeApiCall {
+            apiServices.returnsOrderList(request)
         }
         emit(result)
     }.catch { e ->

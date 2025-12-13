@@ -37,8 +37,10 @@ fun ConfirmOrderScreen(
     id: Int,
     state: ConfirmOrderState,
     events: ((ConfirmOrderEvents) -> Unit)? = null,
-    onBackClicked: (() -> Unit)? = null
-) {
+    onBackClicked: (() -> Unit)? = null,
+    popStack: (() -> Unit)? = null,
+
+    ) {
 
     LaunchedEffect(id) {
         events?.invoke(ConfirmOrderEvents.OrderIdChanged(id))
@@ -165,5 +167,7 @@ fun ConfirmOrderScreen(
     if (state.isLoading) {
         FullLoading()
     }
-
+    if (state.navigateBack){
+        popStack?.invoke()
+    }
 }

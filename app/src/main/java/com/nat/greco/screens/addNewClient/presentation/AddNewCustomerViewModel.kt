@@ -6,9 +6,17 @@ import com.nat.greco.base.BaseRequest
 import com.nat.greco.base.BaseViewModel
 import com.nat.greco.base.domain.userManager.GetUserDataManager
 import com.nat.greco.screens.addNewClient.domain.models.AddCustomerRequest
+import com.nat.greco.screens.addNewClient.domain.models.CitiesRequest
 import com.nat.greco.screens.addNewClient.domain.models.CustomerData
+import com.nat.greco.screens.addNewClient.domain.models.CustomerRequest
+import com.nat.greco.screens.addNewClient.domain.models.StatesRequest
 import com.nat.greco.screens.addNewClient.domain.usecases.AddCustomerUseCase
+import com.nat.greco.screens.addNewClient.domain.usecases.GetAreasUseCase
+import com.nat.greco.screens.addNewClient.domain.usecases.GetCitiesUseCase
+import com.nat.greco.screens.addNewClient.domain.usecases.GetCountryUseCase
 import com.nat.greco.screens.addNewClient.domain.usecases.GetCustomersUseCase
+import com.nat.greco.screens.addNewClient.domain.usecases.GetStatesUseCase
+import com.nat.greco.screens.addNewOrders.models.AddToCartRequest
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,7 +28,13 @@ import kotlinx.coroutines.launch
 class AddNewCustomerViewModel(
     private val getUserDataManager: GetUserDataManager,
     private val getCustomersUseCase: GetCustomersUseCase,
-    private val addCustomerUseCase: AddCustomerUseCase
+    private val addCustomerUseCase: AddCustomerUseCase,
+    private val getAreasUseCase: GetAreasUseCase,
+
+    val getCountryUseCase: GetCountryUseCase,
+    val getStatesUseCase: GetStatesUseCase,
+    val getCitiesUseCase: GetCitiesUseCase
+
 ) : BaseViewModel() {
     private val _state = MutableStateFlow(AddNewCustomerState())
     val state = _state.asStateFlow()
@@ -34,6 +48,8 @@ class AddNewCustomerViewModel(
 
     init {
         processEvents()
+        callCountriesApi()
+        callAreasApi()
     }
 
 
@@ -70,11 +86,50 @@ class AddNewCustomerViewModel(
                                 email = state.value.email,
                                 phone = state.value.phone,
                                 address = state.value.address,
-                                contract = state.value.contract
+                                country = state.value.countryId,
+                                state = state.value.statesId,
+                                area = state.value.area,
+                                city = state.value.cityId,
+                                lat = state.value.lat,
+                                long = state.value.long,
                             )
                         ) {
 
                             callAddCustomerApi()
+                        }
+                    }
+
+                    is AddNewCustomerEvents.CityChanged -> {
+                        _state.update { it.copy(cityId = event.city) }
+
+
+                    }
+
+                    is AddNewCustomerEvents.AreaChanged -> {
+                        _state.update { it.copy(area = event.area) }
+
+
+                    }
+
+                    is AddNewCustomerEvents.CountryChanged -> {
+                        _state.update { it.copy(countryId = event.country) }
+                        callStatesApi(event.country)
+
+
+                    }
+
+                    is AddNewCustomerEvents.StateChanged -> {
+                        _state.update { it.copy(statesId = event.state) }
+                        callCitiesApi(event.state)
+                    }
+
+                    is AddNewCustomerEvents.LocationChanged -> {
+                        _state.update {
+                            it.copy(
+                                lat = event.lat,
+                                long = event.long,
+                                location = event.name
+                            )
                         }
                     }
                 }
@@ -82,6 +137,112 @@ class AddNewCustomerViewModel(
         }
     }
 
+    private fun callCitiesApi(stateId: Int) {
+        executeFlow(
+            block = {
+                getCitiesUseCase.invoke(
+                    request = BaseRequest(
+                        params = CitiesRequest(
+                            token = getUserDataManager.readToken().first(),
+                            state_id = stateId
+                        )
+                    )
+                )
+            },
+            onLoading = { value ->
+                _state.update { it.copy(isLoading = value) }
+            },
+            onSuccess = { result ->
+                _state.update { it.copy(cities = result?.result?.data ?: listOf()) }
+
+            },
+            onFailure = { error, code ->
+                _state.update { it.copy(error = error) }
+
+            }
+        )
+
+    }
+
+
+    private fun callAreasApi() {
+        executeFlow(
+            block = {
+                getAreasUseCase.invoke(
+                    request = BaseRequest(
+                        params = CustomerRequest(
+                            token = getUserDataManager.readToken().first(),
+                        )
+                    )
+                )
+            },
+            onLoading = { value ->
+                _state.update { it.copy(isLoading = value) }
+            },
+            onSuccess = { result ->
+                _state.update { it.copy(areas = result?.result?.data ?: listOf()) }
+
+            },
+            onFailure = { error, code ->
+                _state.update { it.copy(error = error) }
+
+            }
+        )
+
+    }
+
+    private fun callStatesApi(countryId: Int) {
+        executeFlow(
+            block = {
+                getStatesUseCase.invoke(
+                    request = BaseRequest(
+                        params = StatesRequest(
+                            token = getUserDataManager.readToken().first(),
+                            country_id = countryId
+                        )
+                    )
+                )
+            },
+            onLoading = { value ->
+                _state.update { it.copy(isLoading = value) }
+            },
+            onSuccess = { result ->
+                _state.update { it.copy(states = result?.result?.data ?: listOf()) }
+
+            },
+            onFailure = { error, code ->
+                _state.update { it.copy(error = error) }
+
+            }
+        )
+
+    }
+
+    private fun callCountriesApi() {
+        executeFlow(
+            block = {
+                getCountryUseCase.invoke(
+                    request = BaseRequest(
+                        params = CustomerRequest(
+                            token = getUserDataManager.readToken().first(),
+                        )
+                    )
+                )
+            },
+            onLoading = { value ->
+                _state.update { it.copy(isLoading = value) }
+            },
+            onSuccess = { result ->
+                _state.update { it.copy(countries = result?.result?.data ?: listOf()) }
+
+            },
+            onFailure = { error, code ->
+                _state.update { it.copy(error = error) }
+
+            }
+        )
+
+    }
 
     private fun callAddCustomerApi() {
         _state.update { it.copy(isLoading = true, error = "") }
@@ -96,7 +257,14 @@ class AddNewCustomerViewModel(
                                 email = state.value.email,
                                 mobile = state.value.phone,
                                 name = state.value.name,
-                                phone = state.value.phone
+                                phone = state.value.phone,
+                                country_id = state.value.countryId,
+                                state_id = state.value.statesId,
+                                city_id = state.value.cityId,
+                                area_id = state.value.area,
+                                distinctive_mark = state.value.address,
+                                location_length = state.value.lat.toString(),
+                                location_circles = state.value.long.toString(),
                             ),
                             token = getUserDataManager.readToken().first()
                         )
@@ -106,7 +274,6 @@ class AddNewCustomerViewModel(
             onSuccess = { result ->
                 _state.update {
                     it.copy(
-                        error = result?.result?.message.orEmpty(),
                         isLoading = false,
                         navigateBack = true
                     )
@@ -125,7 +292,12 @@ class AddNewCustomerViewModel(
         email: String,
         phone: String,
         address: String,
-        contract: String
+        country: Int,
+        state: Int,
+        area: Int,
+        city: Int,
+        lat: String,
+        long: String,
     ): Boolean {
         val egyptianPhonePattern = Regex("^01[0-2,5][0-9]{8}\$") // Only Egyptian numbers
 
@@ -186,6 +358,69 @@ class AddNewCustomerViewModel(
                 false
             }
 
+
+            country == 0 -> {
+                _state.update {
+                    it.copy(
+                        isValidName = true,
+                        isValidPhone = true,
+                        isValidEmail = true,
+                        isValidAddress = true,
+                        isValidCountry = false,
+                        countryValidationMessage = "برجاء اختار البلد"
+                    )
+                }
+                false
+            }
+
+            state == 0 -> {
+                _state.update {
+                    it.copy(
+                        isValidName = true,
+                        isValidPhone = true,
+                        isValidEmail = true,
+                        isValidAddress = true,
+                        isValidCountry = true,
+                        isValidState = false,
+                        stateValidationMessage = "برجاء اختار محافظة"
+                    )
+                }
+                false
+            }
+
+            city == 0 -> {
+                _state.update {
+                    it.copy(
+                        isValidName = true,
+                        isValidPhone = true,
+                        isValidEmail = true,
+                        isValidAddress = true,
+                        isValidCountry = true,
+                        isValidState = true,
+                        isValidCity = false,
+                        cityValidationMessage = "برجاء اختار مدينة"
+                    )
+                }
+                false
+            }
+
+            area == 0 -> {
+                _state.update {
+                    it.copy(
+                        isValidName = true,
+                        isValidPhone = true,
+                        isValidEmail = true,
+                        isValidAddress = true,
+                        isValidCountry = true,
+                        isValidState = true,
+                        isValidCity = true,
+                        isValidArea = false,
+                        cityValidationMessage = "برجاء اختار مدينة"
+                    )
+                }
+                false
+            }
+
             address.isEmpty() -> {
                 _state.update {
                     it.copy(
@@ -193,21 +428,25 @@ class AddNewCustomerViewModel(
                         isValidPhone = true,
                         isValidEmail = true,
                         isValidAddress = false,
-                        addressValidationMessage = "برجاء ادخال عنوان"
+                        addressValidationMessage =  "برجاء ادخال علامة مميزة"
                     )
                 }
                 false
             }
 
-            contract.isEmpty() -> {
+            (lat.isEmpty()  && long.isEmpty()) -> {
                 _state.update {
                     it.copy(
                         isValidName = true,
                         isValidPhone = true,
                         isValidEmail = true,
                         isValidAddress = true,
-                        isValidContract = false,
-                        contractValidationMessage = "برجاء ادخال تفاصيل"
+                        isValidCountry = true,
+                        isValidState = true,
+                        isValidCity = true,
+                        isValidArea = true,
+                        isValidLocation = false,
+                        locationValidationMessage = "برجاء اختار الموقع"
                     )
                 }
                 false
@@ -220,7 +459,12 @@ class AddNewCustomerViewModel(
                         isValidPhone = true,
                         isValidEmail = true,
                         isValidAddress = true,
-                        isValidContract = true,
+                        isValidCountry = true,
+                        isValidState = true,
+                        isValidCity = true,
+                        isValidArea = true,
+                        isValidLocation = true
+
                     )
                 }
                 true

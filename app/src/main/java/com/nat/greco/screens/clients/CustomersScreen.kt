@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -18,12 +19,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nat.greco.base.ui.appLoading.FullLoading
 import com.nat.greco.base.ui.toast.ShowToast
+import com.nat.greco.screens.dailyReport.DailyReportEvents
 import com.nat.greco.ui.theme.CompactTypography
 
 @Composable
 fun CustomersScreen(
-    state: CutomersState
-) {
+    state: CutomersState,
+    events: ((CustomersEvents) -> Unit)? = null,
+
+    ) {
+
+    LaunchedEffect(Unit) {
+        events?.invoke(CustomersEvents.FetchCustomers)
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()

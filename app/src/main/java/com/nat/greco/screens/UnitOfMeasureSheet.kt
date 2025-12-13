@@ -1,5 +1,7 @@
 package com.nat.greco.screens
 
+import android.widget.Toast
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -7,11 +9,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -45,26 +51,51 @@ fun UnitOfMeasureSheet(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    "${uom.uom_name} السعر: ${uom.price}",
-                    style = CompactTypography.headlineMedium.copy(fontSize = 14.sp)
-                            ,modifier = Modifier
+//                Text(
+//                    "${uom.uom_name} السعر: ${uom.price}",
+//                    style = CompactTypography.headlineMedium.copy(fontSize = 14.sp)
+//                            ,modifier = Modifier
+//                            .weight(1f) // 👈 gives text flexible width
+//                        .padding(end = 8.dp),
+//                    maxLines = 2, // 👈 optional: wrap text but keep height consistent
+//                    overflow = TextOverflow.Ellipsis
+//                )
+
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(2.dp)
+                    ,modifier = Modifier
                             .weight(1f) // 👈 gives text flexible width
                         .padding(end = 8.dp),
-                    maxLines = 2, // 👈 optional: wrap text but keep height consistent
-                    overflow = TextOverflow.Ellipsis
-                )
+                ) {
+                    Text(
+                        uom.uom_name,
+                        style = CompactTypography.headlineMedium.copy(fontSize = 14.sp),
+                        maxLines = 1, // 👈 optional: wrap text but keep height consistent
+                        overflow = TextOverflow.Ellipsis
+                    )
 
-                Counter(
-                    value = currentQuantity,
-                    onCounterChange = { newQuantity ->
+                    Text(
+                        uom.price.toString() + " EGP",
+                        style = CompactTypography.headlineMedium.copy(fontSize = 14.sp),
+                        maxLines = 1, // 👈 optional: wrap text but keep height consistent
+                        overflow = TextOverflow.Ellipsis
+                    )
+
+                }
+
+                OutlinedTextField(
+                    value = if (currentQuantity == 0) "" else currentQuantity.toString(),
+                    singleLine = true,
+                    onValueChange = { text ->
+                        val newQuantity = text.toIntOrNull() ?: 0
+
                         val existingIndex = selectedUnits.indexOfFirst {
                             it.productId == data.id && it.uomId == uom.uom_id
                         }
 
                         when {
                             newQuantity > 0 && existingIndex == -1 -> {
-                                // Add new selection
                                 selectedUnits.add(
                                     SelectedUnit(
                                         productId = data.id,
@@ -77,50 +108,51 @@ fun UnitOfMeasureSheet(
                             }
 
                             newQuantity > 0 && existingIndex != -1 -> {
-                                // Update quantity
                                 selectedUnits[existingIndex] =
                                     selectedUnits[existingIndex].copy(quantity = newQuantity)
                             }
 
                             newQuantity == 0 && existingIndex != -1 -> {
-                                // Remove if quantity reset to 0
                                 selectedUnits.removeAt(existingIndex)
                             }
                         }
                     },
                     modifier = Modifier
-                        .width(130.dp) // 👈 fixed width for consistent alignment
-                        .height(50.dp),
+                        .width(120.dp),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Number
+                    ),
+                    label = { Text("الكمية", style = CompactTypography.headlineMedium.copy(fontSize = 14.sp)) }
                 )
+
+
             }
         }
 
-//        Spacer(Modifier.height(8.dp))
-//        Row(
-//            modifier = Modifier.fillMaxWidth(),
-//            verticalAlignment = Alignment.CenterVertically
-//        ) {
-//            Text(
-//                "الوحدة (كرتونة)",
-//                style = CompactTypography.headlineMedium.copy(fontSize = 14.sp)
-//            )
-//            Spacer(modifier = Modifier.weight(1f))
-//
-//            Counter(
-//                onCounterChange = {},
-//                modifier = Modifier.fillMaxWidth(.6f)
-//                    .height(40.dp),
-//            )
-//        }
-
-
         Spacer(Modifier.height(32.dp))
+        val context = LocalContext.current
+
         AppButton(
             text = "اضافة",
             onClick = {
-                onAddClicked?.invoke(selectedUnits)
+                val totalSelectedQuantity = selectedUnits
+                    .filter { it.productId == data?.id }
+                    .sumOf { it.quantity }
+
+                val maxQuantity = data?.quantity ?: 0.0
+
+                if (totalSelectedQuantity > maxQuantity) {
+                    Toast.makeText(
+                        context,
+                        "الكمية المختارة أكبر من الكمية المتاحة (${maxQuantity})",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    onAddClicked?.invoke(selectedUnits)
+                }
             }
         )
+
 
     }
 

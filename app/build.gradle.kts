@@ -27,14 +27,15 @@ android {
 
     buildTypes {
         debug {
+//            https://adelsita1-greko-eg-main-25915325.dev.odoo.com/odoo/users?debug=1
             isMinifyEnabled = false
-            buildConfigField("String", "BASE_URL", "\" https://elwarda-test.odoo.com/\"")
+            buildConfigField("String", "BASE_URL", "\"https://adelsita1-greko-eg-main-25915325.dev.odoo.com/\"")
 //            buildConfigField(
 //                "String",
 //                "CLIENT_ID",
 //                "\"235851507231-9paiu2lqebsuh2a4ureo1imv4gle50dp.apps.googleusercontent.com\""
 //            )
-
+//            https://elwarda-test.odoo.com/
         }
         release {
             isMinifyEnabled = true

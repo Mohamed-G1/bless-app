@@ -3,6 +3,7 @@ package com.nat.greco.screens.stocks.peresentation
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,14 +27,16 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -43,7 +46,6 @@ import androidx.compose.ui.unit.sp
 import com.nat.greco.base.ui.appButton.AppButton
 import com.nat.greco.base.ui.appLoading.FullLoading
 import com.nat.greco.base.ui.textField.AppTextField
-import com.nat.greco.base.ui.toast.ShowToast
 import com.nat.greco.ui.theme.CompactTypography
 import com.nat.greco.ui.theme.MediumBlue
 import com.nat.greco.ui.theme.MediumGray
@@ -55,9 +57,12 @@ fun StockScreen(
     events: ((StockEvents) -> Unit)? = null,
     onReceiveClicked: (() -> Unit)? = null,
 ) {
-    var tabIndex by remember { mutableStateOf(1) }
+    var tabIndex by remember { mutableIntStateOf(1) }
     val tabs = listOf("المرتجع", "المخزون")
 
+    LaunchedEffect(Unit) {
+        events?.invoke(StockEvents.GetStockList)
+    }
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -145,24 +150,48 @@ fun StockScreen(
                             state = state,
                             events = events,
                         )
-                        LazyVerticalGrid(
-                            columns = GridCells.Fixed(2),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .heightIn(max = 1000.dp), // prevent infinite height inside LazyColumn
-                            verticalArrangement = Arrangement.spacedBy(12.dp),
-                            horizontalArrangement = Arrangement.spacedBy(12.dp),
-                            contentPadding = PaddingValues(8.dp)
-                        ) {
-                            items(state.returnsList) { item ->
-                                ReturnItem(
-                                    onClicked = {
 
-                                    },
-                                    item = item
-                                )
+
+
+                        if (state.returnsList.isEmpty() == true) {
+                                Column(
+                                    modifier = Modifier.fillMaxSize(),
+                                    verticalArrangement = Arrangement.Center,
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Text(
+                                        "لا يوجد مرتجع", style = CompactTypography.headlineMedium.copy(
+                                            fontSize = 22.sp,
+                                            textAlign = TextAlign.Center,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    )
+                                }
+
+
+                        }else {
+                            LazyVerticalGrid(
+                                columns = GridCells.Fixed(2),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .heightIn(max = 1000.dp), // prevent infinite height inside LazyColumn
+                                verticalArrangement = Arrangement.spacedBy(12.dp),
+                                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                contentPadding = PaddingValues(8.dp)
+                            ) {
+                                items(state.returnsList) { item ->
+                                    ReturnItem(
+                                        onClicked = {
+
+                                        },
+                                        item = item
+                                    )
+                                }
                             }
                         }
+
+
+
 
                     }
 
@@ -171,22 +200,42 @@ fun StockScreen(
                             state = state,
                             events = events,
                         )
-                        LazyVerticalGrid(
-                            columns = GridCells.Fixed(2),
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .heightIn(max = 1000.dp), // prevent infinite height inside LazyColumn
-                            verticalArrangement = Arrangement.spacedBy(12.dp),
-                            horizontalArrangement = Arrangement.spacedBy(12.dp),
-                            contentPadding = PaddingValues(8.dp)
-                        ) {
-                            items(state.stockList) { item ->
-                                StockItem(
-                                    onClicked = { },
-                                    item = item
+
+                        if (state.stockList.isEmpty() == true) {
+                            Column(
+                                modifier = Modifier.fillMaxSize(),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    "لا يوجد مخزون", style = CompactTypography.headlineMedium.copy(
+                                        fontSize = 22.sp,
+                                        textAlign = TextAlign.Center,
+                                        fontWeight = FontWeight.Bold
+                                    )
                                 )
                             }
+
+
+                        }else {
+                            LazyVerticalGrid(
+                                columns = GridCells.Fixed(2),
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .heightIn(max = 1000.dp), // prevent infinite height inside LazyColumn
+                                verticalArrangement = Arrangement.spacedBy(12.dp),
+                                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                contentPadding = PaddingValues(8.dp)
+                            ) {
+                                items(state.stockList) { item ->
+                                    StockItem(
+                                        onClicked = { },
+                                        item = item
+                                    )
+                                }
+                            }
                         }
+
 
                         Spacer(Modifier.height(16.dp))
                         AppButton(
@@ -203,9 +252,12 @@ fun StockScreen(
         }
     }
 
-    if (state.error.isNotEmpty()) {
-        ShowToast(state.error)
-    }
+//    LaunchedEffect(state.error) {
+//        if (state.error.isNotEmpty()) {
+//            Toast.makeText(context, state.error, Toast.LENGTH_SHORT).show()
+//        }
+//    }
+
 
     if (state.isLoading) {
         FullLoading()

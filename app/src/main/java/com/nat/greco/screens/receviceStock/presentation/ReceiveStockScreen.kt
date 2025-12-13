@@ -24,8 +24,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -94,20 +96,40 @@ fun ReceiveStockScreen(
 
 
         Spacer(Modifier.height(16.dp))
-        LazyColumn(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            contentPadding = PaddingValues(8.dp)
-        ) {
-            items(state.model) { item ->
-                ReceiveStockItem(
-                    item = item,
-                    onClicked = { id ->
-events?.invoke(ReceiveStockEvents.ConfirmReceiveStock(id))
-                    }
+
+        if (state.model.isEmpty() == true) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    "لم يتم تخصيص أي تحويلات لهذا المستخدم", style = CompactTypography.headlineMedium.copy(
+                        fontSize = 22.sp,
+                        textAlign = TextAlign.Center,
+                        fontWeight = FontWeight.Bold
+                    )
                 )
             }
+
+
+        }else {
+            LazyColumn(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                contentPadding = PaddingValues(8.dp)
+            ) {
+                items(state.model) { item ->
+                    ReceiveStockItem(
+                        item = item,
+                        onClicked = { id ->
+                            events?.invoke(ReceiveStockEvents.ConfirmReceiveStock(id))
+                        }
+                    )
+                }
+            }
         }
+
 
 //        Spacer(Modifier.weight(1f))
 //        AppButton(
@@ -120,12 +142,15 @@ events?.invoke(ReceiveStockEvents.ConfirmReceiveStock(id))
 
     }
 
-    if (state.error.isNotEmpty()) {
-        ShowToast(state.error)
-    }
+//    if (state.error.isNotEmpty()) {
+//        ShowToast(state.error)
+//    }
 
     if (state.isLoading) {
         FullLoading()
+    }
+    if (state.navigateBack){
+        onBackClicked?.invoke()
     }
 }
 

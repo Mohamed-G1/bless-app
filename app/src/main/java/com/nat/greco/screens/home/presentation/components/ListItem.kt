@@ -21,6 +21,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -90,13 +95,16 @@ val context = LocalContext.current
                 }
 
                 DeliveryStatus(is_visited = item?.is_visited == true,
-                    is_collected = item?.is_collected == true
+                    not_visited_reason_id = item?.not_visited_reason_id.orEmpty()
                 )
 
             }
 
 
-            DeliveryStatusBar(item?.is_visited == true)
+            DeliveryStatusBar(item?.is_visited == true,
+                not_visited_reason_id = item?.not_visited_reason_id.orEmpty()
+
+            )
 
             Row(
                 modifier = Modifier
@@ -186,13 +194,32 @@ val context = LocalContext.current
 
 
 @Composable
-fun DeliveryStatus(is_visited: Boolean,is_collected: Boolean ) {
-    val color = when (is_visited) {
-        true -> DeliverGreen
-        false -> Gray
+fun DeliveryStatus(is_visited: Boolean,not_visited_reason_id: String ) {
+    var color by remember { mutableStateOf(Color(0)) }
+    var text by remember { mutableStateOf("") }
+
+    when{
+        is_visited -> {
+            color = DeliverGreen
+            text = "تم الزيارة"
+        }
+        !not_visited_reason_id.isEmpty() -> {
+            color = NotDeliverRed
+            text = "لم يتم الزيارة"
+        }
+        else -> {
+            color = Gray
+            text = "قيد التنفيذ"
+        }
     }
 
-    val visitedStatus = if (is_visited) "تم الزيارة" else "قيد التنفيذ"
+//    val color = when (is_visited) {
+//        true -> DeliverGreen
+//        false -> Gray
+//    }
+
+//    val notVisited = if (not_visited_reason_id.isBlank()) "قيد التنفيذ" else "لم يتم الزيارة"
+//    val visitedStatus = if (is_visited) "تم الزيارة" else "قيد التنفيذ"
 //    val collectedStatus = if (is_collected) "تم التحصيل" else "لم يتم التحصيل
 
     Card(
@@ -203,7 +230,7 @@ fun DeliveryStatus(is_visited: Boolean,is_collected: Boolean ) {
         ) {
 
         Text(
-            visitedStatus,
+            text,
             style = CompactTypography.labelMedium.copy(
                 color = WhiteGray,
                 textAlign = TextAlign.Center
@@ -218,16 +245,34 @@ fun DeliveryStatus(is_visited: Boolean,is_collected: Boolean ) {
 }
 
 @Composable
-fun DeliveryStatusBar(is_visited: Boolean) {
-    val color = when (is_visited) {
-        true -> DeliverGreen
-        false -> Gray
+fun DeliveryStatusBar(is_visited: Boolean,not_visited_reason_id: String ) {
+    var color by remember { mutableStateOf(Color(0)) }
+    var text by remember { mutableStateOf("") }
+    var icon by remember { mutableIntStateOf(0) }
+
+    when{
+        is_visited -> {
+            color = DeliverGreen
+            text = "تم الزيارة"
+           icon = R.drawable.ic_check_circle
+        }
+        !not_visited_reason_id.isEmpty() -> {
+            color = NotDeliverRed
+            text = "لم يتم الزيارة"
+            icon = R.drawable.ic_cancel
+        }
+        else -> {
+            color = Gray
+            text = "قيد التنفيذ"
+            icon = R.drawable.ic_check_circle
+        }
     }
 
-    val icon = when (is_visited) {
-        true -> painterResource(R.drawable.ic_check_circle)
-        false -> painterResource(R.drawable.ic_check_circle)
-    }
+
+//    val icon = when (is_visited) {
+//        true -> painterResource(R.drawable.ic_check_circle)
+//        false -> painterResource(R.drawable.ic_check_circle)
+//    }
 
     Box(
         modifier = Modifier
@@ -253,7 +298,7 @@ fun DeliveryStatusBar(is_visited: Boolean) {
 //            )
 
             Icon(
-                painter = icon,
+                painter = painterResource(icon),
                 contentDescription = null,
                 tint = color,
             )
@@ -271,11 +316,11 @@ private fun ListItemPreview() {
 @Preview(locale = "ar")
 @Composable
 private fun DeliveryStatusPreview() {
-    DeliveryStatus(true, true)
+    DeliveryStatus(true, "sdfsdf")
 }
 
 @Preview(locale = "ar")
 @Composable
 private fun DeliveryStatusBarPreview() {
-    DeliveryStatusBar(true)
+    DeliveryStatusBar(false,"hfghjghj")
 }

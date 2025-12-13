@@ -101,7 +101,8 @@ class ReceiveStockViewModel(
                     _state.update {
                         it.copy(
                             isLoading = false,
-                            error = result.result.message
+                            error = result.result.message,
+                            navigateBack = true
                         )
                     }                }
 

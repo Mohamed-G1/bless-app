@@ -55,6 +55,7 @@ class DayDetailsViewModel(
     }
 
     private fun callGetDayDetailsApi() {
+        _state.update { it.copy(isLoading = true, error = "") }
         executeFlow(
             block = {
                 getDayDetailsUseCase.invoke(
@@ -72,7 +73,8 @@ class DayDetailsViewModel(
             onSuccess = { result ->
                 _state.update {
                     it.copy(
-                        model = result
+                        model = result,
+                        error = result?.result?.message.orEmpty()
                     )
                 }
             },
@@ -99,7 +101,7 @@ class DayDetailsViewModel(
             onSuccess = { result ->
                 _state.update {
                     it.copy(
-                        error = result?.result?.message, isLoading = false
+                        error = result?.result?.message.toString(), isLoading = false
                     )
                 }
 

@@ -10,6 +10,7 @@ import com.nat.greco.base.local.LocalDataSource
 import com.nat.greco.screens.home.domain.models.RouteRequest
 import com.nat.greco.screens.home.domain.usecases.GetRoutesUseCase
 import com.nat.greco.screens.home.domain.usecases.SendLocationUseCase
+import com.nat.greco.screens.login.domain.usecases.ClearUserUseCase
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,7 +24,8 @@ class HomeViewModel(
     private val useCase: GetRoutesUseCase,
     private val getUserDataManager: GetUserDataManager,
     private val localDataSource: LocalDataSource,
-    private val sendLocationUseCase: SendLocationUseCase
+    private val sendLocationUseCase: SendLocationUseCase,
+    private val clearUserUseCase: ClearUserUseCase
 ) : BaseViewModel() {
 
     private val _state = MutableStateFlow(HomeState())
@@ -144,6 +146,12 @@ class HomeViewModel(
         viewModelScope.launch {
             _intentChannel.consumeAsFlow().collect { event ->
                 when (event) {
+                    is HomeEvents.clearUser -> {
+                      viewModelScope.launch {
+                          clearUserUseCase.invoke()
+                      }
+                    }
+
                     is HomeEvents.DataChanged -> {
                         _state.update { it.copy(date = event.date) }
                         callGetRoutesApi()

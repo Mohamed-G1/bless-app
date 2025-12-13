@@ -74,7 +74,8 @@ class ConfirmOrderViewModel(
                 _state.update {
                     it.copy(
                         error = result?.result?.message.orEmpty(),
-                        isLoading = false
+                        isLoading = false,
+                        navigateBack = true
                     )
                 }
 

@@ -16,4 +16,5 @@ sealed class HomeEvents {
     data object ResetPickupSortClicked : HomeEvents()
     data object WaybillResetFilterClicked : HomeEvents()
     data object PickupResetFilterClicked : HomeEvents()
+    data object clearUser : HomeEvents()
 }

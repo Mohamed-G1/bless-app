@@ -95,7 +95,22 @@ fun OrderDetailsItem(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "رقم الطلب",
+                        text = "اسم المنتج",
+                        style = CompactTypography.headlineLarge.copy(fontSize = 12.sp)
+                    )
+                    Text(
+                        text = item?.product_id?.name.orEmpty(),
+                        style = CompactTypography.headlineLarge.copy(fontSize = 12.sp, color = Gray)
+                    )
+                }
+
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "كود المنتج",
                         style = CompactTypography.headlineLarge.copy(fontSize = 12.sp)
                     )
                     Text(
@@ -113,7 +128,7 @@ fun OrderDetailsItem(
                         style = CompactTypography.headlineLarge.copy(fontSize = 12.sp)
                     )
                     Text(
-                        text = item?.product_uom_qty.toString() +" "+item?.product_uom,
+                        text = item?.product_uom_qty.toString() + " " + item?.product_uom,
                         style = CompactTypography.headlineLarge.copy(fontSize = 12.sp, color = Gray)
                     )
                 }
@@ -127,7 +142,7 @@ fun OrderDetailsItem(
                         style = CompactTypography.headlineLarge.copy(fontSize = 12.sp)
                     )
                     Text(
-                        text = item?.price_subtotal.toString(),
+                        text = item?.price_subtotal.toString() + " EGP",
                         style = CompactTypography.headlineLarge.copy(fontSize = 12.sp, color = Gray)
                     )
                 }

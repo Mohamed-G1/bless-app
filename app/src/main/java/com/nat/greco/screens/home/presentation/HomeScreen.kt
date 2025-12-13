@@ -44,6 +44,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.nat.greco.base.ui.dialog.AppDialog
 import com.nat.greco.base.ui.datePicker.AppDatePicker
 import com.nat.greco.base.locationChecker.LocationHandler
 import com.nat.greco.base.locationChecker.LocationServiceReceiver
@@ -58,6 +59,7 @@ import com.nat.greco.screens.home.presentation.components.NewOrderSheetLayout
 import com.nat.greco.screens.home.presentation.components.SearchTapItem
 import com.nat.greco.ui.theme.CompactTypography
 import com.nat.greco.ui.theme.MediumBlue
+import com.nat.greco.ui.theme.NotDeliverRed
 import com.nat.greco.utils.convertDateStringToMillis
 import com.nat.greco.utils.formattedDateToEnglish
 import java.time.LocalDate
@@ -72,6 +74,7 @@ fun HomeScreen(
     onClick: ((Route, String) -> Unit)? = null,
     navigateToNotification: (() -> Unit)? = null,
     onDayDetailsClicked: ((String) -> Unit)? = null,
+    onDailyReportClicked: ((String) -> Unit)? = null,
     openNewOrderScreen: (() -> Unit)? = null,
     openAddClientScreen: (() -> Unit)? = null,
     signOut: (() -> Unit)? = null
@@ -84,6 +87,7 @@ fun HomeScreen(
     var showWaybillSortBottomSheet by remember { mutableStateOf(false) }
     var showPickupSortBottomSheet by remember { mutableStateOf(false) }
     var selectedDate by rememberSaveable { mutableStateOf("") }
+    var selectedDateMillis by rememberSaveable { mutableStateOf<Long?>(null) }
 
     var isLocationEnabled by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(
@@ -101,7 +105,6 @@ fun HomeScreen(
 
     var shouldShowDialog by remember { mutableStateOf(false) }
     var isDatePickerOpen by remember { mutableStateOf(false) }
-
     val locationServiceReceiver = rememberUpdatedState(LocationServiceReceiver(
         context = context,
         isLocationEnabled = { isEnabled ->
@@ -110,6 +113,7 @@ fun HomeScreen(
             isLocationEnabled = isEnabled
         }
     ))
+    var showSignoutDialog by remember { mutableStateOf(false) }
 
 
     LaunchedEffect(Unit) {
@@ -144,56 +148,6 @@ fun HomeScreen(
         shouldShowDialog = isEnabled.not()
         isLocationEnabled = isEnabled
     }
-
-    // Send frequently location each 1 hour
-//    LaunchedEffect(Unit) {
-////        if (isLocationEnabled) {
-////            while (true) {
-////                val location = LocationHandler.getCurrentLocation(context)
-////                location?.let {
-//////                    Log.d(
-//////                        "##LocationSender",
-//////                        "Lat: ${it.latitude}, Lon: ${it.longitude}"
-//////                    )
-////                    events?.invoke(
-////                        HomeEvents.SendFrequentlyLocation(
-////                            lat = it.longitude,
-////                            long = it.longitude
-////                        )
-////                    )
-////                    delay(3600 * 1000L)
-////                }
-////            }
-////        }
-//    }
-
-
-
-//    LaunchedEffect(Unit) {
-//        events?.invoke(HomeEvents.RefreshCouriers)
-//    }
-
-    // Register the LocationReceiver using DisposableEffect (Lifecycle-aware)
-//    DisposableEffect(context) {
-//        // Create the receiver and lambda to update the ViewModel
-//        LocationReceiver.setLocationStateUpdateCallback { isEnabled ->
-////            viewModel.updateLocationState(isEnabled)
-//            Log.d("HomeScreen", "HomeScreen $isEnabled")
-//
-//            if (isEnabled.not()) {
-//                locationError = "You need to enable location "
-//            }
-//
-//        }
-//        // Register the receiver
-//        val filter = IntentFilter(LocationManager.PROVIDERS_CHANGED_ACTION)
-//        context.registerReceiver(LocationReceiver, filter)
-//
-//        // Cleanup the receiver when the composable is disposed
-//        onDispose {
-//            context.unregisterReceiver(LocationReceiver)
-//        }
-//    }
 
     Box(
         modifier = Modifier
@@ -272,6 +226,14 @@ fun HomeScreen(
 //                }
 
 
+                SearchTapItem(query = "خروج",
+                    isSelected = true,
+                    mainColor = NotDeliverRed,
+                    onClick = {
+                        showSignoutDialog = true
+                    }
+                )
+
             }
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -309,6 +271,13 @@ fun HomeScreen(
 //                })
 //            Spacer(Modifier.width(8.dp))
                 Spacer(Modifier.weight(1f))
+                SearchTapItem(query = "تقرير اليوم",
+                    isSelected = true,
+                    onClick = {
+                        onDailyReportClicked?.invoke(state.date.orEmpty())
+                    }
+                )
+                Spacer(Modifier.width(12.dp))
 
                 SearchTapItem(query = "انهاء اليوم",
                     isSelected = true,
@@ -318,6 +287,7 @@ fun HomeScreen(
                 )
 
                 Spacer(Modifier.width(12.dp))
+
                 SearchTapItem(query = "اختر التاريخ",
                     isSelected = true,
                     onClick = {
@@ -376,6 +346,7 @@ fun HomeScreen(
                 )
             }
             Spacer(modifier = Modifier.height(24.dp))
+
             LazyColumn(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -413,6 +384,7 @@ fun HomeScreen(
             onDateSelected = {
                 isDatePickerOpen = false
                 selectedDate = it?.formattedDateToEnglish().orEmpty()
+
                 events?.invoke(HomeEvents.DataChanged(it?.formattedDateToEnglish().orEmpty()))
 
             },
@@ -422,7 +394,19 @@ fun HomeScreen(
 
 
 
-
+    if (showSignoutDialog) {
+        AppDialog(
+            dialogMessage = "هل أنت متأكد من تسجيل الخروج؟",
+            onDismiss = { showSignoutDialog = false },
+            onConfirm = {
+                showSignoutDialog = false
+                events?.invoke(HomeEvents.clearUser)
+                signOut?.invoke()
+            },
+            confirmButtonTitle = "نعم",
+            cancelButtonTitle = "لا"
+        )
+    }
 
     if (addNewOrderBottomSheet){
         ModalBottomSheet(

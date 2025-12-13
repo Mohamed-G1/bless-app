@@ -1,5 +1,6 @@
 package com.nat.greco.screens.dayDetails.presentation
 
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -28,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -55,7 +57,7 @@ fun DayDetailsScreen(
     LaunchedEffect(Unit) {
         events?.invoke(DayDetailsEvents.DataChanged(date))
     }
-
+    val context = LocalContext.current
 
     Box(
         modifier = Modifier
@@ -83,21 +85,39 @@ fun DayDetailsScreen(
 
             Spacer(Modifier.height(16.dp))
 
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                itemsIndexed(items = state.model?.result?.data ?: listOf()) { index, item ->
-                    val isLast = index == state.model?.result?.data?.lastIndex
-                    ListItem(
-                        item = item,
-                        modifier = if (isLast) {
-                            Modifier.padding(bottom = 24.dp)
-                        } else {
-                            Modifier
-                        }
+            if (state.model?.result?.data?.isEmpty() == true) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        "لا يوجد تفاصيل", style = CompactTypography.headlineMedium.copy(
+                            fontSize = 22.sp,
+                            textAlign = TextAlign.Center,
+                            fontWeight = FontWeight.Bold
+                        )
                     )
                 }
+
+            }else {
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    itemsIndexed(items = state.model?.result?.data ?: listOf()) { index, item ->
+                        val isLast = index == state.model?.result?.data?.lastIndex
+                        ListItem(
+                            item = item,
+                            modifier = if (isLast) {
+                                Modifier.padding(bottom = 24.dp)
+                            } else {
+                                Modifier
+                            }
+                        )
+                    }
+                }
             }
+
             Spacer(Modifier.weight(1f))
         }
 
@@ -112,9 +132,10 @@ fun DayDetailsScreen(
         )
     }
 
-    if (state.error?.isNotEmpty() == true) {
-        ShowToast(state.error)
-    }
+//    LaunchedEffect(state.error) {
+//        if (state.error.isNotEmpty()) {
+//            Toast.makeText(context, state.error, Toast.LENGTH_SHORT).show()
+//        }    }
 
     if (state.isLoading) {
         FullLoading()

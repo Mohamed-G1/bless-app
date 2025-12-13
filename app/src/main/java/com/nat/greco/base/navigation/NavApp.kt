@@ -36,6 +36,7 @@ import com.nat.greco.screens.returnsScreen.ReturnsScreen
 import com.nat.greco.screens.accounts.AccountsScreen
 import com.nat.greco.screens.accounts.presentation.AccountsViewModel
 import com.nat.greco.screens.addNewClient.presentation.AddNewCustomerViewModel
+import com.nat.greco.screens.addNewClient.presentation.MapScreen
 import com.nat.greco.screens.addNewOrders.presentation.NewProductsViewModel
 import com.nat.greco.screens.addNewOrders.presentation.chooseCustomer.ChooseCustomerViewModel
 import com.nat.greco.screens.orders.presentation.OrdersScreen
@@ -51,7 +52,11 @@ import com.nat.greco.screens.notifications.NotificationScreen
 import com.nat.greco.screens.dealingProducts.peresentation.DealingProductsScreen
 import com.nat.greco.screens.clients.CustomersScreen
 import com.nat.greco.screens.clients.CustomersViewModel
+import com.nat.greco.screens.collect.presenation.CollectScreen
+import com.nat.greco.screens.collect.presenation.CollectViewModel
 import com.nat.greco.screens.confirmOrder.ConfirmOrderViewModel
+import com.nat.greco.screens.dailyReport.DailyReportScreen
+import com.nat.greco.screens.dailyReport.DailyReportViewModel
 import com.nat.greco.screens.dayDetails.presentation.DayDetailsViewModel
 import com.nat.greco.screens.dealingProducts.peresentation.DealingProductsViewModel
 import com.nat.greco.screens.home.domain.models.Route
@@ -159,8 +164,12 @@ fun NavApp() {
                         if (navController.canNavigate)
                             navController.navigate(Destinations.DayDetails(date))
                     },
+                    onDailyReportClicked = { date ->
+                        if (navController.canNavigate)
+                            navController.navigate(Destinations.DailyReport(date))
+                    }
 
-                    )
+                )
             }
 
             composable<Destinations.RouteDetails>(
@@ -212,6 +221,10 @@ fun NavApp() {
                     openPriceListScreen = { id ->
                         if (navController.canNavigate)
                             navController.navigate(Destinations.PriceList(id))
+                    },
+                    openCollectScreen = { id ->
+                        if (navController.canNavigate)
+                            navController.navigate(Destinations.Collect(id))
                     }
                 )
             }
@@ -263,6 +276,22 @@ fun NavApp() {
                     }
                 )
             }
+
+            composable<Destinations.DailyReport> {
+                val args = it.toRoute<Destinations.DailyReport>()
+                val viewModel: DailyReportViewModel = koinViewModel()
+                val state by viewModel.state.collectAsStateWithLifecycle()
+                DailyReportScreen(
+                    date = args.date,
+                    state = state,
+                    events = viewModel::sendEvent,
+                    onBackClicked = {
+                        if (navController.canNavigate)
+                            navController.navigateUp()
+                    }
+                )
+            }
+
             composable<Destinations.ReceiveStock> {
                 val viewModel: ReceiveStockViewModel = koinViewModel()
                 val state by viewModel.state.collectAsStateWithLifecycle()
@@ -309,8 +338,13 @@ fun NavApp() {
                         if (navController.canNavigate)
                             navController.navigateUp()
                     },
-
-                    )
+                    popStack = {
+                        if (navController.canNavigate)
+                            repeat(2) {
+                                navController.popBackStack()
+                            }
+                    }
+                )
             }
 
             composable<Destinations.Accounts> {
@@ -390,7 +424,7 @@ fun NavApp() {
             composable<Destinations.Clients> {
                 val viewModel: CustomersViewModel = koinViewModel()
                 val state by viewModel.state.collectAsStateWithLifecycle()
-                CustomersScreen(state = state)
+                CustomersScreen(state = state, events = viewModel::sendEvent)
             }
 
             composable<Destinations.Requests> {
@@ -398,6 +432,7 @@ fun NavApp() {
                 val state by viewModel.state.collectAsStateWithLifecycle()
                 OrdersScreen(
                     state = state,
+                    events = viewModel::sendEvent,
                     onOrderClicked = { model ->
                         if (navController.canNavigate)
                             navController.navigate(Destinations.OrderDetailsScreen(model))
@@ -433,7 +468,7 @@ fun NavApp() {
                 )
             }
             composable<Destinations.NewOrderScreen> {
-                val viewModel : ChooseCustomerViewModel = koinViewModel()
+                val viewModel: ChooseCustomerViewModel = koinViewModel()
                 val state by viewModel.state.collectAsStateWithLifecycle()
                 ChooseCustomerScreen(
                     state = state,
@@ -454,6 +489,29 @@ fun NavApp() {
                     state = state,
                     events = viewModel::sendEvent,
                     onBackClicked = {
+                        if (navController.canNavigate)
+                            navController.navigateUp()
+                    },
+                    openMapScreen = {
+                        if (navController.canNavigate)
+                            navController.navigate(Destinations.Map)
+                    },
+
+                )
+            }
+
+            composable<Destinations.Map> {
+                MapScreen(
+                    onLocationPicked = { name, lat, lng ->
+                        if (navController.canNavigate){}
+//                            navController.navigate(
+//                                Destinations.AddNewClientScreen(
+//                                    name, lat, lng
+//                                )
+//                            )
+
+                    },
+                    onClose = {
                         if (navController.canNavigate)
                             navController.navigateUp()
                     }
@@ -491,9 +549,12 @@ fun NavApp() {
                         if (navController.canNavigate)
                             navController.navigateUp()
                     },
-                    navigateToReturnDetails = {
+                    popStack = {
                         if (navController.canNavigate)
-                            navController.navigate(Destinations.ReturnsDetails)
+//                            navController.navigate(Destinations.ReturnsDetails)
+                            repeat(2) {
+                                navController.popBackStack()
+                            }
                     }
                 )
             }
@@ -506,8 +567,29 @@ fun NavApp() {
                     }
                 )
             }
-        }
 
+            composable<Destinations.Collect> {
+                val viewModel: CollectViewModel = koinViewModel()
+                val state by viewModel.state.collectAsStateWithLifecycle()
+                val args = it.toRoute<Destinations.Collect>()
+                CollectScreen(
+                    state = state,
+                    events = viewModel::sendEvent,
+                    customerId = args.customerId,
+                    onBackClicked = {
+                        if (navController.canNavigate)
+                            navController.navigateUp()
+                    },
+                    popBack = {
+                        if (navController.canNavigate)
+                            navController.popBackStack()
+//                            repeat(2) {
+//                                navController.popBackStack()
+//                            }
+                    }
+                )
+            }
+        }
     }
 }
 

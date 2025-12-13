@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -49,7 +50,6 @@ import com.nat.greco.base.permissions.PermissionViewModel
 import com.nat.greco.ui.theme.CompactTypography
 import kotlinx.coroutines.delay
 
-@RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @Composable
 fun SplashScreen(
     state: SplashState,
@@ -170,46 +170,44 @@ fun SplashScreen(
 
     Box(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxSize(),
+        contentAlignment = Alignment.Center
     ) {
         // Image with space at the bottom
         Image(
-            painter = painterResource(R.drawable.splash_bg),
+            painter = painterResource(R.drawable.ic_logo),
             contentDescription = null,
             contentScale = ContentScale.FillWidth,
             alignment = Alignment.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .offset {
-                    IntOffset(x = 0, y = (-60))
-                }// This moves the image up slightly, so text fits at the bottom
-        )
+            modifier = Modifier.size(120.dp),
+
+            )
 
         // Column for the text at the bottom
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 38.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            Text(
-                text = stringResource(R.string.coruier_is_became_esay),
-                style = CompactTypography.headlineLarge.copy(fontSize = 26.sp),
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth(),
-            )
-
-            Text(
-                text = stringResource(R.string.in_your_hand),
-                style = CompactTypography.headlineMedium.copy(
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Medium
-                ),
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
+//        Column(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .align(Alignment.BottomCenter)
+//                .padding(bottom = 38.dp),
+//            verticalArrangement = Arrangement.spacedBy(16.dp)
+//        ) {
+//            Text(
+//                text = stringResource(R.string.coruier_is_became_esay),
+//                style = CompactTypography.headlineLarge.copy(fontSize = 26.sp),
+//                textAlign = TextAlign.Center,
+//                modifier = Modifier.fillMaxWidth(),
+//            )
+//
+//            Text(
+//                text = stringResource(R.string.in_your_hand),
+//                style = CompactTypography.headlineMedium.copy(
+//                    fontSize = 24.sp,
+//                    fontWeight = FontWeight.Medium
+//                ),
+//                textAlign = TextAlign.Center,
+//                modifier = Modifier.fillMaxWidth()
+//            )
+//        }
     }
 
 
@@ -226,5 +224,5 @@ fun Activity.openAppSettings() {
 @Preview(locale = "ar")
 @Composable
 private fun SplashViewPreview() {
-//    SplashScreen(splashDefaultState())
+    SplashScreen(state = SplashState())
 }

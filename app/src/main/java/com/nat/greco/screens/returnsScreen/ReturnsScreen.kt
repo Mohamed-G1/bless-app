@@ -1,6 +1,7 @@
 package com.nat.greco.screens.returnsScreen
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -59,7 +60,7 @@ fun ReturnsScreen(
     state: ReturnsState,
     events: ((ReturnsEvents) -> Unit)? = null,
     onBackClicked: (() -> Unit)? = null,
-    navigateToReturnDetails: (() -> Unit)? = null,
+    popStack: (() -> Unit)? = null,
 
     ) {
 
@@ -67,6 +68,7 @@ fun ReturnsScreen(
         events?.invoke(ReturnsEvents.OrderIdChanged(id = orderId))
     }
 
+    val context = androidx.compose.ui.platform.LocalContext.current
 
     Box(
         modifier = Modifier
@@ -301,7 +303,11 @@ fun ReturnsScreen(
                     .align(Alignment.CenterHorizontally),
                 text = "تأكيد المرتجع",
                 onClick = {
-                    events?.invoke(ReturnsEvents.ReturnProducts)
+                    if (state.lines.isEmpty())
+                        Toast.makeText(context, "يرجي اختيار المنتج", Toast.LENGTH_SHORT).show()
+                    else
+                        events?.invoke(ReturnsEvents.ReturnProducts)
+
                 }
             )
         }
@@ -314,8 +320,8 @@ fun ReturnsScreen(
         FullLoading()
     }
 
-    if (state.navigateBack){
-        onBackClicked?.invoke()
+    if (state.navigateBack) {
+        popStack?.invoke()
     }
 }
 

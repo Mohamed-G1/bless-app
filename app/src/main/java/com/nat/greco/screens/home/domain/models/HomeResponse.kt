@@ -31,5 +31,11 @@ data class CustomerId(
     val id: Int,
     val mobile: String,
     val name: String,
-    val phone: String
+    val phone: String,
+    val ref: String,
+    val credit_limit: Double,
+    val create_date: String,
+    val note: String,
+    val is_active: Boolean,
+    val tags: List<String>,
 )

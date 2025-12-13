@@ -91,6 +91,7 @@ fun RouteDetailsScreen(
     openNewProductsScreen: ((Int) -> Unit)? = null,
     openPriceListScreen: ((Int) -> Unit)? = null,
     openContractsScreen: ((String) -> Unit)? = null,
+    openCollectScreen: ((Int) -> Unit)? = null,
 
     ) {
     val context = LocalContext.current
@@ -207,22 +208,25 @@ fun RouteDetailsScreen(
                             horizontalAlignment = Alignment.Start,
                             verticalArrangement = Arrangement.spacedBy(6.dp)
                         ) {
-                            Text(
-                                "نشط",
-                                style = CompactTypography.labelMedium.copy(
-                                    fontSize = 12.sp,
-                                    color = DeliverGreen
+                            if (state.homeModel?.customer_id?.is_active == true) {
+                                Text(
+                                    "نشط",
+                                    style = CompactTypography.labelMedium.copy(
+                                        fontSize = 12.sp,
+                                        color = DeliverGreen
+                                    )
                                 )
-                            )
+                            }
+
+//                            Text(
+//                                "عميل مميز",
+//                                style = CompactTypography.labelMedium.copy(
+//                                    fontSize = 12.sp,
+//                                    color = Color.Gray
+//                                )
+//                            )
                             Text(
-                                "عميل مميز",
-                                style = CompactTypography.labelMedium.copy(
-                                    fontSize = 12.sp,
-                                    color = Color.Gray
-                                )
-                            )
-                            Text(
-                                "12/1/2024",
+                                state.homeModel?.customer_id?.create_date.orEmpty(),
                                 style = CompactTypography.labelMedium.copy(
                                     fontSize = 12.sp,
                                     color = Color.Gray
@@ -245,27 +249,26 @@ fun RouteDetailsScreen(
                             verticalArrangement = Arrangement.spacedBy(6.dp)
                         ) {
 
-                            Text(
-                                "نسبة الخصم: 10%",
+                            Text(state.homeModel?.customer_id?.note.orEmpty(),
                                 style = CompactTypography.labelMedium.copy(
                                     fontSize = 12.sp,
                                     color = Color.Gray
                                 )
                             )
                             Text(
-                                "قطاع: الحملة",
+                                state.homeModel?.customer_id?.tags?.joinToString(",").orEmpty(),
                                 style = CompactTypography.labelMedium.copy(
                                     fontSize = 12.sp,
                                     color = Color.Gray
                                 )
                             )
-                            Text(
-                                "مدير مبيعات: الاسم",
-                                style = CompactTypography.labelMedium.copy(
-                                    fontSize = 12.sp,
-                                    color = Color.Gray
-                                )
-                            )
+//                            Text(
+//                                "مدير مبيعات: الاسم",
+//                                style = CompactTypography.labelMedium.copy(
+//                                    fontSize = 12.sp,
+//                                    color = Color.Gray
+//                                )
+//                            )
                         }
                     }
                 }
@@ -385,7 +388,7 @@ fun RouteDetailsScreen(
                     Spacer(Modifier.height(4.dp))
 
                     Text(
-                        route?.customer_id?.name.orEmpty(),
+                        route?.customer_id?.address.orEmpty(),
                         style = CompactTypography.labelMedium.copy(
                             fontSize = 13.sp,
                             fontWeight = FontWeight.Bold
@@ -416,7 +419,7 @@ fun RouteDetailsScreen(
                         .padding(16.dp)
                 ) {
                     Text(
-                        "3000/10000",
+                        state.homeModel?.customer_id?.credit_limit?.toString() ?: "",
                         style = CompactTypography.labelMedium.copy(
                             fontSize = 12.sp,
                             color = Color.Gray
@@ -880,8 +883,10 @@ fun RouteDetailsScreen(
                 },
                 onCollectClicked = {
                     floatingButtonBottomSheet = false
-//                    openAddClientScreen?.invoke()
+
+                    openCollectScreen?.invoke(state.homeModel?.customer_id?.id ?: 0)
                 }
+
             )
         }
     }

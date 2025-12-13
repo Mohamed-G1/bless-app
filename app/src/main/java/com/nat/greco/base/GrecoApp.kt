@@ -8,6 +8,8 @@ import com.nat.greco.base.network.di.networkModule
 import com.nat.greco.screens.accounts.di.accountsModule
 import com.nat.greco.screens.addNewClient.di.CustomerModule
 import com.nat.greco.screens.addNewOrders.di.newProductsModule
+import com.nat.greco.screens.collect.di.CollectModule
+import com.nat.greco.screens.dailyReport.DailyReportModule
 import com.nat.greco.screens.dayDetails.di.DayDetailsModule
 import com.nat.greco.screens.dealingProducts.di.dealingProductModule
 import com.nat.greco.screens.routeDetails.di.courierDetailsModule
@@ -58,7 +60,9 @@ class GrecoApp : Application() {
                 OrderDetailsModule,
                 ReturnsModule,
                 PromotionModule,
-                CustomerModule
+                CustomerModule,
+                CollectModule,
+                DailyReportModule
             )
         }
     }

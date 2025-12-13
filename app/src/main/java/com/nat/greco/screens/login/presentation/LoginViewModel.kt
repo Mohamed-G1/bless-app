@@ -38,10 +38,11 @@ class LoginViewModel(
         viewModelScope.launch {
             _intentChannel.consumeAsFlow().collect { event ->
                 when (event) {
-                    is LoginEvents.LocationFetched ->{
+                    is LoginEvents.LocationFetched -> {
                         _state.update { it.copy(lat = event.lat, lang = event.long) }
 
                     }
+
                     is LoginEvents.PhoneNumberChanged -> {
                         _state.update { it.copy(mobile = event.phone) }
                     }
@@ -73,7 +74,7 @@ class LoginViewModel(
                                 },
                                 onSuccess = { data ->
 
-                                    if (data?.result?.code != 200) {
+                                    if (data?.result?.message == "User not exist") {
                                         _state.update {
                                             it.copy(
                                                 isLoading = false,
@@ -82,13 +83,14 @@ class LoginViewModel(
                                         }
                                     } else {
                                         viewModelScope.launch {
-                                            saveUserUseCase(response = data.result.data)
+                                            if (data?.result?.data != null)
+                                                saveUserUseCase(response = data.result.data)
                                         }
 
                                         _state.update {
                                             it.copy(
                                                 isLoading = false,
-                                                errorMessage = data.result.message,
+                                                errorMessage = data?.result?.message,
                                                 navigateToHome = true
                                             )
                                         }

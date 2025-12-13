@@ -9,49 +9,53 @@ import kotlinx.serialization.Serializable
 /**
  * This class contain the all app destinations routes
  * */
-
-sealed class Destinations {
-
-    @Serializable
-    data object Splash : Destinations()
+@Serializable
+sealed interface Destinations {
 
     @Serializable
-    data object Login : Destinations()
+    data object Splash : Destinations
 
     @Serializable
-    data object Home : Destinations()
+    data object Login : Destinations
 
     @Serializable
-    data object Clients : Destinations()
+    data object Home : Destinations
 
     @Serializable
-    data object Requests : Destinations()
+    data object Clients : Destinations
 
     @Serializable
-    data object Stock : Destinations()
+    data object Requests : Destinations
 
     @Serializable
-    data class OrderHistory(val id: Int) : Destinations()
+    data object Stock : Destinations
+
+    @Serializable
+    data class OrderHistory(val id: Int) : Destinations
 
     @Serializable
     data class DealingProducts(
         val customerid: Int
-    ) : Destinations()
+    ) : Destinations
 
 
     @Serializable
-    data object Notification : Destinations()
+    data object Notification : Destinations
 
     @Serializable
-    data object NewOrderScreen : Destinations()
+    data object NewOrderScreen : Destinations
 
     @Serializable
-    data object AddNewClientScreen : Destinations()
+    data object AddNewClientScreen : Destinations
+
+
+    @Serializable
+    data object Map : Destinations
 
     @Serializable
     data class OrderDetailsScreen(
-        val  orderId : Int
-    ) : Destinations()
+        val orderId: Int
+    ) : Destinations
 
     @Serializable
     data class OrderHistoryDetails(
@@ -62,54 +66,64 @@ sealed class Destinations {
     data class Accounts
         (
         val customerid: Int
-    ) : Destinations()
+    ) : Destinations
 
     @Serializable
     data class Products(
         val customerid: Int
-    ) : Destinations()
+    ) : Destinations
 
     @Serializable
     data class Contracts(
         val contract: String
-    ) : Destinations()
+    ) : Destinations
 
     @Serializable
     data class ConfirmOrder(
-        val id : Int
-    ) : Destinations()
+        val id: Int
+    ) : Destinations
 
     @Serializable
     data class Promotions(
-        val customerId : Int
-    ) : Destinations()
+        val customerId: Int
+    ) : Destinations
 
     @Serializable
-    data object ReceiveStock : Destinations()
+    data object ReceiveStock : Destinations
+
+    @Serializable
+    data class Collect(
+        val customerId: Int
+    ) : Destinations
 
     @Serializable
     data class DayDetails(
         val date: String
-    ) : Destinations()
+    ) : Destinations
 
     @Serializable
     data class Returns(
-        val orderId : Int
-    ) : Destinations()
+        val orderId: Int
+    ) : Destinations
 
     @Serializable
-    data object ReturnsDetails : Destinations()
+    data object ReturnsDetails : Destinations
+
+    @Serializable
+    data class DailyReport (
+        val date: String
+    ): Destinations
 
     @Serializable
     data class RouteDetails(
         val roues: Route,
         val note: String
-    ) : Destinations()
+    ) : Destinations
 
     @Serializable
     data class PriceList(
         val customerid: Int
-    ) : Destinations()
+    ) : Destinations
 
 }
 
