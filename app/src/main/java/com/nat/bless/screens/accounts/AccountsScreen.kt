@@ -1,0 +1,185 @@
+package com.nat.bless.screens.accounts
+
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color.Companion.White
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.nat.bless.R
+import com.nat.bless.base.ui.appLoading.FullLoading
+import com.nat.bless.base.ui.toast.ShowToast
+import com.nat.bless.screens.accounts.presentation.AccountsEvents
+import com.nat.bless.screens.accounts.presentation.AccountsState
+import com.nat.bless.ui.theme.CompactTypography
+import com.nat.bless.ui.theme.Gray
+import com.nat.bless.ui.theme.WhiteGray
+
+@Composable
+fun AccountsScreen(
+    state: AccountsState,
+    events: ((AccountsEvents) -> Unit)? = null,
+    customer_id: Int = 0,
+    onBackClicked: (() -> Unit)? = null
+) {
+    LaunchedEffect(Unit) {
+        events?.invoke(AccountsEvents.CustomerIdChanged(customer_id))
+    }
+
+    Box {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+                .padding(top = 16.dp),
+        ) {
+            val context = LocalContext.current
+
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    "الحسابات",
+                    style = CompactTypography.headlineMedium.copy(fontSize = 18.sp)
+                )
+
+                IconButton(onClick = { onBackClicked?.invoke() }) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_back),
+                        contentDescription = null
+                    )
+                }
+            }
+            Spacer(Modifier.height(16.dp))
+//            Row(
+//                modifier = Modifier.fillMaxWidth(),
+//                verticalAlignment = Alignment.CenterVertically,
+//                horizontalArrangement = Arrangement.End
+//            ) {
+//                IconButton(onClick = {
+////                    if (courierType == CourierSheetTypes.waybill.name) {
+////                        showWaybillSortBottomSheet = true
+////                    } else {
+////                        showPickupSortBottomSheet = true
+////                    }
+//                }) {
+//                    Image(
+//                        painter = painterResource(R.drawable.ic_sort), contentDescription = null
+//                    )
+//                }
+//
+//                Spacer(Modifier.width(24.dp))
+//
+//                IconButton(onClick = {
+////                    if (courierType == CourierSheetTypes.waybill.name) {
+////                        showWaybillFilterBottomSheet = true
+////                    } else {
+////                        showPickupFilterBottomSheet = true
+////                    }
+//                }) {
+//                    Image(
+//                        painter = painterResource(R.drawable.ic_filter), contentDescription = null
+//                    )
+//                }
+//
+//
+//            }
+//
+//            Spacer(modifier = Modifier.height(24.dp))
+
+            LazyColumn(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                items(state.model?.result?.data ?: listOf()) { item ->
+                    AccountListItem(
+                        data = item
+                    )
+                }
+            }
+        }
+
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
+                .wrapContentHeight()
+                .padding(16.dp)
+        ) {
+            Text(
+                "تفاصيل الحساب",
+                style = CompactTypography.headlineMedium.copy(fontSize = 18.sp)
+            )
+            Spacer(Modifier.height(16.dp))
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight(),
+                colors = CardDefaults.cardColors(containerColor = White),
+                border = BorderStroke(1.dp, color = WhiteGray)
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            text = "اجمالي المديونية",
+                            style = CompactTypography.headlineLarge.copy(fontSize = 14.sp)
+                        )
+                        Text(
+                            text = state.model?.result?.total_remaining_amount.toString() + " EGP",
+                            style = CompactTypography.headlineLarge.copy(
+                                fontSize = 14.sp,
+                                color = Gray
+                            )
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    if (state.errorMessage.isNotEmpty() == true) {
+        ShowToast(state.errorMessage)
+    }
+
+    if (state.isLoading) {
+        FullLoading()
+    }
+}
+
+
+@Preview
+@Composable
+private fun AccountsScreenPreview() {
+    AccountsScreen(customer_id = 0, state = AccountsState())
+}

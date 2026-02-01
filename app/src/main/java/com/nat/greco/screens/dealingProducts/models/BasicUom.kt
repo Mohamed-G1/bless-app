@@ -1,6 +1,0 @@
-package com.nat.greco.screens.dealingProducts.models
-
-data class BasicUom(
-    val uom_id: Int,
-    val uom_name: String
-)
