@@ -24,14 +24,14 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Greco"
+        android:theme="@style/Theme.Bless"
         tools:targetApi="31">
         <activity
             android:name="com.nat.bless.MainActivity"
             android:exported="true"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.Greco">
+            android:theme="@style/Theme.Bless">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

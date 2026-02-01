@@ -10,7 +10,7 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.nat.greco"
+        applicationId = "com.nat.bless"
         minSdk = 24
         targetSdk = 35
         versionCode = 1
