@@ -21,6 +21,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -67,24 +69,39 @@ fun PriceListScreen(
         }
 
         Spacer(Modifier.height(16.dp))
+        if (state.priceListModel?.result?.data?.isEmpty() == true) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
 
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            modifier = Modifier
-                .fillMaxWidth()
-                .heightIn(max = 1000.dp), // prevent infinite height inside LazyColumn
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            contentPadding = PaddingValues(8.dp)
-        ) {
-            items(items = state.priceListModel?.result?.data ?: listOf()) { item ->
-                PriceItem(
-                    item = item
+                Text(
+                    "لا يوجد قائمة اسعار", style = CompactTypography.headlineMedium.copy(
+                        fontSize = 22.sp,
+                        textAlign = TextAlign.Center,
+                        fontWeight = FontWeight.Bold
+                    )
                 )
+            }
+        } else {
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(max = 1000.dp), // prevent infinite height inside LazyColumn
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                contentPadding = PaddingValues(8.dp)
+            ) {
+                items(items = state.priceListModel?.result?.data ?: listOf()) { item ->
+                    PriceItem(
+                        item = item
+                    )
+                }
             }
         }
     }
-
 
 
 

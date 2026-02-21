@@ -170,14 +170,14 @@ fun RouteDetailsScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Image(
-                    painter = painterResource(R.drawable.greko_icon),
+                    painter = painterResource(R.drawable.logo),
                     contentDescription = null,
                     modifier =
                         Modifier
 
                             .clip(CircleShape)
                             .size(60.dp),
-                    contentScale = ContentScale.Crop
+                    contentScale = ContentScale.Fit
                 )
 
                 Column(
@@ -839,6 +839,7 @@ fun RouteDetailsScreen(
     }
     if (state.errorMessage.isNotEmpty()) {
         ShowToast(state.errorMessage)
+        events?.invoke(RouteDetailsEvents.ClearMessage)
     }
 
 //    if (state.navigateBack) {

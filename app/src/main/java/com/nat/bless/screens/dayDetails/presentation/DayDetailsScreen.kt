@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -58,8 +59,7 @@ fun DayDetailsScreen(
 
     Box(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(vertical = 24.dp, horizontal = 16.dp)
+            .fillMaxSize().padding(horizontal = 16.dp).safeContentPadding()
     ) {
         Column {
             Row(

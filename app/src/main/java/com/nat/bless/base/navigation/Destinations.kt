@@ -29,6 +29,8 @@ sealed interface Destinations {
 
     @Serializable
     data object Stock : Destinations
+    @Serializable
+    data object Profile : Destinations
 
     @Serializable
     data class OrderHistory(val id: Int) : Destinations
@@ -47,6 +49,13 @@ sealed interface Destinations {
 
     @Serializable
     data object AddNewClientScreen : Destinations
+
+    @Serializable
+    data object ReporterScreen : Destinations
+    @Serializable
+    data object TargetScreen : Destinations
+    @Serializable
+    data object PayslipScreen : Destinations
 
 
     @Serializable
@@ -167,5 +176,13 @@ sealed class BottomScreens<T>(@DrawableRes val name: Int, val icon: Int, val rou
         name = R.string.stock,
         icon = R.drawable.ic_stock,
         route = Destinations.Stock
+    )
+
+    @SuppressLint("ResourceType")
+    @Serializable
+    data object ProfileScreen : BottomScreens<Destinations.Profile>(
+        name = R.string.profile,
+        icon = R.drawable.outline_user_attributes_24,
+        route = Destinations.Profile
     )
 }

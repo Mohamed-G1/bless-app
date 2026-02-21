@@ -17,6 +17,7 @@ import com.nat.bless.ui.theme.MediumBlue
 
 @Composable
 fun SearchTapItem(
+    modifier: Modifier = Modifier,
     query: String,
     isSelected: Boolean,
     onClick: () -> Unit,
@@ -26,7 +27,7 @@ fun SearchTapItem(
     val textColor = if (isSelected) Color.White else Color.DarkGray.copy(alpha = .4f)
     Card(
         onClick = { onClick.invoke() },
-        modifier = Modifier.wrapContentSize(),
+        modifier = modifier.wrapContentSize(),
         colors = CardDefaults.cardColors(
             containerColor = cardColor
         )
@@ -42,5 +43,5 @@ fun SearchTapItem(
 @Preview
 @Composable
 private fun SearchTapItemPreview() {
-    SearchTapItem("Gamal", true, {})
+//    SearchTapItem("Gamal", true, {})
 }

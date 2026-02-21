@@ -39,8 +39,6 @@ class StockViewModel(
     }
 
     init {
-        _state.update { it.copy(error = "") }
-
         callStockApi()
         processEvents()
     }
@@ -54,7 +52,13 @@ class StockViewModel(
                     }
 
                     is StockEvents.GetStockList -> {
-                        callStockApi()
+                        checkInternetConnection(
+                            reTriggerApi = {
+                                callStockApi()
+                            }
+                        )
+
+
                     }
 
                     is StockEvents.SearchStockQueryChanged -> {
@@ -84,6 +88,10 @@ class StockViewModel(
 
                     is StockEvents.TriggerSearchReturns -> {
                         callSearchReturnsApi()
+                    }
+
+                    is StockEvents.ClearMessage -> {
+                        _state.update { it.copy(error = "") }
                     }
                 }
             }
@@ -157,6 +165,7 @@ class StockViewModel(
                 request = BaseRequest(
                     params = NewProductRequest(
                         token = getUserDataManager.readToken().first(),
+                        customer_id = 0
                     )
                 )
             )
@@ -164,7 +173,7 @@ class StockViewModel(
             _state.update { it.copy(isLoading = value) }
 
         }, onSuccess = { result ->
-            _state.update { it.copy(stockList = result?.result?.data ?: listOf()) }
+            _state.update { it.copy(stockList = result?.result?.data ?: listOf(), error = result?.result?.message.orEmpty()) }
 
         }, onFailure = { error, _ ->
             _state.update { it.copy(error = error) }
@@ -172,7 +181,6 @@ class StockViewModel(
 
         )
     }
-
 
     private fun callReturnsStockApi() {
         executeFlow(block = {

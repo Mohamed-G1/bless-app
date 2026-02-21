@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
@@ -35,11 +36,9 @@ fun CustomersScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
-            .padding(top = 16.dp),
+            .padding(horizontal = 16.dp).safeContentPadding(),
 
         ) {
-        Spacer(Modifier.height(16.dp))
 
         Text(
             "العملاء",
@@ -48,42 +47,7 @@ fun CustomersScreen(
             style = CompactTypography.headlineMedium.copy(fontSize = 18.sp)
         )
         Spacer(Modifier.height(16.dp))
-//        Row(
-//            modifier = Modifier.fillMaxWidth(),
-//            verticalAlignment = Alignment.CenterVertically,
-//            horizontalArrangement = Arrangement.End
-//
-//        ) {
-//            IconButton(onClick = {
-////                    if (courierType == CourierSheetTypes.waybill.name) {
-////                        showWaybillSortBottomSheet = true
-////                    } else {
-////                        showPickupSortBottomSheet = true
-////                    }
-//            }) {
-//                Image(
-//                    painter = painterResource(R.drawable.ic_sort), contentDescription = null
-//                )
-//            }
-//
-//            Spacer(Modifier.width(24.dp))
-//
-//            IconButton(onClick = {
-////                    if (courierType == CourierSheetTypes.waybill.name) {
-////                        showWaybillFilterBottomSheet = true
-////                    } else {
-////                        showPickupFilterBottomSheet = true
-////                    }
-//            }) {
-//                Image(
-//                    painter = painterResource(R.drawable.ic_filter), contentDescription = null
-//                )
-//            }
-//
-//
-//        }
-//
-//        Spacer(modifier = Modifier.height(24.dp))
+
 
         LazyColumn(
             modifier = Modifier.fillMaxWidth(),

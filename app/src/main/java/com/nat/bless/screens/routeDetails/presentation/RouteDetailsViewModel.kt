@@ -76,12 +76,17 @@ class RouteDetailsViewModel(
 
                         callCancelRouteApi(event.routeId, event.reasonId)
                     }
+
                     is RouteDetailsEvents.ConfirmRouteReasonsChanged -> {
 //                        _state.update { it.copy(refusalId = event.reasonId) }
 
                         callConfirmRouteApi(event.routeId, event.reasonId)
                     }
+
                     is RouteDetailsEvents.RefusalPickupReasonsChanged -> {}
+                    is RouteDetailsEvents.ClearMessage -> {
+                        _state.update { it.copy(errorMessage = "") }
+                    }
                 }
             }
         }
@@ -106,7 +111,8 @@ class RouteDetailsViewModel(
                 _state.update {
                     it.copy(
                         isLoading = false,
-                        navigateBack = true
+                        navigateBack = true,
+                        errorMessage = result?.result?.message.orEmpty()
                     )
                 }
             },
@@ -115,6 +121,7 @@ class RouteDetailsViewModel(
             }
         )
     }
+
     private fun callCancelRouteApi(route_id: Int, not_visited_reason_id: Int) {
         _state.update { it.copy(isLoading = true, errorMessage = "") }
         executeSuspend(
@@ -133,7 +140,9 @@ class RouteDetailsViewModel(
                 _state.update {
                     it.copy(
                         isLoading = false,
-                        navigateBack = true
+                        navigateBack = true,
+                        errorMessage = result?.result?.message.orEmpty()
+
                     )
                 }
             },
@@ -142,7 +151,6 @@ class RouteDetailsViewModel(
             }
         )
     }
-
 
 
     private fun callConfirmedReasonsApi() {

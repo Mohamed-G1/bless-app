@@ -43,7 +43,12 @@ class OrdersViewModel(
             _intentChannel.consumeAsFlow().collect { event ->
                 when (event) {
                     is OrdersEvents.GetOrdersEvent -> {
-                        callGetOrdersListApi()
+                        checkInternetConnection(
+                            reTriggerApi = {
+                                callGetOrdersListApi()
+                            }
+                        )
+
                     }
 
                     is OrdersEvents.GetReturnsEvent -> {

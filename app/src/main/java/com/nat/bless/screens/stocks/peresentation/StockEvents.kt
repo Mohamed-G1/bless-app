@@ -4,6 +4,7 @@ sealed class StockEvents {
     object GetReturnsStock : StockEvents()
     object TriggerSearchStock : StockEvents()
     object TriggerSearchReturns : StockEvents()
+    object ClearMessage : StockEvents()
     object GetStockList : StockEvents()
     object ClearStockSearchQuery : StockEvents()
     object ClearReturnsSearchQuery : StockEvents()

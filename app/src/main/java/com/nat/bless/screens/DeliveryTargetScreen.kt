@@ -8,8 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -17,32 +16,29 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nat.bless.R
 import com.nat.bless.ui.theme.CompactTypography
 
 @Composable
-fun ContractsScreen(
-    contract: String,
-    onBackClicked: (() -> Unit)? = null,
+fun DeliveryTargetScreen(
+    onBackClicked: (() -> Unit)? = null
+
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(vertical = 24.dp, horizontal = 16.dp)
-            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 16.dp).safeContentPadding()
     ) {
-
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                "التعاقدات",
+                "تارجت المندوب",
                 style = CompactTypography.headlineMedium.copy(fontSize = 18.sp)
             )
 
@@ -54,28 +50,44 @@ fun ContractsScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
 
-        if (contract.isEmpty()) {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
+        Spacer(Modifier.height(24.dp))
 
-                Text(
-                    "لا يوجد تعاقدات", style = CompactTypography.headlineMedium.copy(
-                        fontSize = 22.sp,
-                        textAlign = TextAlign.Center,
-                        fontWeight = FontWeight.Bold
-                    )
-                )
-            }
-        } else {
-            Text(
-                text = contract,
-                style = CompactTypography.bodyLarge.copy(fontSize = 14.sp)
-            )
-        }
+        val text1 = StringBuilder()
+            .append("زيارات إيجابية: ")
+            .append(0)
+            .toString()
+        Text(
+            text1,
+            style = CompactTypography.headlineMedium.copy(fontSize = 18.sp)
+        )
+        Spacer(Modifier.height(12.dp))
+
+        val text2 = StringBuilder()
+            .append("زيارات ملغاة: ")
+            .append(0)
+            .toString()
+        Text(
+            text2,
+            style = CompactTypography.headlineMedium.copy(fontSize = 18.sp)
+        )
+
+        Spacer(Modifier.height(12.dp))
+
+        val text3 = StringBuilder()
+            .append("إجمالي الزيارات: ")
+            .append(0)
+            .toString()
+        Text(
+            text3,
+            style = CompactTypography.headlineMedium.copy(fontSize = 18.sp)
+        )
     }
+}
+
+
+@Preview
+@Composable
+private fun DeliveryReporterScreenPerview() {
+    DeliveryTargetScreen()
 }

@@ -43,7 +43,11 @@ class CustomersViewModel(
             _intentChannel.consumeAsFlow().collect { event ->
                 when (event) {
                     is CustomersEvents.FetchCustomers -> {
-                        callGetCustomersApi()
+                        checkInternetConnection(
+                            reTriggerApi = {
+                                callGetCustomersApi()
+                            }
+                        )
                     }
                 }
             }

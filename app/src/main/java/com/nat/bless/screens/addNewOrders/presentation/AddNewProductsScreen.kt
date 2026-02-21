@@ -245,6 +245,7 @@ fun AddNewProductsScreen(
 
     if (state.errorMessage.isNotEmpty() == true) {
         ShowToast(state.errorMessage)
+        events?.invoke(NewProductsEvents.ClearMessage)
     }
 
     if (state.isLoading) {

@@ -5,7 +5,7 @@ import com.nat.bless.screens.home.domain.models.Route
 sealed class RouteDetailsEvents {
 
     data class ClientNameChanged(val name: String) : RouteDetailsEvents()
-
+data object ClearMessage : RouteDetailsEvents()
     data class HomeModelChanged(val model: Route?) : RouteDetailsEvents()
     data class LocationChanged(val lat: String, val lng: String) : RouteDetailsEvents()
     data class ClientSignatureChanged(val image: String) : RouteDetailsEvents()

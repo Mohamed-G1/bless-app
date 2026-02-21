@@ -25,6 +25,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -111,19 +113,34 @@ fun AccountsScreen(
 //            }
 //
 //            Spacer(modifier = Modifier.height(24.dp))
+            if (state.model?.result?.data?.isEmpty() == true) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
 
-            LazyColumn(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                items(state.model?.result?.data ?: listOf()) { item ->
-                    AccountListItem(
-                        data = item
+                    Text(
+                        "لا يوجد حسابات حالية", style = CompactTypography.headlineMedium.copy(
+                            fontSize = 22.sp,
+                            textAlign = TextAlign.Center,
+                            fontWeight = FontWeight.Bold
+                        )
                     )
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    items(state.model?.result?.data ?: listOf()) { item ->
+                        AccountListItem(
+                            data = item
+                        )
+                    }
                 }
             }
         }
-
 
         Column(
             modifier = Modifier

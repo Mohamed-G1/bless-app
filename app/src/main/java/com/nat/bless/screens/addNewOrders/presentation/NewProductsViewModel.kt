@@ -50,9 +50,14 @@ class NewProductsViewModel(
                     is NewProductsEvents.CustomerIdChanged -> {
                         _state.update { it.copy(customerId = event.customerId) }
                     }
+
                     is NewProductsEvents.NavigationCompleted -> {
                         _state.update { it.copy(navigateToConfirmOrder = false) }
 
+                    }
+
+                    is NewProductsEvents.ClearMessage -> {
+                        _state.update { it.copy(errorMessage = "") }
                     }
                 }
             }
@@ -86,8 +91,13 @@ class NewProductsViewModel(
             },
             onSuccess = { result ->
                 if (result?.result?.code == 200) {
-                    _state.update { it.copy(addToCartModel = result ,navigateToConfirmOrder = true) }
-                }else {
+                    _state.update {
+                        it.copy(
+                            addToCartModel = result,
+                            navigateToConfirmOrder = true
+                        )
+                    }
+                } else {
                     _state.update { it.copy(errorMessage = result?.result?.message.orEmpty()) }
                 }
             },

@@ -54,6 +54,10 @@ class ConfirmOrderViewModel(
                     is ConfirmOrderEvents.NavigationComplete -> {
                         _state.update { it.copy(navigateToCollectScreen = false) }
                     }
+
+                    is ConfirmOrderEvents.ClearMessage -> {
+                        _state.update { it.copy(error = "") }
+                    }
                 }
             }
         }
@@ -75,9 +79,18 @@ class ConfirmOrderViewModel(
                 )
             },
             onSuccess = { result ->
+               if ( result?.result?.code != 200){
+                     _state.update {
+                          it.copy(
+                            error = result?.result?.message.orEmpty(),
+                            isLoading = false,
+                          )
+                     }
+                     return@executeSuspend
+               }
                 _state.update {
                     it.copy(
-                        error = result?.result?.message.orEmpty(),
+                        error = result.result.message,
                         isLoading = false,
                         navigateToCollectScreen = true
                     )
