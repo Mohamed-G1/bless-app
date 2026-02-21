@@ -18,6 +18,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -28,12 +30,12 @@ import com.nat.bless.ui.theme.CompactTypography
 
 @Composable
 fun OrderHistoryScreen(
-    customerId : Int,
+    customerId: Int,
     state: OrderHistoryState,
     events: ((OrderHistoryEvents) -> Unit)? = null,
     onBackClicked: (() -> Unit)? = null,
     onOrderClicked: ((
-       Int
+        Int
     ) -> Unit)? = null
 ) {
 
@@ -104,26 +106,41 @@ fun OrderHistoryScreen(
 //        }
 //
 //        Spacer(modifier = Modifier.height(24.dp))
+        if (state.model.isEmpty()) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
 
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            itemsIndexed(items = state.model) { index, item ->
-                OrderHistoryItem(
-                    onClicked = { order ->
-                        onOrderClicked?.invoke(
-                            order.id
-                        )
-                    },
-                    item = item
+                Text(
+                    "لا يوجد طلبات سابقة", style = CompactTypography.headlineMedium.copy(
+                        fontSize = 22.sp,
+                        textAlign = TextAlign.Center,
+                        fontWeight = FontWeight.Bold
+                    )
                 )
+            }
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                itemsIndexed(items = state.model) { index, item ->
+                    OrderHistoryItem(
+                        onClicked = { order ->
+                            onOrderClicked?.invoke(
+                                order.id
+                            )
+                        },
+                        item = item
+                    )
+                }
             }
         }
     }
-
     if (state.errorMessage?.isNotEmpty() == true) {
         ShowToast(state.errorMessage)
     }
@@ -136,5 +153,5 @@ fun OrderHistoryScreen(
 @Preview
 @Composable
 private fun OrderHistorypreview() {
-    OrderHistoryScreen(0,OrderHistoryState())
+    OrderHistoryScreen(0, OrderHistoryState())
 }

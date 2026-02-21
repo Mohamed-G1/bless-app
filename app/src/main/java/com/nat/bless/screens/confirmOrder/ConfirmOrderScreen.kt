@@ -171,6 +171,8 @@ fun ConfirmOrderScreen(
 
     if (state.error.isNotEmpty()) {
         ShowToast(state.error)
+        events?.invoke(ConfirmOrderEvents.ClearMessage)
+
     }
 
     if (state.isLoading) {

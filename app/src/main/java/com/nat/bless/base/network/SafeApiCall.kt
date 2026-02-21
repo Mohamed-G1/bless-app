@@ -42,7 +42,7 @@ fun getErrorMessageForHttpCode(statusCode: Int, message: String): String {
 fun <T> handleApiError(exception: Throwable): Resource<T> {
     val message = when (exception) {
         is TimeoutException -> "Request time out. Please try again"
-        is IOException -> "Network error/ please check your connection"
+        is IOException -> "يرجي التحقق من اتصال الانترنت"
         is HttpException -> {
             val statusCode = exception.code()
             when (statusCode) {

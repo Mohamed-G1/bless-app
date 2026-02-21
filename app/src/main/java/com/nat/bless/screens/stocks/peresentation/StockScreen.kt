@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -46,6 +47,7 @@ import androidx.compose.ui.unit.sp
 import com.nat.bless.base.ui.appButton.AppButton
 import com.nat.bless.base.ui.appLoading.FullLoading
 import com.nat.bless.base.ui.textField.AppTextField
+import com.nat.bless.base.ui.toast.ShowToast
 import com.nat.bless.ui.theme.CompactTypography
 import com.nat.bless.ui.theme.MediumBlue
 import com.nat.bless.ui.theme.MediumGray
@@ -66,16 +68,15 @@ fun StockScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(vertical = 24.dp, horizontal = 16.dp),
+            .padding(horizontal = 16.dp).safeContentPadding(),
     ) {
         LazyColumn(
             modifier = Modifier
-                .fillMaxSize(),
+                .fillMaxSize()
+                .padding(bottom = 70.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             item {
-                Spacer(Modifier.height(24.dp))
-
                 Text(
                     "المخزون الحالي",
                     style = CompactTypography.headlineMedium.copy(fontSize = 18.sp),
@@ -90,7 +91,6 @@ fun StockScreen(
                     containerColor = WhiteGray,
                     indicator = {},
                     modifier = Modifier
-                        .padding(horizontal = 16.dp)
                         .clip(RoundedCornerShape(12.dp)),
                     divider = {}
                 ) {
@@ -128,30 +128,12 @@ fun StockScreen(
             }
 
             item {
-//                Row(
-//                    modifier = Modifier.fillMaxWidth(),
-//                    verticalAlignment = Alignment.CenterVertically
-//                ) {
-//                    IconButton(onClick = {}) {
-//                        Icon(
-//                            painter = painterResource(R.drawable.ic_scan),
-//                            contentDescription = null,
-//                            tint = DarkBlue
-//                        )
-//                    }
-
-//                }
-            }
-
-            item {
                 when (tabIndex) {
                     0 -> {
                         ReturnsSearchField(
                             state = state,
                             events = events,
                         )
-
-
 
                         if (state.returnsList.isEmpty() == true) {
                                 Column(
@@ -189,10 +171,6 @@ fun StockScreen(
                                 }
                             }
                         }
-
-
-
-
                     }
 
                     1 -> {
@@ -235,118 +213,33 @@ fun StockScreen(
                                 }
                             }
                         }
-
-
-                        Spacer(Modifier.height(16.dp))
-                        AppButton(
-                            modifier = Modifier
-                                .padding(horizontal = 24.dp)
-                                .fillMaxWidth()
-                                .align(Alignment.BottomCenter),
-                            text = "استلام مخزون",
-                            onClick = { onReceiveClicked?.invoke() }
-                        )
                     }
                 }
             }
         }
+
+        if (tabIndex == 1){
+            AppButton(
+                modifier = Modifier
+                    .padding(horizontal = 24.dp)
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter),
+                text = "استلام مخزون",
+                onClick = { onReceiveClicked?.invoke() }
+            )
+        }
+
     }
 
-//    LaunchedEffect(state.error) {
-//        if (state.error.isNotEmpty()) {
-//            Toast.makeText(context, state.error, Toast.LENGTH_SHORT).show()
-//        }
-//    }
-
-
+    if (state.error.isNotEmpty()){
+        ShowToast(state.error)
+        events?.invoke(StockEvents.ClearMessage)
+    }
     if (state.isLoading) {
         FullLoading()
     }
 }
 
-//@Composable
-//private fun StockItem(
-//    item: HomeModel? = null,
-//    onClicked: (() -> Unit)? = null
-//) {
-//    Card(
-//        onClick = { onClicked?.invoke() },
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .wrapContentHeight(),
-//        colors = CardDefaults.cardColors(containerColor = Color.White),
-//        border = BorderStroke(2.dp, WhiteGray)
-//    ) {
-//
-//        Column(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .padding(16.dp),
-//            horizontalAlignment = Alignment.CenterHorizontally,
-//            verticalArrangement = Arrangement.spacedBy(8.dp)
-//        ) {
-//            Image(
-//                painter = painterResource(R.drawable.greco_product),
-//                contentDescription = null,
-//                modifier = Modifier
-//                    .size(84.dp)
-//                    .clip(
-//                        RoundedCornerShape(12.dp)
-//                    ),
-//                contentScale = ContentScale.Crop
-//            )
-//
-//
-//
-//            Row(
-//                modifier = Modifier.fillMaxWidth(),
-//                horizontalArrangement = Arrangement.SpaceBetween
-//            ) {
-//                Text(
-//                    text = "اسم المنتج",
-//                    style = CompactTypography.headlineLarge.copy(fontSize = 12.sp)
-//                )
-//                Text(
-//                    text = "البان",
-//                    style = CompactTypography.headlineLarge.copy(fontSize = 12.sp, color = Gray)
-//                )
-//            }
-//
-//
-//            Row(
-//                modifier = Modifier.fillMaxWidth(),
-//                horizontalArrangement = Arrangement.SpaceBetween
-//            ) {
-//                Text(
-//                    text = "الكمية",
-//                    style = CompactTypography.headlineLarge.copy(fontSize = 15.sp)
-//                )
-//                Text(
-//                    text = "1 كرتونة",
-//                    style = CompactTypography.headlineLarge.copy(fontSize = 15.sp),
-//
-//                )
-//            }
-//
-//            Row(
-//                modifier = Modifier.fillMaxWidth(),
-//                horizontalArrangement = Arrangement.SpaceBetween
-//            ) {
-//                Text(
-//                    text = "السعر",
-//                    style = CompactTypography.headlineLarge.copy(fontSize = 12.sp)
-//                )
-//                Text(
-//                    text = "3100 EGP",
-//                    style = CompactTypography.headlineLarge.copy(fontSize = 12.sp, color = Gray)
-//                )
-//            }
-//
-//
-//        }
-//
-//    }
-//}
 
 @Composable
 private fun StockSearchField(

@@ -51,7 +51,8 @@ fun AppBottomNavigation(navController: NavController) {
             BottomScreens.HomeScreen,
             BottomScreens.ClientsScreen,
             BottomScreens.RequestsScreen,
-            BottomScreens.StockScreen
+            BottomScreens.StockScreen,
+            BottomScreens.ProfileScreen
         )
     }
 

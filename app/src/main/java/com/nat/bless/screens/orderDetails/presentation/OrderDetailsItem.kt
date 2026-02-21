@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.White
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -63,9 +64,10 @@ fun OrderDetailsItem(
 
             Column(
                 modifier = Modifier
-                    .fillMaxWidth().padding(top = padding)
+                    .fillMaxWidth()
+                    .padding(top = padding)
                     .padding(12.dp),
-                horizontalAlignment = Alignment.Start,
+//                horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Row(
@@ -78,7 +80,12 @@ fun OrderDetailsItem(
                     )
                     Text(
                         text = item?.product_id?.name.orEmpty(),
-                        style = CompactTypography.headlineLarge.copy(fontSize = 12.sp, color = Gray)
+                        style = CompactTypography.headlineLarge.copy(
+                            fontSize = 12.sp,
+                            color = Gray,
+                            textAlign = TextAlign.End
+                        ),
+                        modifier = Modifier.fillMaxWidth()
                     )
                 }
 

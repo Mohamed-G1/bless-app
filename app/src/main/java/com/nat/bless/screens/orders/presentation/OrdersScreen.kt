@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -54,7 +55,7 @@ fun OrdersScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(vertical = 24.dp, horizontal = 16.dp),
+            .padding(horizontal = 16.dp).safeContentPadding(),
     ) {
         LazyColumn(
             modifier = Modifier
@@ -63,8 +64,6 @@ fun OrdersScreen(
         ) {
 
             item{
-                Spacer(Modifier.height(24.dp))
-
                 Text(
                     "الطلبات",
                     modifier = Modifier.fillMaxWidth(),
@@ -80,7 +79,6 @@ fun OrdersScreen(
                     containerColor = WhiteGray,
                     indicator = {},
                     modifier = Modifier
-                        .padding(horizontal = 16.dp)
                         .clip(RoundedCornerShape(12.dp)),
                     divider = {}
                 ) {

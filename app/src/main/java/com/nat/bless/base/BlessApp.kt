@@ -2,6 +2,7 @@ package com.nat.bless.base
 
 import android.app.Application
 import com.nat.bless.base.domain.di.localDataSourceModule
+import com.nat.bless.base.network.NetworkMonitor
 import com.nat.bless.base.network.di.networkModule
 import com.nat.bless.screens.accounts.di.accountsModule
 import com.nat.bless.screens.addNewClient.di.CustomerModule
@@ -30,15 +31,9 @@ class BlessApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
-//            FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
-//                if (task.isSuccessful) {
-//                    Log.d("FCM Token", "Token: ${task.result}")
-//                }
-//
-//        }
-
         startKoin {
             androidContext(this@BlessApp)
+            NetworkMonitor.startMonitoring(context = this@BlessApp)
             modules(
                 networkModule,
                 splashModule,

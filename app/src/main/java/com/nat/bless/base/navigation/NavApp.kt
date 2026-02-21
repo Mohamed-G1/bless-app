@@ -23,6 +23,9 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.nat.bless.screens.addNewClient.presentation.AddNewCustomerScreen
 import com.nat.bless.screens.ContractsScreen
+import com.nat.bless.screens.DeliveryReporterScreen
+import com.nat.bless.screens.DeliveryTargetScreen
+import com.nat.bless.screens.PayslipScreen
 import com.nat.bless.screens.dayDetails.presentation.DayDetailsScreen
 import com.nat.bless.screens.addNewOrders.presentation.chooseCustomer.ChooseCustomerScreen
 import com.nat.bless.screens.promotionsList.presentation.PromotionScreen
@@ -68,6 +71,7 @@ import com.nat.bless.screens.orderHistory.OrderHistoryViewModel
 import com.nat.bless.screens.orders.presentation.OrdersViewModel
 import com.nat.bless.screens.priceList.presentation.PriceListScreen
 import com.nat.bless.screens.priceList.presentation.PriceListViewModel
+import com.nat.bless.screens.profile.ProfileScreen
 import com.nat.bless.screens.promotionsList.presentation.PromotionViewModel
 import com.nat.bless.screens.receviceStock.presentation.ReceiveStockViewModel
 import com.nat.bless.screens.returnsScreen.ReturnsViewModel
@@ -641,6 +645,54 @@ fun NavApp() {
                     isComingFromConfirmOrder = args.comingFromConfirmOrder
                 )
             }
+
+            composable<Destinations.Profile> {
+                ProfileScreen(
+                    navigateToDeliveryReport = {
+                        if (navController.canNavigate)
+                            navController.navigate(Destinations.ReporterScreen)
+                    },
+                    navigateToDeliveryTarget = {
+                        if (navController.canNavigate)
+                            navController.navigate(Destinations.TargetScreen)
+                    },
+                    navigateToPayslip = {
+                        if (navController.canNavigate)
+                            navController.navigate(Destinations.PayslipScreen)
+                    },
+                    signOut = {
+                        if (navController.canNavigate)
+                            signOutFromProfile(navController)
+                    }
+                )
+            }
+
+            composable<Destinations.ReporterScreen> {
+                DeliveryReporterScreen(
+                    onBackClicked = {
+                        if (navController.canNavigate)
+                            navController.navigateUp()
+                    }
+                )
+            }
+
+            composable<Destinations.TargetScreen> {
+                DeliveryTargetScreen(
+                    onBackClicked = {
+                        if (navController.canNavigate)
+                            navController.navigateUp()
+                    }
+                )
+            }
+
+            composable<Destinations.PayslipScreen> {
+                PayslipScreen(
+                    onBackClicked = {
+                        if (navController.canNavigate)
+                            navController.navigateUp()
+                    }
+                )
+            }
         }
     }
 }
@@ -686,6 +738,14 @@ private fun signOutFromHome(navController: NavController) {
             inclusive = true
         }
     }
+}private fun signOutFromProfile(navController: NavController) {
+    navController.navigate(
+        Destinations.Login
+    ) {
+        popUpTo(Destinations.Profile) {
+            inclusive = true
+        }
+    }
 }
 
 /** This function handle the destination from the splash screen to the appropriate screen
@@ -705,6 +765,7 @@ private fun getSelectedItemAccordingToBackstack(backstackState: NavDestination?)
         BottomScreens.ClientsScreen.route.toString() -> 2
         BottomScreens.RequestsScreen.route.toString() -> 3
         BottomScreens.StockScreen.route.toString() -> 4
+        BottomScreens.ProfileScreen.route.toString() -> 5
         else -> 0
     }
 }

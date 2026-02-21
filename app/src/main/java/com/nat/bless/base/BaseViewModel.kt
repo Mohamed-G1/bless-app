@@ -2,12 +2,21 @@ package com.nat.bless.base
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.nat.bless.base.network.NetworkMonitor
 import com.nat.bless.base.network.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 abstract class BaseViewModel : ViewModel() {
-
+    protected fun checkInternetConnection(reTriggerApi: () -> Unit) {
+        viewModelScope.launch {
+            NetworkMonitor.isConnected.collect { connected ->
+                if (connected) {
+                    reTriggerApi.invoke()
+                }
+            }
+        }
+    }
     inline fun <reified T> executeSuspend(
         crossinline block: suspend () -> Resource<T>,
         crossinline onSuccess: (T?) -> Unit,

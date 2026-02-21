@@ -5,6 +5,7 @@ import android.location.LocationManager
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,7 +16,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.paddingFromBaseline
+import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
@@ -24,9 +28,15 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -41,13 +51,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntRect
+import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.PopupPositionProvider
+import com.nat.bless.R
+import com.nat.bless.base.ShimmerLayout
 import com.nat.bless.base.ui.dialog.AppDialog
 import com.nat.bless.base.ui.datePicker.AppDatePicker
 import com.nat.bless.base.locationChecker.LocationHandler
 import com.nat.bless.base.locationChecker.LocationServiceReceiver
+import com.nat.bless.base.network.NetworkMonitor
 import com.nat.bless.base.permissions.LocationPermissionDialog
 import com.nat.bless.base.ui.appLoading.FullLoading
 import com.nat.bless.base.ui.toast.ShowToast
@@ -78,16 +100,12 @@ fun HomeScreen(
     openNewOrderScreen: (() -> Unit)? = null,
     openAddClientScreen: (() -> Unit)? = null,
     signOut: (() -> Unit)? = null
+
 ) {
     val context = LocalContext.current
-
-//    var selectedTap by remember {
-//        mutableStateOf(CourierSheetTypes.All.name)
-//    }
     var showWaybillSortBottomSheet by remember { mutableStateOf(false) }
     var showPickupSortBottomSheet by remember { mutableStateOf(false) }
     var selectedDate by rememberSaveable { mutableStateOf("") }
-    var selectedDateMillis by rememberSaveable { mutableStateOf<Long?>(null) }
 
     var isLocationEnabled by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(
@@ -99,25 +117,29 @@ fun HomeScreen(
     var floatingButtonBottomSheet by remember { mutableStateOf(false) }
     var showWaybillFilterBottomSheet by remember { mutableStateOf(false) }
     var showPickupFilterBottomSheet by remember { mutableStateOf(false) }
-    val locationError by remember { mutableStateOf("") }
 
 //    var courierType by remember { mutableStateOf(state.courierType ?: CourierSheetTypes.All.name) }
 
     var shouldShowDialog by remember { mutableStateOf(false) }
     var isDatePickerOpen by remember { mutableStateOf(false) }
-    val locationServiceReceiver = rememberUpdatedState(LocationServiceReceiver(
-        context = context,
-        isLocationEnabled = { isEnabled ->
-            Log.d("##LocationEnabled", "$isEnabled")
-            shouldShowDialog = !isEnabled
-            isLocationEnabled = isEnabled
-        }
-    ))
-    var showSignoutDialog by remember { mutableStateOf(false) }
+    val locationServiceReceiver = rememberUpdatedState(
+        LocationServiceReceiver(
+            context = context,
+            isLocationEnabled = { isEnabled ->
+                Log.d("##LocationEnabled", "$isEnabled")
+                shouldShowDialog = !isEnabled
+                isLocationEnabled = isEnabled
+            }
+        ))
+    val density = LocalDensity.current
+
 
 
     LaunchedEffect(Unit) {
-        events?.invoke(HomeEvents.DataChanged(selectedDate.ifEmpty { LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy", java.util.Locale.ENGLISH)) }))
+        events?.invoke(HomeEvents.DataChanged(selectedDate.ifEmpty {
+            LocalDate.now()
+                .format(DateTimeFormatter.ofPattern("dd/MM/yyyy", java.util.Locale.ENGLISH))
+        }))
         events?.invoke(HomeEvents.CallRoutes)
     }
     // Register the receiver
@@ -141,7 +163,6 @@ fun HomeScreen(
         }
     }
 
-
     // this to launch the location observer one the screen is opened
     LaunchedEffect(Unit) {
         val isEnabled = LocationHandler.isLocationServiceEnabled(context)
@@ -152,7 +173,7 @@ fun HomeScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(vertical = 24.dp, horizontal = 16.dp)
+            .padding(horizontal = 16.dp).safeContentPadding()
     ) {
         Column(
             modifier = Modifier
@@ -172,154 +193,160 @@ fun HomeScreen(
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 val name =
-                    StringBuilder().append("أهلاً").append(" ").append(state.userName.orEmpty()).toString()
+                    StringBuilder().append("أهلاً").append(" ").append(state.userName.orEmpty())
+                        .toString()
 
                 Text(
                     text = name,
                     style = CompactTypography.labelMedium.copy(fontSize = 18.sp),
+                    maxLines = 2,
                     modifier = Modifier
-                        .fillMaxWidth(.6f)
+                        .fillMaxWidth(.7f)
                 )
 
+                Spacer(Modifier.weight(1f))
 
-//                IconButton(onClick = {
-//                    Toast.makeText(
-//                        context,
-//                        "This feature will be available soon",
-//                        Toast.LENGTH_SHORT
-//                    )
-//                        .show()
-//                }) {
-//                    Icon(
-//                        painter = painterResource(R.drawable.ic_scan),
-//                        contentDescription = null,
-//                        tint = DarkBlue
-//                    )
-//                }
-//
-//                IconButton(onClick = {
-//                    Toast.makeText(
-//                        context,
-//                        "This feature will be available soon",
-//                        Toast.LENGTH_SHORT
-//                    )
-//                        .show()
-//                }) {
-//                    Icon(
-//                        painter = painterResource(R.drawable.ic_message),
-//                        contentDescription = null,
-//                        tint = DarkBlue
-//                    )
-//                }
-//
-//                IconButton(onClick = {
-//                    navigateToNotification?.invoke()
-//                }) {
-//                    Icon(
-//                        painter = painterResource(R.drawable.ic_notification),
-//                        contentDescription = null,
-//                        tint = DarkBlue
-//                    )
-//                }
+                TooltipBox(
+                    positionProvider = object : PopupPositionProvider {
+                        override fun calculatePosition(
+                            anchorBounds: IntRect,
+                            windowSize: IntSize,
+                            layoutDirection: LayoutDirection,
+                            popupContentSize: IntSize
+                        ): IntOffset {
+                            val spacing = with(density) { 8.dp.roundToPx() }
 
-
-                SearchTapItem(query = "خروج",
-                    isSelected = true,
-                    mainColor = NotDeliverRed,
-                    onClick = {
-                        showSignoutDialog = true
+                            return IntOffset(
+                                x = anchorBounds.left +
+                                        (anchorBounds.width - popupContentSize.width) / 2,
+                                y = anchorBounds.bottom + spacing
+                            )
+                        }
+                    },
+                    tooltip = {
+                        Text(
+                            "انهاء اليوم",
+                            style = CompactTypography.headlineMedium.copy(fontSize = 14.sp)
+                        )
+                    },
+                    state = rememberTooltipState()
+                ) {
+                    IconButton(
+                        onClick = {
+                            onDayDetailsClicked?.invoke(state.date.orEmpty())
+                        }
+                    ) {
+                        Image(
+                            painter = painterResource(R.drawable.ic_end_day),
+                            contentDescription = null
+                        )
                     }
-                )
-
-            }
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .horizontalScroll(rememberScrollState()),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-//                SearchTapItem(query = "الكل",
-//                    isSelected = courierType == CourierSheetTypes.All.name,
-//                    onClick = {
-//                    })
+                }
 
                 Spacer(Modifier.width(8.dp))
 
-//            SearchTapItem(query = "توصيل شحنة",
-//                isSelected = courierType == CourierSheetTypes.waybill.name,
-//                onClick = {
-//                    courierType = CourierSheetTypes.waybill.name
-////                    selectedTap = CourierSheetTypes.waybill.name
-//                    events?.invoke(HomeEvents.CallWaybillCouriers(CourierSheetTypes.waybill.name))
-//                })
-//            Spacer(Modifier.width(8.dp))
+                TooltipBox(
+                    positionProvider = object : PopupPositionProvider {
+                        override fun calculatePosition(
+                            anchorBounds: IntRect,
+                            windowSize: IntSize,
+                            layoutDirection: LayoutDirection,
+                            popupContentSize: IntSize
+                        ): IntOffset {
+                            val spacing = with(density) { 8.dp.roundToPx() }
 
-//            SearchTapItem(query = "طلبية من",
-//                isSelected = courierType == CourierSheetTypes.pickup.name,
-//                onClick = {
-//                    courierType = CourierSheetTypes.pickup.name
-////                    selectedTap = CourierSheetTypes.pickup.name
-//                    events?.invoke(HomeEvents.CallPickupCouriers(CourierSheetTypes.pickup.name))
+                            return IntOffset(
+                                x = anchorBounds.left +
+                                        (anchorBounds.width - popupContentSize.width) / 2,
+                                y = anchorBounds.bottom + spacing
+                            )
+                        }
+                    },
+                    tooltip = {
+                        Text(
+                            "اختر التاريخ",
+                            style = CompactTypography.headlineMedium.copy(fontSize = 14.sp)
+                        )
+                    },
+                    state = rememberTooltipState()
+                ) {
+                    IconButton(
+                        onClick = {
+                            isDatePickerOpen = true
+                        }
+                    ) {
+                        Image(
+                            painter = painterResource(R.drawable.ic_calenda),
+                            contentDescription = null
+                        )
+                    }
+                }
+
+            }
+
+//            Spacer(modifier = Modifier.height(24.dp))
 //
-//                })
-//            Spacer(Modifier.width(8.dp))
-                Spacer(Modifier.weight(1f))
-                SearchTapItem(query = "تقرير اليوم",
-                    isSelected = true,
-                    onClick = {
-                        onDailyReportClicked?.invoke(state.date.orEmpty())
-                    }
-                )
-                Spacer(Modifier.width(12.dp))
-
-                SearchTapItem(query = "انهاء اليوم",
-                    isSelected = true,
-                    onClick = {
-                        onDayDetailsClicked?.invoke(state.date.orEmpty())
-                    }
-                )
-
-                Spacer(Modifier.width(12.dp))
-
-                SearchTapItem(query = "اختر التاريخ",
-                    isSelected = true,
-                    onClick = {
-                        isDatePickerOpen = true
-                    }
-                )
-//                IconButton(onClick = {
-////                    if (courierType == CourierSheetTypes.waybill.name) {
-////                        showWaybillSortBottomSheet = true
-////                    } else {
-////                        showPickupSortBottomSheet = true
+//            Row(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .horizontalScroll(rememberScrollState()),
+//                verticalAlignment = Alignment.CenterVertically,
+//                horizontalArrangement = Arrangement.SpaceBetween
+//            ) {
+//
+////                SearchTapItem(query = "تقرير اليوم",
+////                    isSelected = true,
+////                    onClick = {
+////                        onDailyReportClicked?.invoke(state.date.orEmpty())
 ////                    }
-//                }) {
-//                    Image(
-//                        painter = painterResource(R.drawable.ic_sort), contentDescription = null
-//                    )
-//                }
+////                )
+//
+//                SearchTapItem(
+//                    query = "انهاء اليوم",
+//                    isSelected = true,
+//                    onClick = {
+//                        onDayDetailsClicked?.invoke(state.date.orEmpty())
+//                    }
+//                )
 //
 //                Spacer(Modifier.width(12.dp))
 //
-//                IconButton(onClick = {
-////                    if (courierType == CourierSheetTypes.waybill.name) {
-////                        showWaybillFilterBottomSheet = true
-////                    } else {
-////                        showPickupFilterBottomSheet = true
-////                    }
-//                }) {
-//                    Image(
-//                        painter = painterResource(R.drawable.ic_filter), contentDescription = null
-//                    )
-//                }
-            }
+//                SearchTapItem(query = "اختر التاريخ",
+//                    isSelected = true,
+//                    onClick = {
+//                        isDatePickerOpen = true
+//                    }
+//                )
+//                Spacer(Modifier.weight(1f))
+//
+////                IconButton(onClick = {
+//////                    if (courierType == CourierSheetTypes.waybill.name) {
+//////                        showWaybillSortBottomSheet = true
+//////                    } else {
+//////                        showPickupSortBottomSheet = true
+//////                    }
+////                }) {
+////                    Image(
+////                        painter = painterResource(R.drawable.ic_sort), contentDescription = null
+////                    )
+////                }
+////
+////                Spacer(Modifier.width(12.dp))
+////
+////                IconButton(onClick = {
+//////                    if (courierType == CourierSheetTypes.waybill.name) {
+//////                        showWaybillFilterBottomSheet = true
+//////                    } else {
+//////                        showPickupFilterBottomSheet = true
+//////                    }
+////                }) {
+////                    Image(
+////                        painter = painterResource(R.drawable.ic_filter), contentDescription = null
+////                    )
+////                }
+//            }
 
             Spacer(modifier = Modifier.height(12.dp))
 
@@ -334,7 +361,8 @@ fun HomeScreen(
 
 
                 val count =
-                    StringBuilder().append("( ").append(state.model?.routes?.size ?: 0).append("").append("")
+                    StringBuilder().append("( ").append(state.model?.routes?.size ?: 0).append("")
+                        .append("")
                         .append(" )").toString()
 
                 Text(
@@ -347,26 +375,50 @@ fun HomeScreen(
             }
             Spacer(modifier = Modifier.height(24.dp))
 
-            LazyColumn(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-
-                itemsIndexed(state.model?.routes ?: listOf()){index,item ->
-                    val isLast = index == state.model?.routes?.lastIndex
-                    ListItem(
-                        item = item,
-                        modifier = if (isLast) {
-                            Modifier.padding(bottom = 24.dp)
-                        } else {
-                            Modifier
-                        },
-                        onClick = { model ->
-                            onClick?.invoke(model, item.note)
+                LazyColumn(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    if (state.model?.routes == null) {
+                        item {
+                            Box(
+                                Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ){
+                                Spacer(Modifier.height(500.dp))
+                                Text(
+                                    "لا يوجد خط سير لهذا اليوم", style = CompactTypography.headlineMedium.copy(
+                                        fontSize = 22.sp,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                )
+                            }
                         }
-                    )
+                    } else {
+                        itemsIndexed( state.model.routes) { index, item ->
+                            val isLast = index == state.model.routes.lastIndex
+                            ShimmerLayout(
+                                isLoading = state.isLoading,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .wrapContentHeight(),
+                                content = {
+                                    ListItem(
+                                        item = item,
+                                        modifier = if (isLast) {
+                                            Modifier.padding(bottom = 24.dp)
+                                        } else {
+                                            Modifier
+                                        },
+                                        onClick = { model ->
+                                            onClick?.invoke(model, item.note.orEmpty())
+                                        }
+                                    )
+                                })
+
+                        }
+                    }
                 }
-            }
         }
 
         FloatingActionButton(
@@ -393,37 +445,22 @@ fun HomeScreen(
     }
 
 
-
-    if (showSignoutDialog) {
-        AppDialog(
-            dialogMessage = "هل أنت متأكد من تسجيل الخروج؟",
-            onDismiss = { showSignoutDialog = false },
-            onConfirm = {
-                showSignoutDialog = false
-                events?.invoke(HomeEvents.clearUser)
-                signOut?.invoke()
-            },
-            confirmButtonTitle = "نعم",
-            cancelButtonTitle = "لا"
-        )
-    }
-
-    if (addNewOrderBottomSheet){
+    if (addNewOrderBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = {
                 addNewOrderBottomSheet = false
             }, sheetState = sheetState, containerColor = White
-        ){
+        ) {
             NewOrderSheetLayout()
         }
     }
 
-    if (addNewClientBottomSheet){
+    if (addNewClientBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = {
                 addNewClientBottomSheet = false
             }, sheetState = sheetState, containerColor = White
-        ){
+        ) {
             NewClientSheetLayout()
         }
     }
@@ -547,16 +584,11 @@ fun HomeScreen(
     if (state.errorMessage?.isNotEmpty() == true && (state.errorMessage != "Token is not valid")) {
         ShowToast(state.errorMessage)
     }
-
-    if (state.isLoading) {
-        FullLoading()
-    }
-//    if (state.errorMessage?.isNotEmpty() == true) {
-//        ShowToast(state.errorMessage)
-//    } else if (locationError.isNotEmpty()) {
-//        ShowToast(locationError)
-//    }
 //
+//    if (state.isLoading) {
+//        FullLoading()
+//    }
+
 //    // if the user is unauthorized, sign out
     if (state.errorMessage == "Token is not valid") {
         signOut?.invoke()
@@ -564,7 +596,7 @@ fun HomeScreen(
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
-@Preview(locale = "ar")
+@Preview(locale = "ar", showBackground = true)
 @Composable
 private fun HomeScreenPreview() {
     HomeScreen(HomeState())
