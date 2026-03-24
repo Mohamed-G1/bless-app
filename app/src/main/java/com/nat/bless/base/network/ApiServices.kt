@@ -56,6 +56,8 @@ import com.nat.bless.screens.returnsScreen.ReturnsRequest
 import com.nat.bless.screens.routeDetails.domain.models.ConfirmedAndCancelledReasonsResponse
 import com.nat.bless.screens.routeDetails.domain.models.ConfirmedAndCancelledRequest
 import com.nat.bless.screens.routeDetails.domain.models.TriggeredConfirmedAndCancelledResponse
+import com.nat.bless.screens.salespersonBonusScreen.BonusDetailsRequest
+import com.nat.bless.screens.salespersonBonusScreen.BonusDetailsResponse
 import com.nat.bless.screens.stocks.models.SearchRequest
 import com.nat.bless.screens.stocks.models.StockRequest
 import com.nat.bless.screens.stocks.models.returnsModel.ReturnedListData
@@ -277,7 +279,10 @@ interface ApiServices {
 
 
 
-
+    @POST("api/get_bonus_details")
+    suspend fun getBonusDetails(
+        @Body request: BaseRequest<BonusDetailsRequest>
+    ): Response<BaseResponse<BonusDetailsResponse>>
 
 
 

@@ -21,6 +21,8 @@ import com.nat.bless.screens.priceList.di.priceListModule
 import com.nat.bless.screens.promotionsList.di.PromotionModule
 import com.nat.bless.screens.receviceStock.di.ReceiveStockModule
 import com.nat.bless.screens.returnsScreen.ReturnsModule
+import com.nat.bless.screens.salespersonBonusScreen.SalespersonBonus
+import com.nat.bless.screens.salespersonScreen.SalespersonModule
 import com.nat.bless.screens.splash.di.splashModule
 import com.nat.bless.screens.stocks.di.stocksModule
 import org.koin.android.ext.koin.androidContext
@@ -55,7 +57,9 @@ class BlessApp : Application() {
                 PromotionModule,
                 CustomerModule,
                 CollectModule,
-                DailyReportModule
+                DailyReportModule,
+                SalespersonModule,
+                SalespersonBonus
             )
         }
     }

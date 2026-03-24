@@ -12,5 +12,7 @@ data class Line(
     val price: Double,
     val product_id: Int,
     val quantity: Int,
-    val uom_id: Int
+    val uom_id: Int,
+    val lot_id: Int,
+    val lot_name: String,
 )

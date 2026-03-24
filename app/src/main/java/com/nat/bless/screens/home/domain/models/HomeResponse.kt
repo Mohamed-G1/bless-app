@@ -1,5 +1,6 @@
 package com.nat.bless.screens.home.domain.models
 
+import com.nat.bless.screens.login.domain.models.Target
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -38,4 +39,5 @@ data class CustomerId(
     val note: String,
     val is_active: Boolean,
     val tags: List<String>,
+    val target : Target
 )

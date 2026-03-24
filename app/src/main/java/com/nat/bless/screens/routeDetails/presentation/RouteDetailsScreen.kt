@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -71,8 +72,10 @@ import com.nat.bless.screens.home.presentation.components.NewOrderSheetLayout
 import com.nat.bless.screens.routeDetails.presentation.compoenets.AddNewOrderAndCollectSheetLayout
 import com.nat.bless.screens.routeDetails.presentation.compoenets.ConfirmReasonsBottomSheet
 import com.nat.bless.ui.theme.CompactTypography
+import com.nat.bless.ui.theme.DarkBlue
 import com.nat.bless.ui.theme.DeliverGreen
 import com.nat.bless.ui.theme.MediumBlue
+import com.nat.bless.ui.theme.MediumGray
 import com.nat.bless.ui.theme.NotDeliverRed
 import com.nat.bless.ui.theme.WhiteGray
 
@@ -96,17 +99,11 @@ fun RouteDetailsScreen(
 
     ) {
     val context = LocalContext.current
-    val scope = rememberCoroutineScope()
 
     var collectBottomSheet by remember { mutableStateOf(false) }
     var addNewOrderBottomSheet by remember { mutableStateOf(false) }
     var floatingButtonBottomSheet by remember { mutableStateOf(false) }
-    val scanLauncher = rememberLauncherForActivityResult(
-        contract = ScanContract(),
-        onResult = { result ->
-            Log.d("BarcodeTest", "Scanned: ${result.contents}")
-        }
-    )
+
     var showNotDeliveredBottomSheet by remember { mutableStateOf(false) }
     var showRefusalReasonsBottomSheet by remember { mutableStateOf(false) }
     var showConfirmReasonsBottomSheet by remember { mutableStateOf(false) }
@@ -163,106 +160,120 @@ fun RouteDetailsScreen(
             }
 
             Spacer(modifier = Modifier.height(16.dp))
-
-            Row(
-                Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Start,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+            Box(   modifier = Modifier
+                .fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ){
                 Image(
                     painter = painterResource(R.drawable.logo),
                     contentDescription = null,
                     modifier =
                         Modifier
-
                             .clip(CircleShape)
-                            .size(60.dp),
+                            .size(90.dp).border(0.5.dp, MediumGray, CircleShape),
                     contentScale = ContentScale.Fit
                 )
-
-                Column(
-                    Modifier,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
-
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-
-                        Column(
-                            Modifier,
-                            horizontalAlignment = Alignment.Start,
-                            verticalArrangement = Arrangement.spacedBy(6.dp)
-                        ) {
-                            if (state.homeModel?.customer_id?.is_active == true) {
-                                Text(
-                                    "نشط",
-                                    style = CompactTypography.labelMedium.copy(
-                                        fontSize = 12.sp,
-                                        color = DeliverGreen
-                                    )
-                                )
-                            }
-
-//                            Text(
-//                                "عميل مميز",
-//                                style = CompactTypography.labelMedium.copy(
-//                                    fontSize = 12.sp,
-//                                    color = Color.Gray
-//                                )
-//                            )
-                            Text(
-                                state.homeModel?.customer_id?.create_date.orEmpty(),
-                                style = CompactTypography.labelMedium.copy(
-                                    fontSize = 12.sp,
-                                    color = Color.Gray
-                                )
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.width(16.dp))
-                        VerticalDivider(
-                            thickness = 1.dp,
-                            color = Color.Gray,
-                            modifier = Modifier.height(50.dp)
-                        )
-                        Spacer(modifier = Modifier.width(16.dp))
-
-
-                        Column(
-                            Modifier,
-                            horizontalAlignment = Alignment.Start,
-                            verticalArrangement = Arrangement.spacedBy(6.dp)
-                        ) {
-
-                            Text(
-                                state.homeModel?.customer_id?.note.orEmpty(),
-                                style = CompactTypography.labelMedium.copy(
-                                    fontSize = 12.sp,
-                                    color = Color.Gray
-                                )
-                            )
-                            Text(
-                                state.homeModel?.customer_id?.tags?.joinToString(",").orEmpty(),
-                                style = CompactTypography.labelMedium.copy(
-                                    fontSize = 12.sp,
-                                    color = Color.Gray
-                                )
-                            )
-//                            Text(
-//                                "مدير مبيعات: الاسم",
-//                                style = CompactTypography.labelMedium.copy(
-//                                    fontSize = 12.sp,
-//                                    color = Color.Gray
-//                                )
-//                            )
-                        }
-                    }
-                }
             }
+
+//            Row(
+//                Modifier.fillMaxWidth(),
+//                horizontalArrangement = Arrangement.Start,
+//                verticalAlignment = Alignment.CenterVertically
+//            ) {
+//                Image(
+//                    painter = painterResource(R.drawable.logo),
+//                    contentDescription = null,
+//                    modifier =
+//                        Modifier
+//
+//                            .clip(CircleShape)
+//                            .size(60.dp),
+//                    contentScale = ContentScale.Fit
+//                )
+//
+//                Column(
+//                    Modifier,
+//                    horizontalAlignment = Alignment.CenterHorizontally,
+//                    verticalArrangement = Arrangement.spacedBy(6.dp)
+//                ) {
+//
+//
+//                    Row(
+//                        modifier = Modifier.fillMaxWidth(),
+//                        horizontalArrangement = Arrangement.Center
+//                    ) {
+//
+//                        Column(
+//                            Modifier,
+//                            horizontalAlignment = Alignment.Start,
+//                            verticalArrangement = Arrangement.spacedBy(6.dp)
+//                        ) {
+//                            if (state.homeModel?.customer_id?.is_active == true) {
+//                                Text(
+//                                    "نشط",
+//                                    style = CompactTypography.labelMedium.copy(
+//                                        fontSize = 12.sp,
+//                                        color = DeliverGreen
+//                                    )
+//                                )
+//                            }
+//
+////                            Text(
+////                                "عميل مميز",
+////                                style = CompactTypography.labelMedium.copy(
+////                                    fontSize = 12.sp,
+////                                    color = Color.Gray
+////                                )
+////                            )
+//                            Text(
+//                                state.homeModel?.customer_id?.create_date.orEmpty(),
+//                                style = CompactTypography.labelMedium.copy(
+//                                    fontSize = 12.sp,
+//                                    color = Color.Gray
+//                                )
+//                            )
+//                        }
+//
+//                        Spacer(modifier = Modifier.width(16.dp))
+//                        VerticalDivider(
+//                            thickness = 1.dp,
+//                            color = Color.Gray,
+//                            modifier = Modifier.height(50.dp)
+//                        )
+//                        Spacer(modifier = Modifier.width(16.dp))
+//
+//
+//                        Column(
+//                            Modifier,
+//                            horizontalAlignment = Alignment.Start,
+//                            verticalArrangement = Arrangement.spacedBy(6.dp)
+//                        ) {
+//
+//                            Text(
+//                                state.homeModel?.customer_id?.note.orEmpty(),
+//                                style = CompactTypography.labelMedium.copy(
+//                                    fontSize = 12.sp,
+//                                    color = Color.Gray
+//                                )
+//                            )
+//                            Text(
+//                                state.homeModel?.customer_id?.tags?.joinToString(",").orEmpty(),
+//                                style = CompactTypography.labelMedium.copy(
+//                                    fontSize = 12.sp,
+//                                    color = Color.Gray
+//                                )
+//                            )
+////                            Text(
+////                                "مدير مبيعات: الاسم",
+////                                style = CompactTypography.labelMedium.copy(
+////                                    fontSize = 12.sp,
+////                                    color = Color.Gray
+////                                )
+////                            )
+//                        }
+//                    }
+//                }
+//            }
 
             Spacer(modifier = Modifier.height(24.dp))
 
@@ -393,7 +404,7 @@ fun RouteDetailsScreen(
 
             Spacer(Modifier.height(24.dp))
 
-            Text("الحد الائتماني", style = CompactTypography.labelMedium.copy(fontSize = 16.sp))
+            Text("تفاصيل التارجت", style = CompactTypography.labelMedium.copy(fontSize = 16.sp))
             Spacer(Modifier.height(16.dp))
 
             Card(
@@ -406,12 +417,44 @@ fun RouteDetailsScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp)
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
-                        state.homeModel?.customer_id?.credit_limit?.toString() ?: "",
+                        " المستوي: ${route?.customer_id?.target?.target_level.orEmpty()}",
                         style = CompactTypography.labelMedium.copy(
-                            fontSize = 12.sp,
+                            fontSize = 14.sp,
+                            color = Color.Gray
+                        )
+                    )
+
+                    Text(
+                        " الهدف الشهري: ${route?.customer_id?.target?.monthly_target}",
+                        style = CompactTypography.labelMedium.copy(
+                            fontSize = 14.sp,
+                            color = Color.Gray
+                        )
+                    )
+
+                    Text(
+                        " المستهلك: ${route?.customer_id?.target?.consumed}",
+                        style = CompactTypography.labelMedium.copy(
+                            fontSize = 14.sp,
+                            color = Color.Gray
+                        )
+                    )
+                    Text(
+                        " المتبقي: ${route?.customer_id?.target?.remaining}",
+                        style = CompactTypography.labelMedium.copy(
+                            fontSize = 14.sp,
+                            color = Color.Gray
+                        )
+                    )
+
+                    Text(
+                        " نسبة الإنجاز: ${route?.customer_id?.target?.achievement_rate}%",
+                        style = CompactTypography.labelMedium.copy(
+                            fontSize = 14.sp,
                             color = Color.Gray
                         )
                     )
@@ -440,7 +483,7 @@ fun RouteDetailsScreen(
                     Text(
                         note ?: "",
                         style = CompactTypography.labelMedium.copy(
-                            fontSize = 12.sp,
+                            fontSize = 14.sp,
                             color = Color.Gray
                         )
                     )

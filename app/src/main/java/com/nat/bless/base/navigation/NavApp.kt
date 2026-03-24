@@ -23,8 +23,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.nat.bless.screens.addNewClient.presentation.AddNewCustomerScreen
 import com.nat.bless.screens.ContractsScreen
-import com.nat.bless.screens.DeliveryReporterScreen
-import com.nat.bless.screens.DeliveryTargetScreen
+import com.nat.bless.screens.salespersonBonusScreen.SalespersonBonusScreen
+import com.nat.bless.screens.salespersonScreen.SalespersonTargetScreen
 import com.nat.bless.screens.PayslipScreen
 import com.nat.bless.screens.dayDetails.presentation.DayDetailsScreen
 import com.nat.bless.screens.addNewOrders.presentation.chooseCustomer.ChooseCustomerScreen
@@ -75,6 +75,8 @@ import com.nat.bless.screens.profile.ProfileScreen
 import com.nat.bless.screens.promotionsList.presentation.PromotionViewModel
 import com.nat.bless.screens.receviceStock.presentation.ReceiveStockViewModel
 import com.nat.bless.screens.returnsScreen.ReturnsViewModel
+import com.nat.bless.screens.salespersonBonusScreen.SalespersonBonusViewModel
+import com.nat.bless.screens.salespersonScreen.SalespersonViewModel
 import com.nat.bless.screens.splash.presentation.SplashScreen
 import com.nat.bless.screens.splash.presentation.SplashViewModel
 import com.nat.bless.screens.stocks.peresentation.StockViewModel
@@ -631,11 +633,11 @@ fun NavApp() {
                             navController.navigateUp()
                     },
                     popBack = {
-                        if (navController.canNavigate)
+//                        if (navController.canNavigate)
+//                            navController.popBackStack()
+                        repeat(3) {
                             navController.popBackStack()
-//                            repeat(2) {
-//                                navController.popBackStack()
-//                            }
+                        }
                     },
                     onSkipClicked = {
                         repeat(4) {
@@ -668,7 +670,11 @@ fun NavApp() {
             }
 
             composable<Destinations.ReporterScreen> {
-                DeliveryReporterScreen(
+                val viewModel: SalespersonBonusViewModel = koinViewModel()
+                val state by viewModel.state.collectAsStateWithLifecycle()
+                SalespersonBonusScreen(
+                    state = state,
+                    events = viewModel::sendEvent,
                     onBackClicked = {
                         if (navController.canNavigate)
                             navController.navigateUp()
@@ -677,7 +683,10 @@ fun NavApp() {
             }
 
             composable<Destinations.TargetScreen> {
-                DeliveryTargetScreen(
+                val viewModel: SalespersonViewModel = koinViewModel()
+                val state by viewModel.state.collectAsStateWithLifecycle()
+                SalespersonTargetScreen(
+                    state = state,
                     onBackClicked = {
                         if (navController.canNavigate)
                             navController.navigateUp()
@@ -738,7 +747,9 @@ private fun signOutFromHome(navController: NavController) {
             inclusive = true
         }
     }
-}private fun signOutFromProfile(navController: NavController) {
+}
+
+private fun signOutFromProfile(navController: NavController) {
     navController.navigate(
         Destinations.Login
     ) {

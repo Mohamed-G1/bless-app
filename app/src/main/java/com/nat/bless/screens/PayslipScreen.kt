@@ -20,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nat.bless.R
+import com.nat.bless.screens.salespersonScreen.SalespersonTargetScreen
 import com.nat.bless.ui.theme.CompactTypography
 
 @Composable
@@ -29,7 +30,8 @@ fun PayslipScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp).safeContentPadding()
+            .padding(16.dp)
+            .padding(top = 16.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -99,5 +101,5 @@ fun PayslipScreen(
 @Preview
 @Composable
 private fun DeliveryReporterScreenPerview() {
-    DeliveryTargetScreen()
+    SalespersonTargetScreen()
 }

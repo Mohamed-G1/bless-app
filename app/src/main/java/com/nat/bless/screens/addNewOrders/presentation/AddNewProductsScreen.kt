@@ -95,19 +95,22 @@ fun AddNewProductsScreen(
     var selectedProduct by remember { mutableStateOf<StockListData?>(null) }
 //    val selectedUnits = remember { mutableStateListOf<SelectedUnit>() }
 
-    val SelectedUnitListSaver = listSaver<SnapshotStateList<SelectedUnit>, List<Int>>(
+    val SelectedUnitListSaver = listSaver<SnapshotStateList<SelectedUnit>, List<Any>>(
         save = { list ->
-            list.map { unit -> listOf(unit.productId, unit.uomId, unit.quantity) }
+            list.map { unit -> listOf(unit.id, unit.uomId, unit.quantity, unit.lot_id, unit.lot_name,unit.productId) }
         },
         restore = { saved ->
             mutableStateListOf<SelectedUnit>().apply {
                 addAll(saved.map { arr ->
                     SelectedUnit(
-                        productId = arr[0],
-                        uomId = arr[1],
-                        quantity = arr[2],
+                        id = arr[0] as Int,
+                        uomId = arr[1] as Int,
+                        quantity = arr[2] as Int,
                         uomName = "",
                         price = 0.0,
+                        lot_id = arr[3] as? Int ?: 0,
+                        lot_name = arr[4] as? String ?: "",
+                        productId = arr[5] as? Int ?: 0
                     )
                 })
             }
@@ -121,7 +124,7 @@ fun AddNewProductsScreen(
     val selectedProducts by remember(selectedUnits) {
         derivedStateOf {
             selectedUnits
-                .groupBy { it.productId }
+                .groupBy { it.id }
                 .map { (productId, units) -> productId to units.sumOf { it.quantity } }
         }
     }
@@ -189,10 +192,11 @@ fun AddNewProductsScreen(
                 contentPadding = PaddingValues(8.dp) // Optional padding
             ) {
 
-                items(productList, key = { it.id }) { item ->
+                items(productList) { item ->
 //                    val isSelected = selectedMap[item.id]?.let { it > 0 } ?: false
                     val count = selectedProducts.find { it.first == item.id }?.second ?: 0
                     val isSelected = count > 0
+                    Log.d("Ids", "${item.id}")
 
                     ProductItem(
                         isSelected = isSelected,
@@ -265,7 +269,7 @@ fun mergeSelectedUnits(
 ) {
     newList.forEach { unit ->
         val existingIndex = globalList.indexOfFirst {
-            it.productId == unit.productId && it.uomId == unit.uomId
+            it.id == unit.id && it.uomId == unit.uomId
         }
         if (existingIndex != -1) {
             globalList[existingIndex] = unit
@@ -275,10 +279,10 @@ fun mergeSelectedUnits(
 
         // update per-product quantity
         val totalQty = globalList
-            .filter { it.productId == unit.productId }
+            .filter { it.id == unit.id }
             .sumOf { it.quantity }
 
-        selectedMap[unit.productId] = totalQty
+        selectedMap[unit.id] = totalQty
     }
 }
 
@@ -356,12 +360,8 @@ private fun ProductItem(
                         tint = White,
                         contentDescription = null
                     )
-
                 }
-
-
             }
-
         }
 
 

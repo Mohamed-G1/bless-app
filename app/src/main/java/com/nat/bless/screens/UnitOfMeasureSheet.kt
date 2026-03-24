@@ -15,6 +15,11 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,72 +43,68 @@ fun UnitOfMeasureSheet(
 //    val selectedUnits = remember { mutableStateListOf<SelectedUnit>() }
 
     Column(
-        modifier = Modifier.padding(16.dp).verticalScroll(rememberScrollState()),
+        modifier = Modifier
+            .padding(16.dp)
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
         data?.uom_prices?.forEach { uom ->
-            val currentQuantity = selectedUnits.find {
-                it.productId == data.id && it.uomId == uom.uom_id
-            }?.quantity ?: 0
 
+            val existingIndex = selectedUnits.indexOfFirst {
+                it.productId == data.product_id && it.uomId == uom.uom_id
+            }
+
+            val currentQuantity =
+                if (existingIndex != -1) selectedUnits[existingIndex].quantity else 0
+
+            // ✅ local text state per uom row
+            var text by remember(data.id, uom.uom_id) {
+                mutableStateOf(if (currentQuantity == 0) "" else currentQuantity.toString())
+            }
+
+            // ✅ keep text in sync if list changes from outside (optional but good)
+            LaunchedEffect(currentQuantity) {
+                val newText = if (currentQuantity == 0) "" else currentQuantity.toString()
+                if (text != newText) text = newText
+            }
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-//                Text(
-//                    "${uom.uom_name} السعر: ${uom.price}",
-//                    style = CompactTypography.headlineMedium.copy(fontSize = 14.sp)
-//                            ,modifier = Modifier
-//                            .weight(1f) // 👈 gives text flexible width
-//                        .padding(end = 8.dp),
-//                    maxLines = 2, // 👈 optional: wrap text but keep height consistent
-//                    overflow = TextOverflow.Ellipsis
-//                )
 
                 Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(2.dp)
-                    ,modifier = Modifier
-                            .weight(1f) // 👈 gives text flexible width
+                    modifier = Modifier
+                        .weight(1f)
                         .padding(end = 8.dp),
+                    verticalArrangement = Arrangement.spacedBy(2.dp)
                 ) {
-                    Text(
-                        uom.uom_name,
-                        style = CompactTypography.headlineMedium.copy(fontSize = 14.sp),
-                        maxLines = 1, // 👈 optional: wrap text but keep height consistent
-                        overflow = TextOverflow.Ellipsis
-                    )
-
-                    Text(
-                        uom.price.toString() + " EGP",
-                        style = CompactTypography.headlineMedium.copy(fontSize = 14.sp),
-                        maxLines = 1, // 👈 optional: wrap text but keep height consistent
-                        overflow = TextOverflow.Ellipsis
-                    )
-
+                    Text(uom.uom_name, maxLines = 1)
+                    Text("${uom.price} EGP", maxLines = 1)
                 }
 
                 OutlinedTextField(
-                    value = if (currentQuantity == 0) "" else currentQuantity.toString(),
-                    singleLine = true,
-                    onValueChange = { text ->
-                        val newQuantity = text.toIntOrNull() ?: 0
+                    value = text,
+                    onValueChange = { newText ->
+                        // ✅ allow typing freely, but keep only digits
+                        val filtered = newText.filter { it.isDigit() }
+                        text = filtered
 
-                        val existingIndex = selectedUnits.indexOfFirst {
-                            it.productId == data.id && it.uomId == uom.uom_id
-                        }
+                        val newQuantity = filtered.toIntOrNull() ?: 0
 
                         when {
                             newQuantity > 0 && existingIndex == -1 -> {
                                 selectedUnits.add(
                                     SelectedUnit(
-                                        productId = data.id,
+                                        id = data.id,
+                                        productId = data.product_id,
                                         uomId = uom.uom_id,
                                         uomName = uom.uom_name,
                                         price = uom.price,
-                                        quantity = newQuantity
+                                        quantity = newQuantity,
+                                        lot_id = data.lot_id,
+                                        lot_name = data.lot_name
                                     )
                                 )
                             }
@@ -118,18 +119,13 @@ fun UnitOfMeasureSheet(
                             }
                         }
                     },
-                    modifier = Modifier
-                        .width(120.dp),
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Number
-                    ),
-                    label = { Text("الكمية", style = CompactTypography.headlineMedium.copy(fontSize = 14.sp)) }
+                    modifier = Modifier.width(120.dp),
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    label = { Text("الكمية") }
                 )
-
-
             }
         }
-
         Spacer(Modifier.height(32.dp))
         val context = LocalContext.current
 
