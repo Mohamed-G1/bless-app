@@ -247,10 +247,7 @@ fun CollectScreen(
     }
 
     if (state.navigateBack) {
-        if (isComingFromConfirmOrder)
-            onSkipClicked?.invoke()
-        else
-            popBack?.invoke()
+        onSkipClicked?.invoke()
     }
 
 

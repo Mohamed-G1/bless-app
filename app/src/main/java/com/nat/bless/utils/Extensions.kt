@@ -71,6 +71,17 @@ fun createSignatureBitmap(
 
     return bitmap
 }
+fun String.formattedDateToEnglishMonth(): String {
+    return try {
+        val parser = SimpleDateFormat("MM/yyyy", Locale.ENGLISH).apply { isLenient = false }
+        val formatter = SimpleDateFormat("MM/yyyy", Locale.ENGLISH)
+        val date = parser.parse(this) ?: return this
+        formatter.format(date)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        this
+    }
+}
 fun String.formattedDateToEnglish(): String {
     return try {
         val parser = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH).apply { isLenient = false }
@@ -147,6 +158,16 @@ fun Long.formattedDateFromMillis(): String {
     val date = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
     date.timeZone = TimeZone.getTimeZone("UTC") // Set this according to your timezone needs
     return date.format(this)
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+fun Long.formattedDateFromMillisMonth(): String {
+    val date = java.time.Instant.ofEpochMilli(this)
+        .atZone(java.time.ZoneId.systemDefault())
+        .toLocalDate()
+
+    val month = date.monthValue.toString().padStart(2, '0')
+    return "$month/${date.year}"
 }
 
 fun String?.formatDateMonthsNameAndDays(): String? {

@@ -173,7 +173,8 @@ fun HomeScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp).safeContentPadding()
+            .padding(16.dp)
+            .padding(top = 16.dp)
     ) {
         Column(
             modifier = Modifier
@@ -585,9 +586,9 @@ fun HomeScreen(
         ShowToast(state.errorMessage)
     }
 //
-//    if (state.isLoading) {
-//        FullLoading()
-//    }
+    if (state.isLoading) {
+        FullLoading()
+    }
 
 //    // if the user is unauthorized, sign out
     if (state.errorMessage == "Token is not valid") {

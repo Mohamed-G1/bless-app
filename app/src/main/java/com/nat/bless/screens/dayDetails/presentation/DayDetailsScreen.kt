@@ -28,6 +28,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -98,26 +99,57 @@ fun DayDetailsScreen(
                 }
 
             }else {
-                Column {
-                    val text1 = StringBuilder()
-                        .append("زيارات تمت: ")
-                        .append(state.model?.result?.data?.viste_count ?: 0)
-                        .toString()
-                    Text(
-                        text1,
-                        style = CompactTypography.headlineMedium.copy(fontSize = 18.sp)
-                    )
-                    Spacer(Modifier.height(8.dp))
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight(),
+                    colors = CardDefaults.cardColors(containerColor = White),
+                    border = BorderStroke(1.dp, color = WhiteGray)
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text(
+                            " زيارات تمت: ${state.model.result.data.viste_count}",
+                            style = CompactTypography.labelMedium.copy(
+                                fontSize = 14.sp,
+                                color = Color.Gray
+                            )
+                        )
 
-                    val text2 = StringBuilder()
-                        .append("زيارات ملغاة: ")
-                        .append(state.model?.result?.data?.not_viste_count ?: 0)
-                        .toString()
-                    Text(
-                        text2,
-                        style = CompactTypography.headlineMedium.copy(fontSize = 18.sp)
-                    )
-                    Spacer(Modifier.height(12.dp))
+                        Text(
+                            " زيارات ملغاة: ${state.model.result.data.not_viste_count}",
+                            style = CompactTypography.labelMedium.copy(
+                                fontSize = 14.sp,
+                                color = Color.Gray
+                            )
+                        )
+
+                        Text(
+                            " مكافأة اليوم: ${state.model.result.data.today_bonus}",
+                            style = CompactTypography.labelMedium.copy(
+                                fontSize = 14.sp,
+                                color = Color.Gray
+                            )
+                        )
+
+                        Text(
+                            " مكافأة الشهر: ${state.model.result.data.total_month_bonus}",
+                            style = CompactTypography.labelMedium.copy(
+                                fontSize = 14.sp,
+                                color = Color.Gray
+                            )
+                        )
+
+                    }
+                }
+
+
+                Column {
+
                     LazyColumn(
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {

@@ -36,7 +36,8 @@ fun CustomersScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp).safeContentPadding(),
+            .padding(16.dp)
+            .padding(top = 16.dp),
 
         ) {
 

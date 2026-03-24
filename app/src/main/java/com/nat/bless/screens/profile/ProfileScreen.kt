@@ -54,7 +54,8 @@ fun ProfileScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp).safeContentPadding()
+            .padding(16.dp)
+            .padding(top = 16.dp)
             .verticalScroll(
                 rememberScrollState()
             ),
@@ -79,7 +80,7 @@ fun ProfileScreen(
 
         Spacer(Modifier.height(16.dp))
         ProfileItem(
-            title = "تقرير المندوب",
+            title = "سجل المندوب",
             onClick = {
 
                 navigateToDeliveryReport?.invoke()

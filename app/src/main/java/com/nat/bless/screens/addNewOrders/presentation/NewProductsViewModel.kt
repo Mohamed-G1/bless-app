@@ -70,7 +70,9 @@ class NewProductsViewModel(
                 price = unit.price,
                 product_id = unit.productId,
                 quantity = unit.quantity,
-                uom_id = unit.uomId
+                uom_id = unit.uomId,
+                lot_id = unit.lot_id,
+                lot_name = unit.lot_name
             )
         }
         executeFlow(

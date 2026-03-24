@@ -4,6 +4,9 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.byteArrayPreferencesKey
+import androidx.datastore.preferences.core.doublePreferencesKey
+import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
@@ -30,6 +33,13 @@ const val InTransitReasonId = "InTransitReasonId"
 const val CourierPickedupStatusId = "CourierPickedupStatusId"
 const val CourierPickedupReasonId = "CourierPickedupReasonId"
 const val ROUTE_ID = "routeId"
+const val target_level = "target_level"
+const val monthly_target = "monthly_target"
+const val consumed = "consumed"
+const val remaining = "remaining"
+const val achievement_rate = "achievement_rate"
+const val total_this_month = "total_this_month"
+const val details = "details"
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = USER_SETTINGS)
 
@@ -57,5 +67,11 @@ object PreferencesKeys {
     val courierPickedupStatusId = stringPreferencesKey(name = CourierPickedupStatusId)
     val courierPickedupReasonId = stringPreferencesKey(name = CourierPickedupReasonId)
 
-
+    val targetLevel = stringPreferencesKey(name = target_level)
+    val monthlyTarget = doublePreferencesKey(name = monthly_target)
+    val consume = doublePreferencesKey(name = consumed)
+    val remain = doublePreferencesKey(name = remaining)
+    val achievementRate = doublePreferencesKey(name = achievement_rate)
+    val totalThisMonth = doublePreferencesKey(name = total_this_month)
+    val DETAILS_KEY = stringPreferencesKey("details")
 }
