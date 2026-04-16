@@ -79,8 +79,15 @@ sealed interface Destinations {
 
     @Serializable
     data class Products(
+        val customerid: Int,
+        val categoryId : Int
+    ) : Destinations
+ @Serializable
+    data class Category(
         val customerid: Int
     ) : Destinations
+
+
 
     @Serializable
     data class Contracts(

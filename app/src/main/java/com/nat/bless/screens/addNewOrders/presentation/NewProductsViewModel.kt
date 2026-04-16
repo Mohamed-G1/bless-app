@@ -47,8 +47,8 @@ class NewProductsViewModel(
                         callAddToCartApi(event.selectedUnits)
                     }
 
-                    is NewProductsEvents.CustomerIdChanged -> {
-                        _state.update { it.copy(customerId = event.customerId) }
+                    is NewProductsEvents.CustomerIdAndCategoryIdChanged -> {
+                        _state.update { it.copy(customerId = event.customerId, categoryId = event.categoryId) }
                     }
 
                     is NewProductsEvents.NavigationCompleted -> {
@@ -117,7 +117,8 @@ class NewProductsViewModel(
                     request = BaseRequest(
                         params = NewProductRequest(
                             token = getUserDataManager.readToken().first(),
-                            customer_id = state.value.customerId
+                            customer_id = state.value.customerId,
+                            category_id = state.value.categoryId
                         )
                     )
                 )

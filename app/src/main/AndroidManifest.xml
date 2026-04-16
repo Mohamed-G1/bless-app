@@ -30,6 +30,7 @@
             android:name="com.nat.bless.MainActivity"
             android:exported="true"
             android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustResize"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Bless">
             <intent-filter>

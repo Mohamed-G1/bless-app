@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.DarkGray
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -157,6 +158,20 @@ fun EditableOrderListItem(
                     )
                     Text(
                         text = item?.discount.toString() + " %",
+                        style = CompactTypography.headlineLarge.copy(fontSize = 12.sp, color = Gray)
+                    )
+                }
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = stringResource(R.string.new_discount),
+                        style = CompactTypography.headlineLarge.copy(fontSize = 12.sp)
+                    )
+                    Text(
+                        text = item?.discount_2.toString() + " %",
                         style = CompactTypography.headlineLarge.copy(fontSize = 12.sp, color = Gray)
                     )
                 }

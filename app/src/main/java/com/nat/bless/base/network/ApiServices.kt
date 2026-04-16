@@ -18,6 +18,8 @@ import com.nat.bless.screens.addNewOrders.models.StockListData
 import com.nat.bless.screens.addNewOrders.models.NewProductRequest
 import com.nat.bless.screens.addNewOrders.models.NewProductsResponse
 import com.nat.bless.screens.addNewOrders.models.addTocart.AddToCartResponse
+import com.nat.bless.screens.category.domain.models.CategoryRequest
+import com.nat.bless.screens.category.domain.models.CategoryResponse
 import com.nat.bless.screens.collect.domain.models.CollectRequest
 import com.nat.bless.screens.collect.domain.models.CollectResponse
 import com.nat.bless.screens.collect.domain.models.CreatePaymentRequest
@@ -133,6 +135,13 @@ interface ApiServices {
         @Body request: BaseRequest<ConfirmedAndCancelledRequest>
     ): Response<TriggeredConfirmedAndCancelledResponse>
 
+
+    @POST("api/route/set_start_date")
+    suspend fun setStartDateConfirmRoute(
+        @Body request: BaseRequest<ConfirmedAndCancelledRequest>
+    ): Response<TriggeredConfirmedAndCancelledResponse>
+
+
     @POST("api/route/visited_closed")
     suspend fun cancelledRoute(
         @Body request: BaseRequest<ConfirmedAndCancelledRequest>
@@ -222,6 +231,13 @@ interface ApiServices {
     ): Response<BaseResponse<OrdersResponse>>
 
 
+    @POST("api/category_in_stock")
+    suspend fun getCategoryData(
+        @Body request: BaseRequest<CategoryRequest>
+    ): Response<BaseResponse<List<CategoryResponse>>>
+
+
+
 
 
 
@@ -256,7 +272,7 @@ interface ApiServices {
     ): Response<BaseResponse<Any>>
 
 
-  @POST("api/get_journals")
+    @POST("api/get_journals")
     suspend fun getJournals(
         @Body request: BaseRequest<CollectRequest>
     ): Response<BaseResponse<List<CollectResponse>>>
@@ -278,20 +294,10 @@ interface ApiServices {
     suspend fun getTags(): Response<TagsResponse>
 
 
-
     @POST("api/get_bonus_details")
     suspend fun getBonusDetails(
         @Body request: BaseRequest<BonusDetailsRequest>
     ): Response<BaseResponse<BonusDetailsResponse>>
-
-
-
-
-
-
-
-
-
 
 
     @POST("api/Courier/TrackingCourierFire")

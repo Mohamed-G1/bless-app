@@ -9,6 +9,7 @@ data class NewProductsState(
     val navigateToConfirmOrder: Boolean = false,
     val errorMessage: String = "",
     val customerId: Int? = null,
+    val categoryId: Int? = null,
     val model: NewProductsResponse? = null,
     val addToCartModel: AddToCartResponse? = null
 )

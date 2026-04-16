@@ -13,6 +13,7 @@ import com.nat.bless.screens.routeDetails.domain.usecases.GetRefusalReasonsUseCa
 import com.nat.bless.screens.routeDetails.domain.usecases.HandleConfirmAndCancelRoutesUseCase
 import com.nat.bless.screens.routeDetails.domain.usecases.UpdateWaybillCourierStatusUseCase
 import com.nat.bless.screens.routeDetails.domain.usecases.SendSignatureUseCase
+import com.nat.bless.screens.routeDetails.domain.usecases.SetStartDateConfirmRouteUseCase
 import com.nat.bless.screens.routeDetails.domain.usecases.StatusNotDeliveredUseCase
 import com.nat.bless.screens.routeDetails.domain.usecases.UpdatePickupCourierStatusUseCase
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -31,8 +32,9 @@ val courierDetailsModule = module {
     single { GetConfirmReasonsUseCase(get()) }
     single { GetCancelReasonsUseCase(get()) }
     single { ConfirmRouteUseCase(get()) }
+    single { SetStartDateConfirmRouteUseCase(get()) }
     single { CancelRouteUseCase(get()) }
-    single { HandleConfirmAndCancelRoutesUseCase(get(), get(), get(), get()) }
+    single { HandleConfirmAndCancelRoutesUseCase(get(), get(), get(), get(), get()) }
 
     single<RouteDetailsRepository> {
         RouteDetailsRepositoryImpl(get())

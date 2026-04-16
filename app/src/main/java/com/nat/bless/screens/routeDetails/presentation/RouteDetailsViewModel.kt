@@ -81,17 +81,56 @@ class RouteDetailsViewModel(
 //                        _state.update { it.copy(refusalId = event.reasonId) }
 
                         callConfirmRouteApi(event.routeId, event.reasonId)
+
                     }
 
                     is RouteDetailsEvents.RefusalPickupReasonsChanged -> {}
                     is RouteDetailsEvents.ClearMessage -> {
                         _state.update { it.copy(errorMessage = "") }
                     }
+
+                    is RouteDetailsEvents.InitSuccessValue -> {
+                        _state.update { it.copy(isStartDateSuccess = false) }
+
+                    }
+
+                    is RouteDetailsEvents.StartDateChanged -> {
+                        setStartDateRouteApi(event.routeId)
+                    }
                 }
             }
         }
     }
 
+
+    private fun setStartDateRouteApi(route_id: Int) {
+        _state.update { it.copy(isLoading = true, errorMessage = "") }
+        executeSuspend(
+            block = {
+                handleConfirmAndCancelRoutesUseCase.setStartDateConfirmRouteUseCase(
+                    requestBody = BaseRequest(
+                        params = ConfirmedAndCancelledRequest(
+                            token = getUserDataManager.readToken().first(),
+                            route_id = route_id
+                        )
+                    )
+                )
+            },
+            onSuccess = { result ->
+                _state.update {
+                    it.copy(
+                        isLoading = false,
+                        navigateBack = true,
+                        isStartDateSuccess = true,
+                        errorMessage = result?.result?.message.orEmpty()
+                    )
+                }
+            },
+            onFailure = { error ->
+                _state.update { it.copy(isLoading = false, errorMessage = error) }
+            }
+        )
+    }
 
     private fun callConfirmRouteApi(route_id: Int, not_visited_reason_id: Int) {
         _state.update { it.copy(isLoading = true, errorMessage = "") }

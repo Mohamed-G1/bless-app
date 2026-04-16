@@ -27,6 +27,10 @@ interface RouteDetailsRepository {
         request: BaseRequest<ConfirmedAndCancelledRequest>
     ): Resource<TriggeredConfirmedAndCancelledResponse>
 
+    suspend fun setStartDate(
+        request: BaseRequest<ConfirmedAndCancelledRequest>
+    ): Resource<TriggeredConfirmedAndCancelledResponse>
+
     suspend fun cancelRoute(
         request: BaseRequest<ConfirmedAndCancelledRequest>
     ): Resource<TriggeredConfirmedAndCancelledResponse>

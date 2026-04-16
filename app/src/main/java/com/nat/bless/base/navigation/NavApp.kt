@@ -41,6 +41,8 @@ import com.nat.bless.screens.addNewClient.presentation.AddNewCustomerViewModel
 import com.nat.bless.screens.addNewClient.presentation.MapScreen
 import com.nat.bless.screens.addNewOrders.presentation.NewProductsViewModel
 import com.nat.bless.screens.addNewOrders.presentation.chooseCustomer.ChooseCustomerViewModel
+import com.nat.bless.screens.category.presentation.CategoryScreen
+import com.nat.bless.screens.category.presentation.CategoryViewModel
 import com.nat.bless.screens.orders.presentation.OrdersScreen
 import com.nat.bless.screens.routeDetails.presentation.RouteDetailsScreen
 import com.nat.bless.screens.routeDetails.presentation.RouteDetailsViewModel
@@ -219,7 +221,9 @@ fun NavApp() {
                     },
                     openNewProductsScreen = { id ->
                         if (navController.canNavigate)
-                            navController.navigate(Destinations.Products(id))
+//                            navController.navigate(Destinations.Products(id))
+
+                            navController.navigate(Destinations.Category(id))
                     },
                     openContractsScreen = { contract ->
                         if (navController.canNavigate)
@@ -330,6 +334,7 @@ fun NavApp() {
                 val args = it.toRoute<Destinations.Products>()
                 AddNewProductsScreen(
                     customerId = args.customerid,
+                    categoryId = args.categoryId,
                     state = state,
                     events = viewModel::sendEvent,
                     onBackClicked = {
@@ -344,6 +349,29 @@ fun NavApp() {
                     navigateToEditableConfirmOrder = { id ->
                         if (navController.canNavigate)
                             navController.navigate(Destinations.EditableConfirmOrder(id))
+                    }
+                )
+            }
+
+            composable<Destinations.Category> {
+                val viewModel: CategoryViewModel = koinViewModel()
+                val state by viewModel.state.collectAsStateWithLifecycle()
+                val args = it.toRoute<Destinations.Category>()
+                CategoryScreen(
+                    customerId = args.customerid,
+                    state = state,
+                    onBackClicked = {
+                        if (navController.canNavigate)
+                            navController.navigateUp()
+                    },
+                    navigateToProducts = { customerid, categoryid ->
+                        if (navController.canNavigate)
+                            navController.navigate(
+                                Destinations.Products(
+                                    customerid = customerid,
+                                    categoryId = categoryid
+                                )
+                            )
                     }
                 )
             }
@@ -529,7 +557,9 @@ fun NavApp() {
                     },
                     navigateToProducts = { id ->
                         if (navController.canNavigate)
-                            navController.navigate(Destinations.Products(id))
+//                            navController.navigate(Destinations.Products(id))
+
+                            navController.navigate(Destinations.Category(id))
                     }
                 )
             }

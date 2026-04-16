@@ -15,18 +15,18 @@ data class LoginState(
     val lang: String? = null,
 
     val isValidMobile : Boolean = true,
-    @StringRes val mobileValidationMessage : Int = R.string.please_fill_mobile,
+    @param:StringRes val mobileValidationMessage : Int = R.string.please_fill_mobile,
 
     val isValidPassword : Boolean = true,
-    @StringRes val passwordValidationMessage : Int = R.string.please_fill_password
+    @param:StringRes val passwordValidationMessage : Int = R.string.please_fill_password
 )
 
 fun defaultLoginState() = LoginState(
     isLoading = false,
     navigateToHome = false,
     errorMessage = "",
-    mobile = if (BuildConfig.DEBUG) "" else "",
-    password = if (BuildConfig.DEBUG) "" else "",
+    mobile = if (BuildConfig.DEBUG) "01090639351" else "",
+    password = if (BuildConfig.DEBUG) "1234" else "",
     isValidMobile = true,
     mobileValidationMessage =  R.string.please_fill_mobile,
     isValidPassword = true,

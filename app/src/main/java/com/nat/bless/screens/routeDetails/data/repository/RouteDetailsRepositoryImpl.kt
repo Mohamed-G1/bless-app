@@ -52,6 +52,12 @@ class RouteDetailsRepositoryImpl(
         }
     }
 
+    override suspend fun setStartDate(request: BaseRequest<ConfirmedAndCancelledRequest>): Resource<TriggeredConfirmedAndCancelledResponse> {
+        return safeApiCall {
+            apiServices.setStartDateConfirmRoute(request = request)
+        }
+    }
+
     override suspend fun cancelRoute(request: BaseRequest<ConfirmedAndCancelledRequest>): Resource<TriggeredConfirmedAndCancelledResponse> {
         return safeApiCall {
             apiServices.cancelledRoute(request = request)
