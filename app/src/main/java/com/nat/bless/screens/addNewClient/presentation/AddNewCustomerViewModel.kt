@@ -100,7 +100,7 @@ class AddNewCustomerViewModel(
                                 country = state.value.countryId,
                                 state = state.value.statesId,
                                 area = state.value.area,
-                                city = state.value.cityId,
+//                                city = state.value.cityId,
                                 lat = state.value.lat,
                                 long = state.value.long,
                                 distinctive = state.value.distinctive
@@ -294,7 +294,7 @@ class AddNewCustomerViewModel(
                                 phone = state.value.phone,
                                 country_id = state.value.countryId,
                                 state_id = state.value.statesId,
-                                city_id = state.value.cityId,
+//                                city_id = state.value.cityId,
                                 area_id = state.value.area,
                                 distinctive_mark = state.value.distinctive,
                                 location_length = state.value.lat.toString(),
@@ -331,7 +331,7 @@ class AddNewCustomerViewModel(
         country: Int,
         state: Int,
         area: Int,
-        city: Int,
+//        city: Int,
         lat: String,
         long: String,
         distinctive : String
@@ -440,23 +440,23 @@ class AddNewCustomerViewModel(
                 false
             }
 
-            city == 0 -> {
-                _state.update {
-                    it.copy(
-                        isValidName = true,
-                        isValidPhone = true,
-                        isValidEmail = true,
-                        isValidAddress = true,
-                        isValidCountry = true,
-                        isValidState = true,
-                        isValidTag = true,
-
-                        isValidCity = false,
-                        cityValidationMessage = "برجاء اختار مدينة"
-                    )
-                }
-                false
-            }
+//            city == 0 -> {
+//                _state.update {
+//                    it.copy(
+//                        isValidName = true,
+//                        isValidPhone = true,
+//                        isValidEmail = true,
+//                        isValidAddress = true,
+//                        isValidCountry = true,
+//                        isValidState = true,
+//                        isValidTag = true,
+//
+//                        isValidCity = false,
+//                        cityValidationMessage = "برجاء اختار مدينة"
+//                    )
+//                }
+//                false
+//            }
 
             area == 0 -> {
                 _state.update {

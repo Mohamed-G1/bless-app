@@ -84,7 +84,8 @@ fun AddNewProductsScreen(
     onBackClicked: (() -> Unit)? = null,
     navigateToEditableConfirmOrder: ((Int) -> Unit)? = null,
     navigateToProductDetails: (() -> Unit)? = null,
-    customerId: Int
+    customerId: Int,
+    categoryId: Int,
 ) {
 
     val context = LocalContext.current
@@ -135,7 +136,7 @@ fun AddNewProductsScreen(
 
 
     LaunchedEffect(Unit) {
-        events?.invoke(NewProductsEvents.CustomerIdChanged(customerId))
+        events?.invoke(NewProductsEvents.CustomerIdAndCategoryIdChanged(customerId, categoryId))
     }
 
 
@@ -247,7 +248,7 @@ fun AddNewProductsScreen(
         }
     }
 
-    if (state.errorMessage.isNotEmpty() == true) {
+    if (state.errorMessage.isNotEmpty()) {
         ShowToast(state.errorMessage)
         events?.invoke(NewProductsEvents.ClearMessage)
     }
@@ -461,5 +462,5 @@ fun Counter(
 @Preview(showBackground = true)
 @Composable
 private fun ProductsPreview() {
-    AddNewProductsScreen(NewProductsState(), customerId = 0)
+    AddNewProductsScreen(NewProductsState(), customerId = 0, categoryId = 0)
 }

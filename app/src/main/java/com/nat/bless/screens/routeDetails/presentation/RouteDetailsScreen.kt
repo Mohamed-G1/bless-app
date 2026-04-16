@@ -2,9 +2,7 @@ package com.nat.bless.screens.routeDetails.presentation
 
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -43,7 +41,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -59,7 +56,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.text.HtmlCompat
-import com.journeyapps.barcodescanner.ScanContract
 import com.nat.bless.R
 import com.nat.bless.base.ui.appButton.AppButton
 import com.nat.bless.base.ui.appLoading.FullLoading
@@ -72,7 +68,6 @@ import com.nat.bless.screens.home.presentation.components.NewOrderSheetLayout
 import com.nat.bless.screens.routeDetails.presentation.compoenets.AddNewOrderAndCollectSheetLayout
 import com.nat.bless.screens.routeDetails.presentation.compoenets.ConfirmReasonsBottomSheet
 import com.nat.bless.ui.theme.CompactTypography
-import com.nat.bless.ui.theme.DarkBlue
 import com.nat.bless.ui.theme.DeliverGreen
 import com.nat.bless.ui.theme.MediumBlue
 import com.nat.bless.ui.theme.MediumGray
@@ -160,17 +155,19 @@ fun RouteDetailsScreen(
             }
 
             Spacer(modifier = Modifier.height(16.dp))
-            Box(   modifier = Modifier
-                .fillMaxWidth(),
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(),
                 contentAlignment = Alignment.Center
-            ){
+            ) {
                 Image(
                     painter = painterResource(R.drawable.logo),
                     contentDescription = null,
                     modifier =
                         Modifier
                             .clip(CircleShape)
-                            .size(90.dp).border(0.5.dp, MediumGray, CircleShape),
+                            .size(90.dp)
+                            .border(0.5.dp, MediumGray, CircleShape),
                     contentScale = ContentScale.Fit
                 )
             }
@@ -824,6 +821,14 @@ fun RouteDetailsScreen(
             color = White
         ) {
             // status buttons
+
+
+            val confirmButtonText =
+                if (route?.start_date?.isNotBlank() == true || state.isStartDateSuccess) "انهاء الزيارة" else "بدأ الزيارة"
+
+
+
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -833,19 +838,43 @@ fun RouteDetailsScreen(
             ) {
 
                 AppButton(
-                    text = "تمت الزيارة",
+                    text = confirmButtonText,
                     buttonColor = DeliverGreen,
                     boarderColor = DeliverGreen,
+                    enabled = route?.end_date?.isBlank() == true,
                     modifier = Modifier.weight(.5f),
                     onClick = {
 //                        showConfirmReasonsBottomSheet = true
 
-                        events?.invoke(
-                            RouteDetailsEvents.ConfirmRouteReasonsChanged(
-                                routeId = state.homeModel?.id ?: 0,
-                                reasonId = 0
+//                        events?.invoke(
+//                            RouteDetailsEvents.ConfirmRouteReasonsChanged(
+//                                routeId = state.homeModel?.id ?: 0,
+//                                reasonId = 0
+//                            )
+//                        )
+
+
+                        // if there is a returned start date already or the start api date succeed call the normal api
+                        // otherwise call  start date api
+
+
+                        if (route?.start_date?.isNotBlank() == true || state.isStartDateSuccess) {
+                            events?.invoke(
+                                RouteDetailsEvents.ConfirmRouteReasonsChanged(
+                                    routeId = state.homeModel?.id ?: 0,
+                                    reasonId = 0
+                                )
                             )
-                        )
+
+                            events?.invoke(RouteDetailsEvents.InitSuccessValue)
+
+                        } else {
+                            events?.invoke(
+                                RouteDetailsEvents.StartDateChanged(
+                                    routeId = state.homeModel?.id ?: 0
+                                )
+                            )
+                        }
                     }
                 )
 
@@ -886,7 +915,7 @@ fun RouteDetailsScreen(
     }
 
 //    if (state.navigateBack) {
-////        onBackClicked?.invoke()
+//        onBackClicked?.invoke()
 //    }
 
 
@@ -931,6 +960,7 @@ fun RouteDetailsScreen(
             )
         }
     }
+
 }
 
 

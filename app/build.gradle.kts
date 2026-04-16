@@ -26,6 +26,8 @@ android {
 
     buildFeatures.buildConfig = true
 
+    // test https://blees-test.odoo.com
+    // live https://bless-eg.odoo.com
     buildTypes {
         debug {
             applicationIdSuffix = ".debug"

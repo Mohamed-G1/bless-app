@@ -27,5 +27,6 @@
     <string name="client_name">إسم العميل</string>
     <string name="enter_client_name">ادخل اسم العميل</string>
     <string name="profile">حساب تعريفي</string>
+    <string name="new_discount">نسبة الخصم الجديدة</string>
 
 </resources>

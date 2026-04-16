@@ -15,7 +15,7 @@ data class CustomerData(
 
     val country_id : Int,
     val state_id : Int,
-    val city_id : Int,
+    val city_id : Int? = null,
     val area_id : Int,
     val tag_id : Int,
     val distinctive_mark : String,

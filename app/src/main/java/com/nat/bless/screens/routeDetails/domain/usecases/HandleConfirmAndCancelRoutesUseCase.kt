@@ -4,5 +4,6 @@ data class HandleConfirmAndCancelRoutesUseCase (
     val getCancelReasonsUseCase: GetCancelReasonsUseCase,
     val getConfirmReasonsUseCase: GetConfirmReasonsUseCase,
     val confirmRouteUseCase: ConfirmRouteUseCase,
-    val cancelRouteUseCase: CancelRouteUseCase
+    val cancelRouteUseCase: CancelRouteUseCase,
+    val setStartDateConfirmRouteUseCase: SetStartDateConfirmRouteUseCase
 )

@@ -19,6 +19,8 @@ data class Route(
     val is_visited: Boolean,
     val not_collected_reason_id: String,
     val not_visited_reason_id: String,
+    val start_date: String,
+    val end_date: String,
     val note: String,
     val order_amount: Double,
     val payment_amount: Double

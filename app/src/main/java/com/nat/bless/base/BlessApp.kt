@@ -7,6 +7,7 @@ import com.nat.bless.base.network.di.networkModule
 import com.nat.bless.screens.accounts.di.accountsModule
 import com.nat.bless.screens.addNewClient.di.CustomerModule
 import com.nat.bless.screens.addNewOrders.di.newProductsModule
+import com.nat.bless.screens.category.di.CategoryModule
 import com.nat.bless.screens.collect.di.CollectModule
 import com.nat.bless.screens.dailyReport.DailyReportModule
 import com.nat.bless.screens.dayDetails.di.DayDetailsModule
@@ -59,7 +60,8 @@ class BlessApp : Application() {
                 CollectModule,
                 DailyReportModule,
                 SalespersonModule,
-                SalespersonBonus
+                SalespersonBonus,
+                CategoryModule
             )
         }
     }

@@ -19,6 +19,7 @@ data class OrdersResponse(
 @Serializable
 data class OrdersLine(
     val discount: Double,
+    val discount_2: Double,
     val discount_amount: Double,
     val id: Int,
     val price_subtotal: Double,

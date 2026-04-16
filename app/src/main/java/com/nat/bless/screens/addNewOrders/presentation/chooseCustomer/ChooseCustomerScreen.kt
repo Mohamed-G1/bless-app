@@ -3,6 +3,7 @@ package com.nat.bless.screens.addNewOrders.presentation.chooseCustomer
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,25 +12,35 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -60,14 +71,18 @@ import com.nat.bless.ui.theme.DarkGray
 import com.nat.bless.ui.theme.MediumGray
 import com.nat.bless.ui.theme.WhiteGray
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChooseCustomerScreen(
     state: ChooseCustomerState,
     onBackClicked: (() -> Unit)? = null,
     navigateToProducts: ((Int) -> Unit)? = null
 ) {
-
-    var customerId by remember { mutableIntStateOf(0) }
+    var customerId by rememberSaveable { mutableIntStateOf(0) }
+    // Hoist the name so the UI can display it after selection
+    var customerName by rememberSaveable { mutableStateOf("") }
+    // Control bottom sheet visibility
+    var showSheet by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
 
@@ -104,29 +119,17 @@ fun ChooseCustomerScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-
             Text(
                 "بيانات العميل",
                 style = CompactTypography.headlineMedium.copy(fontSize = 16.sp)
             )
             Spacer(Modifier.height(8.dp))
 
-            ChooseClientDropDownMenu(
-                customers = state.customers,
-                onCustomerSelected = { id ->
-                    customerId = id
-                }
+            // 1. The Trigger Card
+            CustomerSelectorCard(
+                selectedName = customerName,
+                onClick = { showSheet = true }
             )
-//            Spacer(Modifier.height(8.dp))
-//            ChooseLocation()
-//            Spacer(Modifier.height(8.dp))
-//            ChoosePrice()
-//            Spacer(Modifier.height(8.dp))
-//            ChoosePriceValue()
-//            Spacer(Modifier.height(8.dp))
-//            ChooseDate()
-
-
         }
 
         AppButton(
@@ -137,10 +140,27 @@ fun ChooseCustomerScreen(
                     navigateToProducts?.invoke(customerId)
                 else
                     Toast.makeText(context, "برجاء اختيار عميل", Toast.LENGTH_SHORT).show()
-
             }
         )
     }
+
+    // 2. The Bottom Sheet
+    if (showSheet) {
+        ModalBottomSheet(
+            onDismissRequest = { showSheet = false },
+            containerColor = White // Assuming White is defined in your theme
+        ) {
+            CustomerSearchBottomSheet(
+                customers = state.customers,
+                onCustomerSelected = { customer ->
+                    customerId = customer.id
+                    customerName = customer.name
+                    showSheet = false // Close sheet on selection
+                }
+            )
+        }
+    }
+
     if (state.error.isNotEmpty()) {
         ShowToast(state.error)
     }
@@ -150,6 +170,132 @@ fun ChooseCustomerScreen(
     }
 }
 
+@Composable
+private fun CustomerSelectorCard(
+    selectedName: String,
+    onClick: () -> Unit
+) {
+    Card(
+        onClick = onClick,
+        border = BorderStroke(1.dp, WhiteGray),
+        colors = CardDefaults.cardColors(containerColor = WhiteGray),
+        modifier = Modifier
+            .height(60.dp)
+            .fillMaxWidth()
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 12.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = selectedName.ifBlank { "اختر عميل" },
+                style = CompactTypography.labelMedium.copy(
+                    color = if (selectedName.isBlank()) Color.Gray else Black,
+                    textAlign = TextAlign.Start
+                ),
+                modifier = Modifier.weight(1f)
+            )
+
+            Icon(
+                imageVector = Icons.Default.ArrowDropDown,
+                contentDescription = "Open customer list",
+                tint = DarkGray
+            )
+        }
+    }
+}
+
+@Composable
+private fun CustomerSearchBottomSheet(
+    customers: List<CustomerResponse>,
+    onCustomerSelected: (CustomerResponse) -> Unit
+) {
+    var searchQuery by remember { mutableStateOf("") }
+
+    // Locally filter the list based on the search query
+    val filteredCustomers = remember(searchQuery, customers) {
+        if (searchQuery.isBlank()) {
+            customers
+        } else {
+            customers.filter {
+                it.name.contains(searchQuery, ignoreCase = true)
+            }
+        }
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 24.dp)
+            .imePadding()
+    ) {
+        // Search Bar
+        OutlinedTextField(
+            value = searchQuery,
+            onValueChange = { searchQuery = it },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            shape = RoundedCornerShape(16.dp),
+            placeholder = {
+                Text("بحث...", style = CompactTypography.labelMedium)
+            },
+            trailingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Search,
+                    contentDescription = "Search"
+                )
+            },
+            singleLine = true
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // LazyColumn is much better for performance than a forEach loop in a Column
+        LazyColumn(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            items(filteredCustomers) { customer ->
+                Text(
+                    text = customer.name,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { onCustomerSelected(customer) }
+                        .padding(horizontal = 16.dp, vertical = 14.dp),
+                    style = CompactTypography.labelMedium.copy(
+                        color = Black,
+                        textAlign = TextAlign.Start, // Adjusted to match RTL flow
+                        fontSize = 14.sp
+                    )
+                )
+
+                // Optional: Add a subtle divider between items
+                HorizontalDivider(
+                    color = WhiteGray,
+                    thickness = 0.5.dp,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+            }
+
+            // Empty state if search yields no results
+            if (filteredCustomers.isEmpty()) {
+                item {
+                    Text(
+                        text = "لا يوجد نتائج",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(32.dp),
+                        textAlign = TextAlign.Center,
+                        color = Color.Gray
+                    )
+                }
+            }
+        }
+    }
+}
 
 @Composable
 private fun ChooseClientDropDownMenu(
