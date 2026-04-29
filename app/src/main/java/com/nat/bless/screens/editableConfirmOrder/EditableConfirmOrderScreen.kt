@@ -44,6 +44,7 @@ fun EditableConfirmOrderScreen(
     events: ((EditableConfirmOrderEvents) -> Unit)? = null,
     onBackClicked: (() -> Unit)? = null,
     navigateToConfirmOrderScreen: ((Int, Int) -> Unit)? = null,
+    navigateToOrdersPromotionsScreen: ((Int) -> Unit)? = null,
 ) {
     LaunchedEffect(customerId) {
         events?.invoke(EditableConfirmOrderEvents.CustomerIdChanged(customerId))
@@ -205,16 +206,36 @@ fun EditableConfirmOrderScreen(
 
         Spacer(Modifier.weight(1f))
 
-        AppButton(
-            enabled = state.model?.order_lines?.isNotEmpty() == true,
-            text = "اكمال الطلب",
-            onClick = {
-                navigateToConfirmOrderScreen?.invoke(
-                    state.model?.id ?: 0,
-                    state.customerId,
-                )
-            },
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            AppButton(
+                modifier = Modifier.weight(1f),
+                enabled = state.model?.order_lines?.isNotEmpty() == true,
+                text = "اكمال الطلب",
+                onClick = {
+                    navigateToConfirmOrderScreen?.invoke(
+                        state.model?.id ?: 0,
+                        state.customerId,
+                    )
+                },
+            )
+
+            Spacer(Modifier.width(16.dp))
+
+            AppButton(
+                modifier = Modifier.weight(1f),
+                enabled = state.model?.order_lines?.isNotEmpty() == true,
+                text = "تطبيق العروض",
+                onClick = {
+                    navigateToOrdersPromotionsScreen?.invoke(
+                        state.customerId,
+                    )
+                },
+            )
+        }
+
     }
 
     if (state.error.isNotEmpty()) {

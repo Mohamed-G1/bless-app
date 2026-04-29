@@ -100,6 +100,13 @@ sealed interface Destinations {
         val customerid: Int
     ) : Destinations
 
+
+    @Serializable
+    data class OrderPromotions(
+        val customerid: Int
+    ) : Destinations
+
+
     @Serializable
     data class EditableConfirmOrder(
         val customerid: Int

@@ -43,6 +43,9 @@ import com.nat.bless.screens.home.domain.models.HomeResponse
 import com.nat.bless.screens.home.domain.models.RouteRequest
 import com.nat.bless.screens.login.domain.models.LoginRequest
 import com.nat.bless.screens.login.domain.models.LoginResponse
+import com.nat.bless.screens.orderPromotions.domain.models.ApplyPromotionsRequest
+import com.nat.bless.screens.orderPromotions.domain.models.OderPromotionsResponse
+import com.nat.bless.screens.orderPromotions.domain.models.PromotionsRequest
 import com.nat.bless.screens.orders.domain.models.OrderDetailsRequest
 import com.nat.bless.screens.orders.domain.models.OrdersRequest
 import com.nat.bless.screens.orders.domain.models.OrdersResponse
@@ -235,6 +238,17 @@ interface ApiServices {
     suspend fun getCategoryData(
         @Body request: BaseRequest<CategoryRequest>
     ): Response<BaseResponse<List<CategoryResponse>>>
+
+
+    @POST("api/bonus/get_info")
+    suspend fun getBonus(
+        @Body request: BaseRequest<PromotionsRequest>
+    ): Response<BaseResponse<OderPromotionsResponse>>
+
+    @POST("api/bonus/apply_to_order")
+    suspend fun applyBonus(
+        @Body request: BaseRequest<ApplyPromotionsRequest>
+    ): Response<BaseResponse<Any>>
 
 
 

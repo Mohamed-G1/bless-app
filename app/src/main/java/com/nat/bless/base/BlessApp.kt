@@ -17,6 +17,7 @@ import com.nat.bless.screens.home.di.homeModule
 import com.nat.bless.screens.login.di.userModule
 import com.nat.bless.screens.orderDetails.di.OrderDetailsModule
 import com.nat.bless.screens.orderHistory.orderHistoryModule
+import com.nat.bless.screens.orderPromotions.di.OrderPromotionsModule
 import com.nat.bless.screens.orders.di.OrdersModule
 import com.nat.bless.screens.priceList.di.priceListModule
 import com.nat.bless.screens.promotionsList.di.PromotionModule
@@ -61,7 +62,8 @@ class BlessApp : Application() {
                 DailyReportModule,
                 SalespersonModule,
                 SalespersonBonus,
-                CategoryModule
+                CategoryModule,
+                OrderPromotionsModule
             )
         }
     }

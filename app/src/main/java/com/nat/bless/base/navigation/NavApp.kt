@@ -70,6 +70,8 @@ import com.nat.bless.screens.orderDetails.presentation.OrderDetailsViewModel
 import com.nat.bless.screens.orderHistory.OrderHistoryDetailsScreen
 import com.nat.bless.screens.orderHistory.OrderHistoryDetailsViewModel
 import com.nat.bless.screens.orderHistory.OrderHistoryViewModel
+import com.nat.bless.screens.orderPromotions.peresenation.OrderPromotionsScreen
+import com.nat.bless.screens.orderPromotions.peresenation.OrderPromotionsViewModel
 import com.nat.bless.screens.orders.presentation.OrdersViewModel
 import com.nat.bless.screens.priceList.presentation.PriceListScreen
 import com.nat.bless.screens.priceList.presentation.PriceListViewModel
@@ -422,11 +424,37 @@ fun NavApp() {
                     navigateToConfirmOrderScreen = { orderid, customerid ->
                         if (navController.canNavigate)
                             navController.navigate(Destinations.ConfirmOrder(orderid, customerid))
+                    },
+
+                    navigateToOrdersPromotionsScreen = {customerid ->
+                        if (navController.canNavigate)
+                            navController.navigate(Destinations.OrderPromotions(customerid))
+
                     }
 
 
                 )
             }
+
+
+            composable<Destinations.OrderPromotions> {
+                val args = it.toRoute<Destinations.OrderPromotions>()
+                val viewModel: OrderPromotionsViewModel = koinViewModel()
+                val state by viewModel.state.collectAsStateWithLifecycle()
+
+                OrderPromotionsScreen(
+                    state = state,
+                    events = viewModel::sendEvent,
+                    customerId = args.customerid,
+                    onBackClicked = {
+                        if (navController.canNavigate)
+                            navController.navigateUp()
+                    }
+                )
+            }
+
+
+
 
             composable<Destinations.Accounts> {
                 val viewModel: AccountsViewModel = koinViewModel()
