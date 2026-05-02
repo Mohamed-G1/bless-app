@@ -32,6 +32,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nat.bless.R
+import com.nat.bless.base.ui.appLoading.FullLoading
+import com.nat.bless.base.ui.toast.ShowToast
 import com.nat.bless.screens.login.domain.models.Detail
 import com.nat.bless.ui.theme.CompactTypography
 import com.nat.bless.ui.theme.WhiteGray
@@ -97,7 +99,7 @@ fun SalespersonTargetScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
-                    "المستوى: ${state.targetLevel}",
+                    "المستوى: ${state.model?.target_level}",
                     style = CompactTypography.labelMedium.copy(
                         fontSize = 14.sp,
                         color = Color.Gray
@@ -105,7 +107,7 @@ fun SalespersonTargetScreen(
                 )
 
                 Text(
-                    " الهدف الشهري: ${state.monthlyTarget}",
+                    " الهدف الشهري: ${state.model?.monthly_target}",
                     style = CompactTypography.labelMedium.copy(
                         fontSize = 14.sp,
                         color = Color.Gray
@@ -113,7 +115,7 @@ fun SalespersonTargetScreen(
                 )
 
                 Text(
-                    " المستهلك: ${state.consumed}",
+                    " المستهلك: ${state.model?.consumed}",
                     style = CompactTypography.labelMedium.copy(
                         fontSize = 14.sp,
                         color = Color.Gray
@@ -121,7 +123,7 @@ fun SalespersonTargetScreen(
                 )
 
                 Text(
-                    " المتبقي: ${state.remaining}",
+                    " المتبقي: ${state.model?.remaining}",
                     style = CompactTypography.labelMedium.copy(
                         fontSize = 14.sp,
                         color = Color.Gray
@@ -129,7 +131,7 @@ fun SalespersonTargetScreen(
                 )
 
                 Text(
-                    " نسبة الإنجاز: ${state.achievementRate}%",
+                    " نسبة الإنجاز: ${state.model?.achievement_rate}%",
                     style = CompactTypography.labelMedium.copy(
                         fontSize = 14.sp,
                         color = Color.Gray
@@ -156,7 +158,7 @@ fun SalespersonTargetScreen(
                     .padding(16.dp)
             ) {
                 Text(
-                    "اجمالي الشهر: ${state.monthlyTarget}",
+                    "اجمالي الشهر: ${state.model?.monthly_target}",
                     style = CompactTypography.labelMedium.copy(
                         fontSize = 14.sp,
                         color = Color.Gray
@@ -165,14 +167,14 @@ fun SalespersonTargetScreen(
             }
         }
 
-        Spacer(Modifier.height(24.dp))
-        if (state.details.isNotEmpty()){
-            Text("تفاصيل المكافأة", style = CompactTypography.labelMedium.copy(fontSize = 16.sp))
-            Spacer(Modifier.height(16.dp))
-        }
-        state.details.forEach { detail ->
-            BonusItem(detail)
-        }
+//        Spacer(Modifier.height(24.dp))
+//        if (state.details.isNotEmpty()){
+//            Text("تفاصيل المكافأة", style = CompactTypography.labelMedium.copy(fontSize = 16.sp))
+//            Spacer(Modifier.height(16.dp))
+//        }
+//        state.details.forEach { detail ->
+//            BonusItem(detail)
+//        }
 
 
 //        val text1 = StringBuilder()
@@ -204,6 +206,15 @@ fun SalespersonTargetScreen(
 //            text3,
 //            style = CompactTypography.headlineMedium.copy(fontSize = 18.sp)
 //        )
+    }
+
+
+    if (state.error.isNotEmpty()) {
+        ShowToast(state.error)
+    }
+//
+    if (state.isLoading) {
+        FullLoading()
     }
 }
 

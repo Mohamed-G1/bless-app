@@ -34,7 +34,7 @@ android {
             applicationIdSuffix = ".debug"
             versionNameSuffix = "bless-debug"
             isMinifyEnabled = false
-            buildConfigField("String", "BASE_URL", "\"https://bless-eg.odoo.com\"")
+            buildConfigField("String", "BASE_URL", "\"https://blees-test.odoo.com\"")
         }
         release {
             isMinifyEnabled = true
@@ -79,6 +79,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.compose.foundation.layout)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
