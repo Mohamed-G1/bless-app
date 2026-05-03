@@ -26,6 +26,7 @@ playServicesAuth = "21.2.0"
 googleid = "1.1.1"
 androidx_datastore = "1.1.1"
 coil = "2.4.0"
+foundationLayout = "1.11.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -77,6 +78,7 @@ androidx_datastore = { module = "androidx.datastore:datastore-preferences", vers
 coil = { module = "io.coil-kt:coil", version.ref = "coil" }
 coil_gif = { module = "io.coil-kt:coil-gif", version.ref = "coil" }
 coil_compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
+androidx-compose-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout", version.ref = "foundationLayout" }
 
 
 [plugins]

@@ -92,14 +92,7 @@ class OrderPromotionsViewModel(
     }
 
 
-    private fun callApplyOrdersPromotionsListApi(selectedItem: List<AllowedProduct>) {
-
-        val items: List<AppliedProducts> = selectedItem.map {
-            AppliedProducts(
-                product_id = it.id,
-                qty = 1
-            )
-        }
+    private fun callApplyOrdersPromotionsListApi(selectedItem: List<AppliedProducts>) {
 
         _state.update { it.copy(errorMessage = "") }
         executeFlow(block = {
@@ -108,7 +101,7 @@ class OrderPromotionsViewModel(
                     ApplyPromotionsRequest(
                         token = getUserDataManager.readToken().first(),
                         customer_id = state.value.customerId,
-                        products = items
+                        products = selectedItem
                     )
                 )
             )

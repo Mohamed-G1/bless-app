@@ -63,6 +63,8 @@ import com.nat.bless.screens.routeDetails.domain.models.ConfirmedAndCancelledReq
 import com.nat.bless.screens.routeDetails.domain.models.TriggeredConfirmedAndCancelledResponse
 import com.nat.bless.screens.salespersonBonusScreen.BonusDetailsRequest
 import com.nat.bless.screens.salespersonBonusScreen.BonusDetailsResponse
+import com.nat.bless.screens.salespersonScreen.SalesPersonTargetResponse
+import com.nat.bless.screens.salespersonScreen.SalespersonTargetRequest
 import com.nat.bless.screens.stocks.models.SearchRequest
 import com.nat.bless.screens.stocks.models.StockRequest
 import com.nat.bless.screens.stocks.models.returnsModel.ReturnedListData
@@ -312,6 +314,15 @@ interface ApiServices {
     suspend fun getBonusDetails(
         @Body request: BaseRequest<BonusDetailsRequest>
     ): Response<BaseResponse<BonusDetailsResponse>>
+
+
+
+    @POST("api/get_salesperson_target")
+    suspend fun getSalespersonTargetDetails(
+        @Body request: BaseRequest<SalespersonTargetRequest>
+    ): Response<BaseResponse<SalesPersonTargetResponse>>
+
+
 
 
     @POST("api/Courier/TrackingCourierFire")
