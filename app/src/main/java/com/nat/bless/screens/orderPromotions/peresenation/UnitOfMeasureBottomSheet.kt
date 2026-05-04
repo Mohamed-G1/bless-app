@@ -120,24 +120,17 @@ fun UnitOfMeasureBottomSheet(
             HorizontalDivider(color = WhiteGray)
 
             // Product info
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = item.name,
-                    style = CompactTypography.headlineLarge.copy(fontSize = 14.sp)
+            Text(
+                text = item.name,
+                style = CompactTypography.headlineLarge.copy(fontSize = 14.sp)
+            )
+            Text(
+                text = "السعر: ${item.price}",
+                style = CompactTypography.headlineLarge.copy(
+                    fontSize = 13.sp,
+                    color = Gray
                 )
-                Text(
-                    text = "السعر: ${item.price}",
-                    style = CompactTypography.headlineLarge.copy(
-                        fontSize = 13.sp,
-                        color = Gray
-                    )
-                )
-            }
-
+            )
             // Quantity input
             OutlinedTextField(
                 value = qtyInput,

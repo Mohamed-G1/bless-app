@@ -130,16 +130,16 @@ fun OrderPromotionsScreen(
                         .padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Text(
-                        " نسبة البونص: ${state.model?.bonus_percentage.toString() + " %"}",
-                        style = CompactTypography.labelMedium.copy(
-                            fontSize = 14.sp,
-                            color = Color.Gray
-                        )
-                    )
+//                    Text(
+//                        " نسبة البونص: ${state.model?.bonus_percentage.toString() + " %"}",
+//                        style = CompactTypography.labelMedium.copy(
+//                            fontSize = 14.sp,
+//                            color = Color.Gray
+//                        )
+//                    )
 
                     Text(
-                        " نسبة البونص المتبقية: ${state.model?.remaining_bonus_amount.toString() + " %"}",
+                        " مبلغ البونص المتبقي: ${state.model?.remaining_bonus_amount.toString() + " ُEGP"}",
                         style = CompactTypography.labelMedium.copy(
                             fontSize = 14.sp,
                             color = Color.Gray

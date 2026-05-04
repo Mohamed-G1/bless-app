@@ -73,7 +73,7 @@ class OrderPromotionsViewModel(
                 request = BaseRequest(
                     params = PromotionsRequest(
                         token = getUserDataManager.readToken().first(),
-                        customer_id = 303
+                        customer_id = _state.value.customerId
                     )
                 )
             )

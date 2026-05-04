@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.kotlin.serialization)
 //    id("com.google.gms.google-services")
+    id("org.jetbrains.kotlin.plugin.compose")  // ← add this
+
 }
 
 android {
@@ -34,7 +36,7 @@ android {
             applicationIdSuffix = ".debug"
             versionNameSuffix = "bless-debug"
             isMinifyEnabled = false
-            buildConfigField("String", "BASE_URL", "\"https://blees-test.odoo.com\"")
+            buildConfigField("String", "BASE_URL", "\"https://bless-eg.odoo.com\"")
         }
         release {
             isMinifyEnabled = true
@@ -58,7 +60,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+//        kotlinCompilerExtensionVersion = "1.5.1"
     }
     packaging {
         resources {
