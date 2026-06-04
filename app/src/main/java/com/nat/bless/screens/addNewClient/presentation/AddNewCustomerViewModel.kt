@@ -97,7 +97,7 @@ class AddNewCustomerViewModel(
                                 phone = state.value.phone,
                                 tagId = state.value.tagId,
                                 address = state.value.address,
-                                country = state.value.countryId,
+//                                country = state.value.countryId,
                                 state = state.value.statesId,
                                 area = state.value.area,
 //                                city = state.value.cityId,
@@ -328,7 +328,7 @@ class AddNewCustomerViewModel(
         phone: String,
         tagId: Int,
         address: String,
-        country: Int,
+//        country: Int,
         state: Int,
         area: Int,
 //        city: Int,
@@ -371,17 +371,17 @@ class AddNewCustomerViewModel(
                 false
             }
 
-            email.isEmpty() -> {
-                _state.update {
-                    it.copy(
-                        isValidName = true,
-                        isValidPhone = true,
-                        isValidEmail = false,
-                        emailValidationMessage = "برجاء ادخال بريد الكتروني"
-                    )
-                }
-                false
-            }
+//            email.isEmpty() -> {
+//                _state.update {
+//                    it.copy(
+//                        isValidName = true,
+//                        isValidPhone = true,
+//                        isValidEmail = false,
+//                        emailValidationMessage = "برجاء ادخال بريد الكتروني"
+//                    )
+//                }
+//                false
+//            }
 
             !Patterns.EMAIL_ADDRESS.matcher(email).matches() -> {
                 _state.update {
@@ -408,20 +408,20 @@ class AddNewCustomerViewModel(
                 }
                 false
             }
-            country == 0 -> {
-                _state.update {
-                    it.copy(
-                        isValidName = true,
-                        isValidPhone = true,
-                        isValidEmail = true,
-                        isValidAddress = true,
-                        isValidTag = true,
-                        isValidCountry = false,
-                        countryValidationMessage = "برجاء اختار البلد"
-                    )
-                }
-                false
-            }
+//            country == 0 -> {
+//                _state.update {
+//                    it.copy(
+//                        isValidName = true,
+//                        isValidPhone = true,
+//                        isValidEmail = true,
+//                        isValidAddress = true,
+//                        isValidTag = true,
+//                        isValidCountry = false,
+//                        countryValidationMessage = "برجاء اختار البلد"
+//                    )
+//                }
+//                false
+//            }
 
             state == 0 -> {
                 _state.update {

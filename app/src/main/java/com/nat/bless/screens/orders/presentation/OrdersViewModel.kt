@@ -51,20 +51,44 @@ class OrdersViewModel(
 
                     }
 
+                    is OrdersEvents.MonthSelected -> {
+                        _state.update {
+                            it.copy(
+                                selectedMonth = event.month,
+                                selectedYear = event.year
+                            )
+                        }
+                        callGetOrdersListApi()   // re-fetch with the new month/year
+                    }
+
                     is OrdersEvents.GetReturnsEvent -> {
                         callGetReturnsListApi()
+                    }
+
+                    is OrdersEvents.OnResetClicked -> {
+//                        _state.update {
+//                            it.copy(
+//                                selectedMonth = null,
+//                                selectedYear = null
+//                            )
+//                        }
+//                        callGetOrdersListApiWihoutDate()
                     }
                 }
             }
         }
     }
+
+
     private fun callGetOrdersListApi() {
         _state.update { it.copy(error = "") }
         executeFlow(block = {
             getOrdersListUseCase.invoke(
                 request = BaseRequest(
                     params = OrdersRequest(
-                        token = getUserDataManager.readToken().first()
+                        token = getUserDataManager.readToken().first(),
+                        month = _state.value.selectedMonth.toString(),
+                        year = _state.value.selectedYear.toString(),
                     )
                 )
             )

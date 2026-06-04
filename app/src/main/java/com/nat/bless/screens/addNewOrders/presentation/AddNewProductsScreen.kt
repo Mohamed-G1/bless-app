@@ -98,7 +98,7 @@ fun AddNewProductsScreen(
 
     val SelectedUnitListSaver = listSaver<SnapshotStateList<SelectedUnit>, List<Any>>(
         save = { list ->
-            list.map { unit -> listOf(unit.id, unit.uomId, unit.quantity, unit.lot_id, unit.lot_name,unit.productId) }
+            list.map { unit -> listOf(unit.id, unit.uomId, unit.quantity, unit.lot_id, unit.lot_name,unit.productId, unit.price, unit.uomName) }
         },
         restore = { saved ->
             mutableStateListOf<SelectedUnit>().apply {
@@ -107,11 +107,11 @@ fun AddNewProductsScreen(
                         id = arr[0] as Int,
                         uomId = arr[1] as Int,
                         quantity = arr[2] as Int,
-                        uomName = "",
-                        price = 0.0,
                         lot_id = arr[3] as? Int ?: 0,
                         lot_name = arr[4] as? String ?: "",
-                        productId = arr[5] as? Int ?: 0
+                        productId = arr[5] as? Int ?: 0,
+                        price = arr[6] as? Double ?: 0.0,
+                        uomName = arr[7] as? String ?: ""
                     )
                 })
             }
@@ -130,8 +130,6 @@ fun AddNewProductsScreen(
         }
     }
     val selectedMap = remember { mutableStateMapOf<Int, Int>() }
-
-
 
 
 
