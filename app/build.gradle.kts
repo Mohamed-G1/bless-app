@@ -36,7 +36,7 @@ android {
             applicationIdSuffix = ".debug"
             versionNameSuffix = "bless-debug"
             isMinifyEnabled = false
-            buildConfigField("String", "BASE_URL", "\"https://bless-eg.odoo.com\"")
+            buildConfigField("String", "BASE_URL", "\"https://blees-test.odoo.com\"")
         }
         release {
             isMinifyEnabled = true

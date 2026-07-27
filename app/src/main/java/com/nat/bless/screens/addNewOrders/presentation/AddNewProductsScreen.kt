@@ -47,6 +47,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color.Companion.DarkGray
 import androidx.compose.ui.graphics.Color.Companion.White
@@ -73,6 +74,7 @@ import com.nat.bless.ui.theme.CompactTypography
 import com.nat.bless.ui.theme.Gray
 import com.nat.bless.ui.theme.MediumBlue
 import com.nat.bless.ui.theme.MediumGray
+import com.nat.bless.ui.theme.NotDeliverRed
 import com.nat.bless.ui.theme.Orange
 import com.nat.bless.ui.theme.WhiteGray
 
@@ -295,6 +297,13 @@ private fun ProductItem(
 ) {
     Log.d("isSelected", "AddNewProductsScreen: $isSelected")
 
+    val quantity = data?.quantity ?: 0.0
+    val isOutOfStock = quantity <= 0.0
+    val price = data?.let { d ->
+        d.uom_prices.firstOrNull { it.uom_id == d.basic_uom.uom_id }?.price
+            ?: d.uom_prices.firstOrNull()?.price
+    } ?: 0.0
+
     Box {
         Card(
             modifier = Modifier
@@ -346,12 +355,24 @@ private fun ProductItem(
                     textAlign = TextAlign.Start
                 )
 
+                Text(
+                    text = "$price EGP",
+                    style = CompactTypography.headlineLarge.copy(fontSize = 12.sp, color = Gray),
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Start
+                )
+
 
                 Card(
                     onClick = {
                         onClicked?.invoke()
                     },
-                    colors = CardDefaults.cardColors(containerColor = MediumBlue)
+                    enabled = !isOutOfStock,
+                    colors = CardDefaults.cardColors(
+                        containerColor = MediumBlue,
+                        disabledContainerColor = MediumGray
+                    ),
+                    modifier = Modifier.alpha(if (isOutOfStock) 0.5f else 1f)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Add,
@@ -373,6 +394,22 @@ private fun ProductItem(
             ) {
                 Text(
                     "Selected",
+                    style = CompactTypography.headlineLarge
+                        .copy(fontSize = 10.sp, color = White),
+                    modifier = Modifier.padding(4.dp)
+                )
+            }
+        }
+
+        if (isOutOfStock) {
+            Badge(
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(8.dp),
+                containerColor = NotDeliverRed
+            ) {
+                Text(
+                    "نفذت الكمية",
                     style = CompactTypography.headlineLarge
                         .copy(fontSize = 10.sp, color = White),
                     modifier = Modifier.padding(4.dp)
